@@ -1,0 +1,18 @@
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--purple-400);
+  font-weight: 600;
+}
+
+.label::before {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: var(--purple-400);
+  flex-shrink: 0;
+}

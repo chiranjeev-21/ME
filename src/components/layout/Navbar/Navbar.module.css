@@ -1,0 +1,71 @@
+.nav {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px var(--section-px);
+  animation: navSlideDown 0.7s ease both;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #fff;
+  letter-spacing: -0.025em;
+}
+
+.sub {
+  font-size: 0.6rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.link {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  transition: color var(--ease-fast);
+}
+
+.link:hover {
+  color: var(--text-primary);
+}
+
+.linkCta {
+  background: rgba(124, 58, 237, 0.2);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  color: #fff !important;
+  padding: 9px 22px;
+  border-radius: var(--radius-pill);
+  transition:
+    background var(--ease-fast) !important,
+    border-color var(--ease-fast) !important;
+}
+
+.linkCta:hover {
+  background: rgba(124, 58, 237, 0.45) !important;
+  border-color: rgba(168, 85, 247, 0.6) !important;
+}
+
+@keyframes navSlideDown {
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: none; }
+}

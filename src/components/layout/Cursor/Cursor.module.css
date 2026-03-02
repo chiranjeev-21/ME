@@ -1,0 +1,34 @@
+.dot {
+  width: 9px;
+  height: 9px;
+  background: #fff;
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  will-change: left, top;
+}
+
+.ring {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  will-change: left, top;
+}
+
+/* Hide on touch devices */
+@media (hover: none) {
+  .dot, .ring { display: none; }
+}

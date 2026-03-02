@@ -1,0 +1,25 @@
+.pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.03em;
+  transition:
+    border-color var(--ease-fast),
+    color var(--ease-fast),
+    background var(--ease-fast);
+}
+
+.pill:hover {
+  border-color: rgba(168, 85, 247, 0.45);
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(168, 85, 247, 0.06);
+}
+
+.hot {
+  border-color: rgba(168, 85, 247, 0.35);
+  color: var(--purple-300);
+  background: rgba(168, 85, 247, 0.1);
+}

@@ -1,0 +1,104 @@
+/* ─── Design Tokens ───────────────────────────────────────────────────────── */
+:root {
+  /* Background */
+  --bg-primary:   #080810;
+  --bg-secondary: #0c0c18;
+  --bg-card:      rgba(255, 255, 255, 0.025);
+
+  /* Purple scale */
+  --purple-900: #3b0764;
+  --purple-700: #6d28d9;
+  --purple-600: #7c3aed;
+  --purple-500: #8b5cf6;
+  --purple-400: #a855f7;
+  --purple-300: #c084fc;
+  --purple-200: #d8b4fe;
+
+  /* Accent */
+  --pink-500: #ec4899;
+  --pink-400: #f472b6;
+  --magenta:  #c2185b;
+
+  /* Text */
+  --text-primary:   #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.55);
+  --text-muted:     rgba(255, 255, 255, 0.32);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.055);
+  --border-medium: rgba(255, 255, 255, 0.1);
+
+  /* Typography */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+
+  /* Radii */
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-pill: 9999px;
+
+  /* Transitions */
+  --ease-fast:   0.18s ease;
+  --ease-normal: 0.28s ease;
+  --ease-slow:   0.65s ease;
+
+  /* Layout */
+  --max-width:  1200px;
+  --section-px: clamp(24px, 5vw, 80px);
+  --section-py: clamp(72px, 10vh, 120px);
+}
+
+/* ─── Reset ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  cursor: none;
+  line-height: 1.6;
+}
+
+a         { text-decoration: none; color: inherit; }
+button    { border: none; background: none; cursor: none; font-family: inherit; }
+img, svg  { display: block; max-width: 100%; }
+ul, ol    { list-style: none; }
+
+/* ─── Scroll Reveal ───────────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity var(--ease-slow),
+    transform var(--ease-slow);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.32s; }
+.reveal-delay-4 { transition-delay: 0.44s; }
+
+/* ─── Focus visible ───────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--purple-400);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
