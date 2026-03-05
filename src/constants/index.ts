@@ -108,7 +108,9 @@ export const PROJECTS: ProjectItem[] = [
 export const HERO_SKILLS: SkillItem[] = [
   { label: 'Agentic AI', hot: true },
   { label: 'LLM / RAG', hot: true },
+  { label: 'Java', hot: true },
   { label: 'Python', hot: true },
+  { label: 'JavaScript' },
   { label: 'Node.js' },
   { label: 'FastAPI' },
   { label: 'AWS' },
