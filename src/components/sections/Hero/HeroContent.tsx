@@ -17,11 +17,9 @@ export function HeroContent() {
 
       {/* Headline */}
       <h1 className={styles.heading}>
-        Software
+        Software Engineer
         <br />
-        <span className={styles.headingGrad}>Engineer &amp;</span>
-        <br />
-        <span className={styles.headingRole}>AI Specialist.</span>
+        <span className={styles.headingGrad}>&amp; AI Specialist.</span>
       </h1>
 
       {/* Description */}
