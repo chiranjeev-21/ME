@@ -27,7 +27,19 @@ export const EXPERIENCE: ExperienceItem[] = [
       'Increased service success rate from <strong>85% → ~92%</strong> via a timeout-aware spillover mechanism, discarding delayed requests efficiently.',
       'Led internal <strong>AI/ML knowledge sessions</strong> on Neural Networks, Transformers & GenAI — attended by <strong>200+ employees</strong> across orgs.',
     ],
-    tags: ['AWS S3', 'React', 'Polaris', 'System Design', 'LLM', 'GenAI'],
+    tags: [
+      'AWS S3',
+      'React',
+      'Polaris',
+      'System Design',
+      'LLM',
+      'GenAI',
+      'AWS SQS',
+      'AWS CloudWatch',
+      'Java',
+      'JUnit',
+      'Mockito',
+    ],
   },
   {
     id: 'oyo-sde1',
@@ -42,7 +54,17 @@ export const EXPERIENCE: ExperienceItem[] = [
       'Built a <strong>voice processing pipeline</strong> achieving <strong>86% sentiment accuracy</strong> on 1,000+ clips, improving issue resolution by 20%.',
       'Optimized <strong>RAG workflows for chatbots</strong> across multiple brands, increasing search speed by 15% and handling <strong>2,000+ daily queries</strong> per department.',
     ],
-    tags: ['Azure ACS', 'RAG', 'NLP', 'Langchain', 'Multimodal'],
+    tags: [
+      'Azure ACS',
+      'RAG',
+      'NLP',
+      'Langchain',
+      'Multimodal',
+      'Azure ML Studio',
+      'Azure Functions',
+      'Python',
+      'Voice Engineering',
+    ],
   },
   {
     id: 'oyo-intern',
@@ -152,8 +174,8 @@ export const HERO_BADGES: HeroBadge[] = [
 // ─── Stats ─────────────────────────────────────────────────────────────────────
 
 export const STATS: StatItem[] = [
-  { value: '3', suffix: '+', label: 'Years Experience' },
-  { value: '4', label: 'Companies' },
+  { value: '2', suffix: '+', label: 'Years Experience' },
+  { value: '2', label: 'Companies' },
   { value: '9.30', label: 'CGPA · Thapar' },
   { value: '200', suffix: '+', label: 'AI Session Attendees' },
 ];
