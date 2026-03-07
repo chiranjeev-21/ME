@@ -217,7 +217,6 @@ export const NAV_LINKS: NavLink[] = [
 export const SOCIAL_LINKS: SocialLink[] = [
   { label: 'LinkedIn', href: 'https://linkedin.com/in/chiranjeev2101' },
   { label: 'GitHub', href: 'https://github.com/chiranjeev-21' },
-  { label: '+91 96825 59049', href: 'tel:+919682559049' },
 ];
 
 export const EMAIL = 'chiranjeev21012003@gmail.com';
