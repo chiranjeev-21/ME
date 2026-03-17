@@ -94,55 +94,6 @@ chiranjeev-portfolio/
 
 ---
 
-## Customisation Guide
-
-### Update content (zero component changes needed)
-Everything lives in **`src/constants/index.ts`**:
-
-| Export | Controls |
-|---|---|
-| `EXPERIENCE` | Job history cards |
-| `PROJECTS` | Featured project cards |
-| `HERO_SKILLS` | Skill pills in hero |
-| `HERO_BADGES` | Floating badges around portrait |
-| `STATS` | Numeric stats in experience section |
-| `EDUCATION` | Education & certification cards |
-| `NAV_LINKS` | Navigation items (add `cta: true` for pill style) |
-| `SOCIAL_LINKS` | Social links in CTA section |
-| `EMAIL` | Contact email address |
-
-### Add your photo
-1. Drop your image at `public/images/photo.jpg`
-2. Open `src/components/sections/Hero/HeroPortrait.tsx`
-3. Delete the `<PlaceholderPortrait />` component
-4. Uncomment the `<img>` tag (instructions are in the file)
-
-### Add a new section
-1. Create `src/components/sections/YourSection/YourSection.tsx` + `.module.css`
-2. Add data types to `src/types/index.ts`
-3. Add data to `src/constants/index.ts`
-4. Import and render `<YourSection />` in `src/App.tsx`
-
-### Change design tokens
-Edit CSS custom properties in `src/styles/globals.css` — colours, spacing, fonts, radii all cascade automatically.
-
----
-
-## Tech Stack
-
-| | |
-|---|---|
-| **React 18** | UI rendering with Concurrent Mode |
-| **TypeScript 5** | Strict mode, path aliases (`@/`) |
-| **Vite 5** | Sub-second HMR, optimised production bundles |
-| **CSS Modules** | Scoped styles — zero class name collisions |
-| **Native CSS** | Design tokens via CSS custom properties |
-| **IntersectionObserver** | Scroll-triggered reveal animations |
-| **requestAnimationFrame** | Smooth cursor lerp |
-
-No CSS-in-JS. No heavy animation libraries. All motion via CSS keyframes + rAF — GPU-composited `opacity` and `transform` only.
-
----
 
 ## Design Principles Applied
 
