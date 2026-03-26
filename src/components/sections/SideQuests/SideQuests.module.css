@@ -308,7 +308,9 @@
 
 .vaultPanelLabel,
 .vaultPanelValue,
-.vaultPanelText {
+.vaultPanelText,
+.vaultStats,
+.vaultTraceRow {
   position: relative;
   z-index: 1;
 }
@@ -331,6 +333,24 @@
   place-items: center;
 }
 
+.vaultMeterRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 180deg,
+    rgba(125, 211, 252, 0.92) 0%,
+    rgba(168, 85, 247, 0.9) var(--vault-signal),
+    rgba(148, 163, 184, 0.12) var(--vault-signal),
+    rgba(148, 163, 184, 0.12) 100%
+  );
+  box-shadow:
+    0 0 26px rgba(56, 189, 248, 0.18),
+    inset 0 0 0 1px rgba(226, 232, 240, 0.05);
+  -webkit-mask: radial-gradient(circle, transparent 56%, black 57%);
+  mask: radial-gradient(circle, transparent 56%, black 57%);
+}
+
 .vaultMeterGlow {
   position: absolute;
   inset: 18px;
@@ -347,8 +367,9 @@
 
 .vaultMeterCore {
   position: relative;
-  width: 96px;
-  height: 96px;
+  z-index: 1;
+  width: 106px;
+  height: 106px;
   border-radius: 50%;
   background: radial-gradient(
     circle at 38% 34%,
@@ -361,6 +382,26 @@
   box-shadow:
     0 0 32px rgba(56, 189, 248, 0.34),
     0 0 70px rgba(168, 85, 247, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.vaultMeterValue {
+  color: #f8fafc;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.vaultMeterCaption {
+  color: rgba(226, 232, 240, 0.76);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .vaultPanelValue {
@@ -380,6 +421,85 @@
   color: rgba(226, 232, 240, 0.82);
   font-size: 0.95rem;
   line-height: 1.72;
+}
+
+.vaultStats {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.vaultStat {
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(3, 7, 18, 0.48);
+  backdrop-filter: blur(10px);
+}
+
+.vaultStatTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.vaultStatLabel {
+  color: rgba(148, 163, 184, 0.88);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.vaultStatValue {
+  color: #f8fafc;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.vaultStatBar {
+  width: 100%;
+  height: 7px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.vaultStatBar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #7dd3fc 0%, #c084fc 56%, #facc15 100%);
+  box-shadow: 0 0 14px rgba(125, 211, 252, 0.16);
+}
+
+.vaultStatDetail {
+  color: rgba(191, 219, 254, 0.72);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.vaultTraceRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.vaultTraceChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: rgba(8, 15, 29, 0.68);
+  color: rgba(226, 232, 240, 0.9);
+  font-size: 0.73rem;
+  letter-spacing: 0.04em;
 }
 
 .questSection {
