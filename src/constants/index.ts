@@ -99,29 +99,14 @@ export const EXPERIENCE: ExperienceItem[] = [
 
 export const PROJECTS: ProjectItem[] = [
   {
-    id: 'multimodal-rag',
-    title: 'Multimodal RAG System',
-    description:
-      'Optimized retrieval-augmented generation workflows across multiple Oyo brands — 15% speed gain handling 2,000+ daily queries with Langchain & Azure.',
-    tag: 'AI · Agentic Workflows',
-    gradientVariant: 'violet',
-    featured: true,
-  },
-  {
-    id: 'spatial-fraud',
-    title: 'Spatial Fraud Detection',
-    description:
-      'DBSCAN & HDBSCAN clustering pipeline identifying fraudulent hotel bookings with a 4:1 true-to-false positive ratio at scale.',
-    tag: 'ML · Fraud Detection',
-    gradientVariant: 'indigo',
-  },
-  {
     id: 'face-mask-detection',
     title: 'Real-Time Face-Mask Detection',
     description:
       'YOLO-based system for detecting mask offenders in real-time via camera surveillance. Published with Intellectual Property India, 2022.',
     tag: 'CV · Publication',
     gradientVariant: 'crimson',
+    featured: true,
+    href: 'https://drive.google.com/drive/u/1/folders/1Kzb7cPkzDbj38a8uRQgOvbUnCQTpJK8Z',
   },
 ];
 

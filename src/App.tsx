@@ -29,12 +29,16 @@ function App() {
 
     window.setTimeout(() => {
       setView(next);
+      window.requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+      });
       setIsTransitioning(false);
       setTargetView(null);
     }, 2000);
   };
 
   const handleOpenSideQuests = () => startTransition('side-quests');
+  const handleReturnToMain = () => startTransition('main');
 
   return (
     <>
@@ -47,10 +51,10 @@ function App() {
             <CTA />
           </>
         ) : (
-          <SideQuests />
+          <SideQuests onBack={handleReturnToMain} />
         )}
       </main>
-      <CloudTransition visible={isTransitioning && targetView === 'side-quests'} />
+      <CloudTransition visible={isTransitioning && targetView !== null} />
     </>
   );
 }
