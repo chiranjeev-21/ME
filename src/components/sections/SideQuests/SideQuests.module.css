@@ -208,10 +208,9 @@
 
 .heroGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.8fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.82fr);
   gap: 28px;
   align-items: stretch;
-  margin-bottom: 28px;
 }
 
 .copyCol {
@@ -254,7 +253,45 @@
   color: rgba(226, 232, 240, 0.84);
   font-size: 1rem;
   line-height: 1.78;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+}
+
+.sourceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.sourcePill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  background: rgba(8, 15, 29, 0.68);
+  color: rgba(191, 219, 254, 0.92);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+}
+
+.profileLink {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(248, 250, 252, 0.92);
+  font-size: 0.92rem;
+  transition: color var(--ease-normal);
+}
+
+.profileLink:hover {
+  color: #7dd3fc;
+}
+
+.notice {
+  margin-top: 14px;
+  color: rgba(148, 163, 184, 0.92);
+  font-size: 0.84rem;
+  line-height: 1.65;
 }
 
 .vaultPanel {
@@ -281,9 +318,14 @@
   pointer-events: none;
 }
 
-.vaultPanelLabel {
+.vaultPanelLabel,
+.vaultPanelValue,
+.vaultPanelText {
   position: relative;
   z-index: 1;
+}
+
+.vaultPanelLabel {
   font-size: 0.74rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -333,10 +375,18 @@
     0 0 70px rgba(168, 85, 247, 0.18);
 }
 
+.vaultPanelValue {
+  margin-bottom: 10px;
+  color: #f8fafc;
+  font-family: var(--font-display);
+  font-size: 1.48rem;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-align: center;
+}
+
 .vaultPanelText {
-  position: relative;
-  z-index: 1;
-  max-width: 280px;
+  max-width: 290px;
   margin: 0 auto;
   text-align: center;
   color: rgba(226, 232, 240, 0.82);
@@ -344,16 +394,37 @@
   line-height: 1.72;
 }
 
-.contentGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
-  gap: 24px;
-  align-items: start;
+.questSection {
+  margin-top: 42px;
+}
+
+.sectionIntro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.sectionEyebrow {
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.86);
+  margin-bottom: 8px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: #f8fafc;
 }
 
 .featureCard {
   position: relative;
-  min-height: 420px;
+  display: block;
   padding: 28px;
   border-radius: 30px;
   border: 1px solid rgba(125, 211, 252, 0.18);
@@ -392,7 +463,7 @@
 
 .featureTop,
 .featureBody,
-.featureMeta {
+.metaRow {
   position: relative;
   z-index: 1;
 }
@@ -402,7 +473,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 86px;
+  margin-bottom: 76px;
 }
 
 .featureBadge {
@@ -418,7 +489,8 @@
   text-transform: uppercase;
 }
 
-.featureArrow {
+.featureArrow,
+.questCardArrow {
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -434,13 +506,15 @@
     border-color var(--ease-normal);
 }
 
-.featureCard:hover .featureArrow {
+.featureCard:hover .featureArrow,
+.questCard:hover .questCardArrow {
   transform: rotate(45deg);
   background: rgba(56, 189, 248, 0.18);
   border-color: rgba(125, 211, 252, 0.36);
 }
 
-.featureLabel {
+.featureLabel,
+.questCardLabel {
   font-size: 0.78rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -454,18 +528,18 @@
   line-height: 0.98;
   letter-spacing: -0.045em;
   color: #f8fafc;
-  max-width: 520px;
+  max-width: 620px;
   margin-bottom: 18px;
 }
 
 .featureDescription {
-  max-width: 620px;
+  max-width: 680px;
   color: rgba(226, 232, 240, 0.86);
   font-size: 0.98rem;
   line-height: 1.8;
 }
 
-.featureMeta {
+.metaRow {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -475,6 +549,7 @@
 .metaPill {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   padding: 8px 12px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.22);
@@ -483,81 +558,68 @@
   font-size: 0.76rem;
 }
 
-.sideColumn {
+.languageDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.14);
+}
+
+.questGrid {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
 }
 
-.infoCard,
-.infoCardAlt {
-  padding: 22px 22px 24px;
+.questCard {
+  display: block;
+  padding: 22px;
   border-radius: 24px;
   border: 1px solid rgba(148, 163, 184, 0.16);
-  background: rgba(2, 6, 23, 0.76);
-  box-shadow: 0 22px 60px rgba(2, 6, 23, 0.52);
-}
-
-.infoCardAlt {
   background:
-    radial-gradient(circle at 100% 0%, rgba(56, 189, 248, 0.14), transparent 34%),
+    radial-gradient(circle at 100% 0%, rgba(56, 189, 248, 0.1), transparent 34%),
     linear-gradient(160deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.96));
+  box-shadow: 0 22px 60px rgba(2, 6, 23, 0.52);
+  transition:
+    transform var(--ease-normal),
+    border-color var(--ease-normal),
+    box-shadow var(--ease-normal);
 }
 
-.infoLabel {
-  font-size: 0.76rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(148, 163, 184, 0.9);
-  margin-bottom: 14px;
+.questCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(125, 211, 252, 0.3);
+  box-shadow:
+    0 28px 70px rgba(2, 6, 23, 0.6),
+    0 0 28px rgba(56, 189, 248, 0.08);
 }
 
-.infoList {
-  display: grid;
+.questCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 12px;
+  margin-bottom: 26px;
 }
 
-.infoList li {
-  color: rgba(226, 232, 240, 0.88);
+.questCardArrow {
+  width: 38px;
+  height: 38px;
+}
+
+.questName {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: #f8fafc;
+  margin-bottom: 12px;
+}
+
+.questDescription {
+  color: rgba(226, 232, 240, 0.84);
   font-size: 0.92rem;
   line-height: 1.72;
-  padding-left: 16px;
-  position: relative;
-}
-
-.infoList li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 11px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #7dd3fc, #facc15);
-  box-shadow: 0 0 10px rgba(125, 211, 252, 0.28);
-}
-
-.queueList {
-  display: grid;
-  gap: 12px;
-}
-
-.queueItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  color: rgba(226, 232, 240, 0.88);
-  font-size: 0.9rem;
-  line-height: 1.65;
-}
-
-.queueDot {
-  width: 10px;
-  height: 10px;
-  margin-top: 5px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: radial-gradient(circle, #fde68a 0%, #38bdf8 52%, #1d4ed8 100%);
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.38);
 }
 
 @keyframes cloudDrift {
@@ -595,7 +657,7 @@
 
 @media (max-width: 980px) {
   .heroGrid,
-  .contentGrid {
+  .questGrid {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -626,18 +688,13 @@
 
   .vaultPanel,
   .featureCard,
-  .infoCard,
-  .infoCardAlt {
+  .questCard {
     padding: 20px;
     border-radius: 24px;
   }
 
-  .featureCard {
-    min-height: auto;
-  }
-
   .featureTop {
-    margin-bottom: 56px;
+    margin-bottom: 52px;
   }
 
   .vaultMeter {
@@ -648,5 +705,10 @@
   .vaultMeterCore {
     width: 82px;
     height: 82px;
+  }
+
+  .sourceRow,
+  .metaRow {
+    gap: 8px;
   }
 }

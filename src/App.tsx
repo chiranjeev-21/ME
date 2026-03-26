@@ -6,15 +6,6 @@ import { Experience } from '@/components/sections/Experience/Experience';
 import { SideQuests } from '@/components/sections/SideQuests/SideQuests';
 import { CTA } from '@/components/sections/CTA/CTA';
 
-/**
- * Root application — composes the portfolio views and page-level transitions.
- *
- * ── Adding a new section ────────────────────────────────────────────────────
- * 1. Create src/components/sections/YourSection/YourSection.tsx + .module.css
- * 2. Add content types to src/types/index.ts
- * 3. Add content data  to src/constants/index.ts
- * 4. Import and render <YourSection /> below in the desired order
- */
 type View = 'main' | 'side-quests';
 
 function App() {

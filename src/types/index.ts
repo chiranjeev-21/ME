@@ -24,6 +24,39 @@ export interface ProjectItem {
   featured?: boolean;
 }
 
+export type HiddenQuestSource = 'github' | 'fallback';
+
+export interface HiddenQuestLanguage {
+  name: string;
+  color?: string | null;
+}
+
+export interface HiddenQuestProject {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  homepageUrl?: string | null;
+  primaryLanguage?: HiddenQuestLanguage | null;
+  stargazerCount: number;
+  forkCount: number;
+  updatedAt: string;
+  topics: string[];
+}
+
+export interface HiddenQuestProfile {
+  login: string;
+  name?: string | null;
+  url: string;
+}
+
+export interface HiddenQuestResponse {
+  source: HiddenQuestSource;
+  profile: HiddenQuestProfile;
+  items: HiddenQuestProject[];
+  message?: string;
+}
+
 // ─── Skills ────────────────────────────────────────────────────────────────────
 
 export interface SkillItem {

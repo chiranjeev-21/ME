@@ -14,7 +14,6 @@ export function ExperienceCard({ item, index }: ExperienceCardProps) {
 
   return (
     <article ref={ref} className={cn('reveal', delayClass, styles.card)}>
-      {/* Header */}
       <header className={styles.cardHeader}>
         <div className={styles.companyRow}>
           <div className={cn(styles.logo, styles[`logo_${item.logoVariant}`])}>
@@ -32,7 +31,6 @@ export function ExperienceCard({ item, index }: ExperienceCardProps) {
         </div>
       </header>
 
-      {/* Body */}
       <div className={styles.cardBody}>
         <ul className={styles.highlights}>
           {item.highlights.map((h, i) => (

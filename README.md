@@ -20,6 +20,36 @@ npm run format       # prettier
 
 ---
 
+## Hidden Vault GitHub Sync
+
+The hidden `SideQuests` page can load pinned GitHub repositories through `/api/github-pinned`.
+That endpoint now works in both:
+
+- `npm run dev` via Vite dev middleware
+- Vercel deployments via the serverless function in `api/github-pinned.js`
+
+Add these environment variables:
+
+```bash
+GITHUB_TOKEN=your_github_token
+GITHUB_PROFILE_LOGIN=chiranjeev-21
+```
+
+Notes:
+
+- `GITHUB_TOKEN` should be a GitHub token with access to the GraphQL API.
+- `GITHUB_PROFILE_LOGIN` is optional and defaults to `chiranjeev-21`.
+- If the token is missing or GitHub is unavailable, the vault falls back to the local face-mask
+  artifact so the page never breaks.
+- For local development, create `.env.local` from `.env.example` and add the values there.
+- If you already stored the variables in Vercel, you can pull them down locally with:
+
+```bash
+npx vercel env pull .env.local
+```
+
+---
+
 ## Project Structure
 
 ```
@@ -94,14 +124,13 @@ chiranjeev-portfolio/
 
 ---
 
-
 ## Design Principles Applied
 
-| Principle | Implementation |
-|---|---|
+| Principle              | Implementation                                                                          |
+| ---------------------- | --------------------------------------------------------------------------------------- |
 | Separation of concerns | Data in `constants/`, types in `types/`, behaviour in `hooks/`, styles in `.module.css` |
-| Single source of truth | All interfaces declared once in `src/types/index.ts` |
-| Open/Closed | Add sections/variants without modifying existing files |
-| Composable sections | Each section self-contained with co-located styles |
-| Performance | GPU-only animations, passive event listeners, fire-once IntersectionObserver |
-| Accessibility | `aria-hidden` on decorative elements, `:focus-visible` ring, semantic HTML |
+| Single source of truth | All interfaces declared once in `src/types/index.ts`                                    |
+| Open/Closed            | Add sections/variants without modifying existing files                                  |
+| Composable sections    | Each section self-contained with co-located styles                                      |
+| Performance            | GPU-only animations, passive event listeners, fire-once IntersectionObserver            |
+| Accessibility          | `aria-hidden` on decorative elements, `:focus-visible` ring, semantic HTML              |

@@ -28,14 +28,12 @@ export function ProjectCard({ item, index }: ProjectCardProps) {
       )}
       {...wrapperProps}
     >
-      {/* Visual */}
       <div className={cn(styles.visual, styles[`grad_${item.gradientVariant}`])}>
         <div className={styles.visualBlob} />
         <span className={styles.projectTag}>{item.tag}</span>
         <div className={styles.arrow}>↗</div>
       </div>
 
-      {/* Body */}
       <div className={styles.projectBody}>
         <div className={styles.projectTitle}>{item.title}</div>
         <div className={styles.projectDesc}>{item.description}</div>

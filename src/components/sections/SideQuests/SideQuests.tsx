@@ -1,29 +1,83 @@
+import { usePinnedQuests } from '@/hooks/usePinnedQuests';
+import type { HiddenQuestProject } from '@/types';
 import styles from './SideQuests.module.css';
 
 interface SideQuestsProps {
   onBack?: () => void;
 }
 
-const FEATURED_ARTIFACT = {
-  title: 'Real-Time Face-Mask Detection',
-  description:
-    'YOLO-based system for detecting mask offenders in real-time via camera surveillance. Published with Intellectual Property India, 2022.',
-  href: 'https://drive.google.com/drive/u/1/folders/1Kzb7cPkzDbj38a8uRQgOvbUnCQTpJK8Z',
-};
+function formatCompactNumber(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(value);
+}
 
-const QUEST_TYPES = [
-  'Prototypes that are fun, weird, or too early for the main portfolio.',
-  'Research-flavored builds with demos, notes, and supporting assets.',
-  'Weekend experiments that show process, curiosity, and range.',
-];
+function formatUpdatedLabel(updatedAt: string): string {
+  const updatedDate = new Date(updatedAt);
 
-const NEXT_UNLOCKS = [
-  'GitHub-powered side quest gallery',
-  'Mini-game and tooling experiments',
-  'More hidden artifacts from research work',
-];
+  if (Number.isNaN(updatedDate.getTime())) {
+    return 'Updated recently';
+  }
+
+  const daysAgo = Math.floor((Date.now() - updatedDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (daysAgo < 1) return 'Updated today';
+  if (daysAgo < 30) return `Updated ${daysAgo}d ago`;
+
+  const monthsAgo = Math.floor(daysAgo / 30);
+  if (monthsAgo < 12) return `Updated ${monthsAgo}mo ago`;
+
+  return `Updated ${updatedDate.getFullYear()}`;
+}
+
+function QuestMeta({ item }: { item: HiddenQuestProject }) {
+  return (
+    <div className={styles.metaRow}>
+      {item.primaryLanguage && (
+        <span className={styles.metaPill}>
+          <span
+            className={styles.languageDot}
+            style={{ backgroundColor: item.primaryLanguage.color ?? '#7dd3fc' }}
+            aria-hidden="true"
+          />
+          {item.primaryLanguage.name}
+        </span>
+      )}
+      {item.stargazerCount > 0 && (
+        <span
+          className={styles.metaPill}
+        >{`${formatCompactNumber(item.stargazerCount)} stars`}</span>
+      )}
+      {item.forkCount > 0 && (
+        <span className={styles.metaPill}>{`${formatCompactNumber(item.forkCount)} forks`}</span>
+      )}
+      <span className={styles.metaPill}>{formatUpdatedLabel(item.updatedAt)}</span>
+      {item.homepageUrl && <span className={styles.metaPill}>Demo available</span>}
+    </div>
+  );
+}
 
 export function SideQuests({ onBack }: SideQuestsProps) {
+  const { data, isLoading, notice } = usePinnedQuests();
+  const [featuredQuest, ...otherQuests] = data.items;
+
+  const vaultHeading = isLoading
+    ? 'Scanning GitHub vault...'
+    : `${data.items.length} hidden artifact${data.items.length === 1 ? '' : 's'} detected`;
+
+  const vaultSummary = isLoading
+    ? 'Looking for pinned GitHub projects that have been tucked behind the treasure chest.'
+    : data.source === 'github'
+      ? 'Live sync on.'
+      : (notice ?? 'The vault is showing its local fallback artifact right now.');
+
+  const topStatus = isLoading
+    ? 'Scanning vault'
+    : data.source === 'github'
+      ? 'Live GitHub sync'
+      : 'Vault fallback';
+
   return (
     <section id="side-quests" className={styles.section} aria-label="Hidden vault">
       <div className={styles.cloudLayer} aria-hidden="true">
@@ -49,7 +103,7 @@ export function SideQuests({ onBack }: SideQuestsProps) {
             </span>
             Return to Portfolio
           </button>
-          <div className={styles.topStatus}>Treasure unlocked</div>
+          <div className={styles.topStatus}>{topStatus}</div>
         </div>
 
         <div className={styles.heroGrid}>
@@ -63,8 +117,22 @@ export function SideQuests({ onBack }: SideQuestsProps) {
             <p className={styles.description}>
               You&apos;ve uncovered a tucked-away room of playful experiments, research-heavy
               builds, and unexpected ideas. Opened through the treasure chest in the hero, this
-              vault holds the side quests hidden beyond the main path.
+              vault now syncs with my open source journey.
             </p>
+            <div className={styles.sourceRow}>
+              <span className={styles.sourcePill}>
+                {data.source === 'github' ? 'Pinned from GitHub' : 'Fallback artifact'}
+              </span>
+              <a
+                className={styles.profileLink}
+                href={data.profile.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {`Explore @${data.profile.login} ↗`}
+              </a>
+            </div>
+            {notice && <p className={styles.notice}>{notice}</p>}
           </div>
 
           <aside className={styles.vaultPanel}>
@@ -73,64 +141,81 @@ export function SideQuests({ onBack }: SideQuestsProps) {
               <span className={styles.vaultMeterGlow} />
               <span className={styles.vaultMeterCore} />
             </div>
-            <p className={styles.vaultPanelText}>
-              One artifact is unlocked right now. More hidden builds can stack here as the secret
-              collection grows.
-            </p>
+            <p className={styles.vaultPanelValue}>{vaultHeading}</p>
+            <p className={styles.vaultPanelText}>{vaultSummary}</p>
           </aside>
         </div>
 
-        <div className={styles.contentGrid}>
-          <a
-            className={styles.featureCard}
-            href={FEATURED_ARTIFACT.href}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className={styles.featureGlow} />
-            <div className={styles.featureTop}>
-              <span className={styles.featureBadge}>Unlocked Artifact</span>
-              <span className={styles.featureArrow} aria-hidden="true">
-                ↗
-              </span>
+        {featuredQuest && (
+          <div className={styles.questSection}>
+            <div className={styles.sectionIntro}>
+              <div>
+                <p className={styles.sectionEyebrow}>Featured quest</p>
+                <h2 className={styles.sectionTitle}>{featuredQuest.name}</h2>
+              </div>
             </div>
 
-            <div className={styles.featureBody}>
-              <p className={styles.featureLabel}>Featured Hidden Project</p>
-              <h2 className={styles.featureTitle}>{FEATURED_ARTIFACT.title}</h2>
-              <p className={styles.featureDescription}>{FEATURED_ARTIFACT.description}</p>
-            </div>
+            <a
+              className={styles.featureCard}
+              href={featuredQuest.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className={styles.featureGlow} />
+              <div className={styles.featureTop}>
+                <span className={styles.featureBadge}>Unlocked Artifact</span>
+                <span className={styles.featureArrow} aria-hidden="true">
+                  ↗
+                </span>
+              </div>
 
-            <div className={styles.featureMeta}>
-              <span className={styles.metaPill}>Drive Archive</span>
-              <span className={styles.metaPill}>Publication</span>
-              <span className={styles.metaPill}>Vision</span>
-            </div>
-          </a>
+              <div className={styles.featureBody}>
+                <p className={styles.featureLabel}>
+                  {data.source === 'github' ? 'Pinned GitHub Project' : 'Vault Artifact'}
+                </p>
+                <h3 className={styles.featureTitle}>{featuredQuest.name}</h3>
+                <p className={styles.featureDescription}>{featuredQuest.description}</p>
+              </div>
 
-          <div className={styles.sideColumn}>
-            <article className={styles.infoCard}>
-              <p className={styles.infoLabel}>What belongs here</p>
-              <ul className={styles.infoList}>
-                {QUEST_TYPES.map(item => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </article>
-
-            <article className={styles.infoCardAlt}>
-              <p className={styles.infoLabel}>Next unlocks</p>
-              <ul className={styles.queueList}>
-                {NEXT_UNLOCKS.map(item => (
-                  <li key={item} className={styles.queueItem}>
-                    <span className={styles.queueDot} aria-hidden="true" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
+              <QuestMeta item={featuredQuest} />
+            </a>
           </div>
-        </div>
+        )}
+
+        {otherQuests.length > 0 && (
+          <div className={styles.questSection}>
+            <div className={styles.sectionIntro}>
+              <div>
+                <p className={styles.sectionEyebrow}>More hidden quests</p>
+                <h2 className={styles.sectionTitle}>Pinned discoveries from GitHub</h2>
+              </div>
+            </div>
+
+            <div className={styles.questGrid}>
+              {otherQuests.map(quest => (
+                <a
+                  key={quest.id}
+                  className={styles.questCard}
+                  href={quest.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div className={styles.questCardTop}>
+                    <span className={styles.questCardLabel}>Pinned repo</span>
+                    <span className={styles.questCardArrow} aria-hidden="true">
+                      ↗
+                    </span>
+                  </div>
+
+                  <h3 className={styles.questName}>{quest.name}</h3>
+                  <p className={styles.questDescription}>{quest.description}</p>
+
+                  <QuestMeta item={quest} />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
