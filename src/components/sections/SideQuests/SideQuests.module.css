@@ -1,0 +1,243 @@
+.section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding: 96px var(--section-px) 96px;
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 10%, rgba(59, 130, 246, 0.45) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 10% 80%, rgba(56, 189, 248, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 35% at 90% 70%, rgba(147, 51, 234, 0.35) 0%, transparent 70%),
+    linear-gradient(160deg, #020617 0%, #020617 40%, #020617 100%);
+  overflow: hidden;
+}
+
+.cloudLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cloud {
+  position: absolute;
+  width: 240px;
+  height: 88px;
+  background: radial-gradient(circle at 20% 30%, #ffffff, #e2e8f0);
+  border-radius: 999px;
+  box-shadow:
+    40px 0 32px rgba(15, 23, 42, 0.28),
+    0 22px 40px rgba(15, 23, 42, 0.5);
+  opacity: 0.82;
+  filter: blur(0.4px);
+}
+
+.cloud::before,
+.cloud::after {
+  content: '';
+  position: absolute;
+  border-radius: inherit;
+  background: inherit;
+}
+
+.cloud::before {
+  width: 120px;
+  height: 80px;
+  left: 10%;
+  top: -40px;
+}
+
+.cloud::after {
+  width: 150px;
+  height: 72px;
+  right: 4%;
+  top: -28px;
+}
+
+.cloud1 {
+  top: 18%;
+  left: -260px;
+  animation: cloudDrift 24s linear infinite;
+}
+
+.cloud2 {
+  top: 40%;
+  left: -320px;
+  opacity: 0.9;
+  transform: scale(1.1);
+  animation: cloudDrift 32s linear infinite;
+  animation-delay: -8s;
+}
+
+.cloud3 {
+  top: 62%;
+  left: -280px;
+  opacity: 0.78;
+  transform: scale(0.9);
+  animation: cloudDrift 28s linear infinite;
+  animation-delay: -14s;
+}
+
+.cloud4 {
+  top: 8%;
+  left: -220px;
+  opacity: 0.7;
+  transform: scale(0.75);
+  animation: cloudDrift 36s linear infinite;
+  animation-delay: -20s;
+}
+
+.inner {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: radial-gradient(circle at 0% 0%, rgba(248, 250, 252, 0.22), rgba(15, 23, 42, 0.95));
+  color: rgba(226, 232, 240, 0.9);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4vw, 3rem);
+  font-weight: 800;
+  color: #e5e7eb;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.accent {
+  background: linear-gradient(120deg, #38bdf8, #a855f7, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.description {
+  max-width: 560px;
+  color: rgba(226, 232, 240, 0.86);
+  font-size: 0.98rem;
+  line-height: 1.8;
+  margin-bottom: 36px;
+}
+
+.cardRow {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.card {
+  position: relative;
+  padding: 22px 22px 24px;
+  border-radius: 22px;
+  background: radial-gradient(circle at 0% 0%, rgba(248, 250, 252, 0.12), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(148, 163, 184, 0.65);
+  box-shadow:
+    0 24px 60px rgba(15, 23, 42, 0.8),
+    0 0 0 1px rgba(15, 23, 42, 0.6);
+  overflow: hidden;
+}
+
+.cardGlow {
+  position: absolute;
+  inset: -40%;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.16), transparent 55%),
+    radial-gradient(circle at 80% 100%, rgba(168, 85, 247, 0.2), transparent 60%);
+  opacity: 0.9;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.cardTitle {
+  position: relative;
+  z-index: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 8px;
+}
+
+.cardText {
+  position: relative;
+  z-index: 1;
+  font-size: 0.9rem;
+  color: rgba(226, 232, 240, 0.9);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+.cardTag {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: rgba(226, 232, 240, 0.9);
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.65);
+}
+
+.cardSecondary {
+  align-self: stretch;
+  padding: 18px 18px 20px;
+  border-radius: 20px;
+  border: 1px dashed rgba(148, 163, 184, 0.7);
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.96),
+    rgba(15, 23, 42, 0.96),
+    rgba(30, 64, 175, 0.9)
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardSecondaryLabel {
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.9);
+  margin-bottom: 8px;
+}
+
+.cardSecondaryText {
+  font-size: 0.95rem;
+  color: #e5e7eb;
+}
+
+@keyframes cloudDrift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(140vw);
+  }
+}
+
+@media (max-width: 800px) {
+  .section {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .cardRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
