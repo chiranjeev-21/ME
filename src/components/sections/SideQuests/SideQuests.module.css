@@ -257,24 +257,6 @@
   margin-bottom: 24px;
 }
 
-.signalRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.signalChip {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(125, 211, 252, 0.22);
-  background: rgba(8, 15, 29, 0.68);
-  color: rgba(191, 219, 254, 0.9);
-  font-size: 0.76rem;
-  letter-spacing: 0.04em;
-}
-
 .vaultPanel {
   position: relative;
   padding: 28px;

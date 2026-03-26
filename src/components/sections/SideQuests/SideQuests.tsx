@@ -11,8 +11,6 @@ const FEATURED_ARTIFACT = {
   href: 'https://drive.google.com/drive/u/1/folders/1Kzb7cPkzDbj38a8uRQgOvbUnCQTpJK8Z',
 };
 
-const VAULT_SIGNALS = ['Computer Vision', 'IP India', '2022', 'Camera Surveillance'];
-
 const QUEST_TYPES = [
   'Prototypes that are fun, weird, or too early for the main portfolio.',
   'Research-flavored builds with demos, notes, and supporting assets.',
@@ -67,14 +65,6 @@ export function SideQuests({ onBack }: SideQuestsProps) {
               builds, and unexpected ideas. Opened through the treasure chest in the hero, this
               vault holds the side quests hidden beyond the main path.
             </p>
-
-            <div className={styles.signalRow}>
-              {VAULT_SIGNALS.map(signal => (
-                <span key={signal} className={styles.signalChip}>
-                  {signal}
-                </span>
-              ))}
-            </div>
           </div>
 
           <aside className={styles.vaultPanel}>
