@@ -215,7 +215,7 @@ export const NAV_LINKS: NavLink[] = [
 // ─── Contact / Social ──────────────────────────────────────────────────────────
 
 export const SOCIAL_LINKS: SocialLink[] = [
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/chiranjeev2101' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/ch1ranjeevs1ngh' },
   { label: 'GitHub', href: 'https://github.com/chiranjeev-21' },
 ];
 
