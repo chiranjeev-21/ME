@@ -155,10 +155,7 @@ async function handlePinnedQuestRequest(req, res, env = process.env) {
     sendJson(
       res,
       200,
-      getFallbackResponse(
-        login,
-        'Pinned GitHub sync is in fallback mode until GITHUB_TOKEN is configured in .env.local or your deployment environment.'
-      )
+      getFallbackResponse(login, 'Vault sync is in fallback mode right now.')
     );
     return;
   }
@@ -172,7 +169,7 @@ async function handlePinnedQuestRequest(req, res, env = process.env) {
         200,
         getFallbackResponse(
           login,
-          'No public pinned repositories were found, so the vault is showing its fallback artifact.'
+          'No hidden artifacts were found, so the vault is showing its fallback artifact.'
         )
       );
       return;
@@ -180,10 +177,9 @@ async function handlePinnedQuestRequest(req, res, env = process.env) {
 
     sendJson(res, 200, payload);
   } catch (error) {
-    const message =
-      error instanceof Error
-        ? `${error.message} The vault is showing its fallback artifact for now.`
-        : 'GitHub sync failed, so the vault is showing its fallback artifact for now.';
+    const message = error instanceof Error
+      ? 'Vault sync is temporarily unavailable, so the vault is showing its fallback artifact for now.'
+      : 'Vault sync is temporarily unavailable, so the vault is showing its fallback artifact for now.';
 
     sendJson(res, 200, getFallbackResponse(login, message));
   }

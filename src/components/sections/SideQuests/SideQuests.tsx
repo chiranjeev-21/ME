@@ -63,11 +63,11 @@ export function SideQuests({ onBack }: SideQuestsProps) {
   const [featuredQuest, ...otherQuests] = data.items;
 
   const vaultHeading = isLoading
-    ? 'Scanning GitHub vault...'
+    ? 'Scanning the vault...'
     : `${data.items.length} hidden artifact${data.items.length === 1 ? '' : 's'} detected`;
 
   const vaultSummary = isLoading
-    ? 'Looking for pinned GitHub projects that have been tucked behind the treasure chest.'
+    ? 'Looking for hidden artifacts tucked behind the treasure chest.'
     : data.source === 'github'
       ? 'Live sync on.'
       : (notice ?? 'The vault is showing its local fallback artifact right now.');
@@ -75,7 +75,7 @@ export function SideQuests({ onBack }: SideQuestsProps) {
   const topStatus = isLoading
     ? 'Scanning vault'
     : data.source === 'github'
-      ? 'Live GitHub sync'
+      ? 'Vault active'
       : 'Vault fallback';
 
   return (
@@ -120,9 +120,6 @@ export function SideQuests({ onBack }: SideQuestsProps) {
               vault now syncs with my open source journey.
             </p>
             <div className={styles.sourceRow}>
-              <span className={styles.sourcePill}>
-                {data.source === 'github' ? 'Pinned from GitHub' : 'Fallback artifact'}
-              </span>
               <a
                 className={styles.profileLink}
                 href={data.profile.url}
@@ -171,7 +168,7 @@ export function SideQuests({ onBack }: SideQuestsProps) {
 
               <div className={styles.featureBody}>
                 <p className={styles.featureLabel}>
-                  {data.source === 'github' ? 'Pinned GitHub Project' : 'Vault Artifact'}
+                  {data.source === 'github' ? 'Featured artifact' : 'Vault artifact'}
                 </p>
                 <h3 className={styles.featureTitle}>{featuredQuest.name}</h3>
                 <p className={styles.featureDescription}>{featuredQuest.description}</p>
@@ -187,7 +184,7 @@ export function SideQuests({ onBack }: SideQuestsProps) {
             <div className={styles.sectionIntro}>
               <div>
                 <p className={styles.sectionEyebrow}>More hidden quests</p>
-                <h2 className={styles.sectionTitle}>Pinned discoveries from GitHub</h2>
+                <h2 className={styles.sectionTitle}>More hidden discoveries</h2>
               </div>
             </div>
 
@@ -201,7 +198,7 @@ export function SideQuests({ onBack }: SideQuestsProps) {
                   rel="noopener noreferrer"
                 >
                   <div className={styles.questCardTop}>
-                    <span className={styles.questCardLabel}>Pinned repo</span>
+                    <span className={styles.questCardLabel}>Hidden quest</span>
                     <span className={styles.questCardArrow} aria-hidden="true">
                       ↗
                     </span>

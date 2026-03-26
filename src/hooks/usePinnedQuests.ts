@@ -26,7 +26,7 @@ const FALLBACK_RESPONSE: HiddenQuestResponse = {
       topics: ['yolo', 'opencv', 'surveillance'],
     },
   ],
-  message: 'Showing the local fallback artifact until the live GitHub vault is available.',
+  message: 'Showing the local fallback artifact while the vault connection is unavailable.',
 };
 
 interface UsePinnedQuestsState {
@@ -53,7 +53,7 @@ export function usePinnedQuests(): UsePinnedQuestsState {
   const [state, setState] = useState<UsePinnedQuestsState>({
     data: FALLBACK_RESPONSE,
     isLoading: true,
-    notice: 'Scanning the vault for pinned GitHub projects...',
+    notice: 'Scanning the vault for hidden artifacts...',
   });
 
   useEffect(() => {
