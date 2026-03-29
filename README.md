@@ -4,6 +4,8 @@ A personal portfolio for **Chiranjeev Singh**, focused on software engineering, 
 
 Built with **React 18**, **TypeScript 5**, and **Vite 5**.
 
+<img width="1875" height="912" alt="image" src="https://github.com/user-attachments/assets/8a23c14c-9724-44d3-b3e5-085cc2be1c4a" />
+
 ## Getting Started
 
 ```bash
