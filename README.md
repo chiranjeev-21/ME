@@ -3,6 +3,12 @@
 Chiranjeev Singh's personal computer on the web. A complete desktop experience,
 not a scrolling portfolio wearing a terminal costume.
 
+The desktop starts clean: **no pre-opened apps**. Original desktop icons, a centered
+glass dock, native-style menus, and restrained window chrome provide a macOS-inspired
+interface without bundling Apple's wallpapers, icons, or fonts.
+The treasure is now a tidy **Side quests** desktop icon opening the same vault,
+instead of a floating overlay competing with application controls.
+
 Built with the existing **React 18, TypeScript, Vite, and CSS Modules** stack. No
 database, paid API, animation framework, or server shell is needed.
 
@@ -22,9 +28,11 @@ open as additional windows. There is deliberately no music player or autoplay au
 ## Desktop controls
 
 - Drag a titlebar or use its focused move control with arrow keys.
+- Double-click a desktop icon, or select it and press Enter. On phones, tap once.
 - Resize with the lower-right handle, or focus it and use arrow keys.
 - Minimize, maximize/restore, and close with the window controls.
-- Click a dock icon to open/restore an app; click the active app to minimize it.
+- Click a dock icon to open, focus, or restore an app. The yellow window control
+  minimizes it; clicking an already-active dock icon does not hide it.
 - `Ctrl+K` / `Cmd+K` searches applications, projects, notes, and shell commands.
 - Backtick opens Terminal when you are not typing in another field.
 - On mobile, apps become full-screen views with a persistent dock.
@@ -91,7 +99,8 @@ impact claims.
 
 ## Deployment
 
-The OS release branch is `feature/cj-os-desktop`. Vercel creates an independent
+The OS release branches are `feature/cj-os-desktop` and `design/cj-os`, kept on the
+same desktop implementation. Vercel creates an independent
 Preview deployment when it is pushed. `main` and the production domain are left
 unchanged until the selected design is merged.
 

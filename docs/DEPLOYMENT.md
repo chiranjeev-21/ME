@@ -4,10 +4,15 @@ The production branch remains `main`. Nothing needs to be disconnected or reimpo
 
 ## Current desktop release
 
-`feature/cj-os-desktop` is the complete OS experience: a shared window manager,
+`feature/cj-os-desktop` and `design/cj-os` are the same complete OS experience: a shared window manager,
 read-only parsed shell, Project Explorer, local retrieval lab, real-data monitor,
 and conventional résumé/PDF app. The dock, palette, terminal, and virtual files
 launch the same application instances.
+
+The desktop starts with no open windows. Desktop icons, a centered dock, native-style
+menus, and original artwork provide a cleaner macOS-inspired presentation.
+Terminal and other applications open only when chosen. Side quests is a desktop
+shortcut rather than an overlay.
 
 The desktop lives in `src/os/Desktop.tsx`; app metadata lives in
 `src/os/registry.ts`. This branch does not use the older `ACTIVE_CONCEPT` switch.
@@ -22,11 +27,10 @@ below still applies. Promote only after reviewing the desktop preview.
 
 | Branch                              | Concept                    | Distinctive interaction                                           |
 | ----------------------------------- | -------------------------- | ----------------------------------------------------------------- |
-| `design/cj-os`                      | CJ OS + Hacker Terminal    | Profile window tabs, command terminal, graphite/lime desktop      |
 | `design/personal-universe`          | Personal Universe          | Orbital navigation, dimensional planet, lavender/peach atmosphere |
 | `design/engineering-command-center` | Engineering Command Center | Interactive storage/signals/AI focus map, blueprint styling       |
 
-All three share the resume update, scroll interactions, responsive navigation,
+The visual explorations retain the resume update, scroll interactions, responsive navigation,
 accessible terminal, floating treasure, and live GitHub vault. The selected concept
 is defined in `src/constants/concept.ts`. The focus map is illustrative, not a diagram
 of an employer's production architecture.

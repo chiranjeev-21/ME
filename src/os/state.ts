@@ -153,26 +153,5 @@ export function desktopReducer(state: DesktopState, action: DesktopAction): Desk
 }
 
 export function initialDesktop(viewport: Viewport): DesktopState {
-  let state: DesktopState = { windows: [], activeId: null, viewport };
-  if (viewport.width > 1000) {
-    state = desktopReducer(state, {
-      type: 'open',
-      appId: 'explorer',
-      payload: { path: '/home/cj' },
-    });
-    state = desktopReducer(state, {
-      type: 'move',
-      id: 'explorer',
-      x: Math.max(0, viewport.width - 730),
-      y: 40,
-    });
-    state = desktopReducer(state, { type: 'resize', id: 'explorer', width: 610, height: 490 });
-  }
-  state = desktopReducer(state, { type: 'open', appId: 'terminal' });
-  return desktopReducer(state, {
-    type: 'move',
-    id: 'terminal',
-    x: viewport.width > 1000 ? 58 : 20,
-    y: viewport.width > 1000 ? 170 : 24,
-  });
+  return { windows: [], activeId: null, viewport };
 }

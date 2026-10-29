@@ -8,8 +8,22 @@ before(
 );
 const size = { width: 1300, height: 850 };
 
-test('opening an existing app restores the same instance and raises it', () => {
+function workspaceWithApps() {
   let state = initialDesktop(size);
+  state = desktopReducer(state, { type: 'open', appId: 'explorer' });
+  return desktopReducer(state, { type: 'open', appId: 'terminal' });
+}
+
+test('a fresh desktop has no pre-opened apps on desktop or mobile', () => {
+  for (const viewport of [size, { width: 374, height: 620 }]) {
+    const state = initialDesktop(viewport);
+    assert.deepEqual(state.windows, []);
+    assert.equal(state.activeId, null);
+  }
+});
+
+test('opening an existing app restores the same instance and raises it', () => {
+  let state = workspaceWithApps();
   state = desktopReducer(state, { type: 'open', appId: 'resume' });
   state = desktopReducer(state, { type: 'minimize', id: 'resume' });
   state = desktopReducer(state, { type: 'open', appId: 'resume' });
@@ -20,7 +34,7 @@ test('opening an existing app restores the same instance and raises it', () => {
 });
 
 test('project identity is shared across launch sources but different projects have separate windows', () => {
-  let state = initialDesktop(size);
+  let state = workspaceWithApps();
   for (const projectId of ['cj-os', 'ai-lab', 'cj-os']) {
     state = desktopReducer(state, { type: 'open', appId: 'project', payload: { projectId } });
   }
@@ -30,7 +44,7 @@ test('project identity is shared across launch sources but different projects ha
 });
 
 test('closing or minimizing the foreground restores the most recent visible window', () => {
-  let state = initialDesktop(size);
+  let state = workspaceWithApps();
   state = desktopReducer(state, { type: 'open', appId: 'resume' });
   state = desktopReducer(state, { type: 'open', appId: 'monitor' });
   state = desktopReducer(state, { type: 'minimize', id: 'monitor' });
@@ -41,7 +55,7 @@ test('closing or minimizing the foreground restores the most recent visible wind
 });
 
 test('maximize and restore preserve normal geometry', () => {
-  let state = initialDesktop(size);
+  let state = workspaceWithApps();
   const normal = state.windows.find(item => item.id === 'terminal').rect;
   state = desktopReducer(state, { type: 'maximize', id: 'terminal' });
   state = desktopReducer(state, { type: 'move', id: 'terminal', x: -99, y: -99 });
@@ -53,7 +67,7 @@ test('maximize and restore preserve normal geometry', () => {
 });
 
 test('drag, resize, and viewport changes keep titlebars and windows reachable', () => {
-  let state = initialDesktop(size);
+  let state = workspaceWithApps();
   state = desktopReducer(state, { type: 'move', id: 'terminal', x: 90000, y: -90000 });
   state = desktopReducer(state, { type: 'resize', id: 'terminal', width: 90000, height: 90000 });
   state = desktopReducer(state, { type: 'viewport', viewport: { width: 304, height: 540 } });
@@ -71,14 +85,14 @@ test('drag, resize, and viewport changes keep titlebars and windows reachable', 
 });
 
 test('ordinary terminal opens clear one-shot commands rather than replaying them', () => {
-  let state = initialDesktop(size);
+  let state = workspaceWithApps();
   state = desktopReducer(state, { type: 'open', appId: 'terminal', payload: { command: 'help' } });
   state = desktopReducer(state, { type: 'open', appId: 'terminal' });
   assert.equal(state.windows.find(item => item.id === 'terminal').payload.command, undefined);
 });
 
 test('ordinary restores remember the virtual location without replaying one-shot commands', () => {
-  let state = initialDesktop(size);
+  let state = workspaceWithApps();
   state = desktopReducer(state, {
     type: 'open',
     appId: 'explorer',

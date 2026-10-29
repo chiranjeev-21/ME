@@ -92,6 +92,22 @@
   background: var(--os-panel);
 }
 
+.explorer .header {
+  padding: 10px 16px;
+}
+.explorer .heading .eyebrow {
+  display: none;
+}
+.explorer .heading > h1 {
+  font-size: 15px;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+.explorer .header > button {
+  min-height: 28px;
+  padding: 4px 10px;
+}
+
 .heading {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -576,9 +592,9 @@
 
 .sidebar > button:hover,
 .sidebar > button[aria-current] {
-  border-color: var(--os-line);
-  color: var(--portfolio-highlight);
-  background: var(--os-bg);
+  border-color: transparent;
+  color: #eeeef6;
+  background: #ffffff10;
 }
 
 .sidebar > p {
@@ -600,16 +616,16 @@
 }
 
 .folderIntro {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .folderIntro p {
-  color: var(--os-text);
-  font-size: 12px;
+  color: var(--os-muted);
+  font-size: 11px;
 }
 
 .folderIntro > span {
-  display: block;
+  display: none;
   margin-top: 4px;
   color: var(--os-muted);
   font-size: 10px;
@@ -625,8 +641,8 @@
 }
 
 .fileGrid {
-  grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(min(104px, 100%), 1fr));
+  gap: 14px 8px;
 }
 
 .fileRow {
@@ -697,20 +713,49 @@
 }
 
 .fileGrid .fileRow {
+  position: relative;
   flex-direction: column;
   align-items: stretch;
-  padding: 8px;
+  padding: 4px;
+  border-color: transparent;
+  background: transparent;
 }
 
 .fileGrid .fileMain {
   flex-direction: column;
-  align-items: flex-start;
-  min-height: 105px;
-  gap: 13px;
+  align-items: center;
+  min-height: 86px;
+  padding: 3px 4px;
+  gap: 4px;
+  text-align: center;
+}
+.fileGrid .fileLabel strong {
+  font-size: 11px;
+  font-weight: 500;
+}
+.fileGrid .fileLabel small {
+  display: none;
+}
+.fileGrid .fileRow.selected {
+  background: #6a9cdb17;
+  border-color: #9bb9e42e;
 }
 
 .fileGrid .openButton {
-  align-self: flex-end;
+  align-self: center;
+  min-height: 23px;
+  padding: 1px 8px;
+  opacity: 0;
+}
+.fileGrid .fileRow:hover .openButton,
+.fileGrid .fileRow:focus-within .openButton {
+  opacity: 1;
+}
+@media (hover: none) {
+  .fileGrid .openButton {
+    opacity: 1;
+    min-height: 32px;
+  }
 }
 
 .statusBar {

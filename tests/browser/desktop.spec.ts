@@ -48,14 +48,31 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/github-pinned', route => route.fulfill({ json: feed }));
 });
 
-test('boots into an actual desktop with identity and direct recruiter access', async ({ page }) => {
+test('starts with a clean desktop, centered dock and opt-in apps', async ({ page }, testInfo) => {
   await page.goto('/');
   await expect(page.locator('[data-os-desktop]')).toBeVisible();
+  await expect(page.locator('[data-window-id]')).toHaveCount(0);
+  await expect(page.getByText('Chiranjeev Singh', { exact: true })).toBeVisible();
+  const shortcut = page
+    .getByRole('group', { name: 'Desktop applications' })
+    .getByRole('button', { name: 'Open Terminal', exact: true });
+  if (testInfo.project.name === 'desktop') {
+    await shortcut.click();
+    await expect(shortcut).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('[data-window-id]')).toHaveCount(0);
+    await shortcut.dblclick();
+  } else await shortcut.click();
+  await expect(page.locator('[data-window-id="terminal"]')).toBeVisible();
+  await open(page, 'Terminal');
   await expect(page.locator('[data-window-id="terminal"]')).toBeVisible();
   await expect(page.locator('[data-window-id="terminal"]')).toContainText('Chiranjeev');
   await expect(
     page.getByRole('navigation', { name: 'Application dock' }).getByRole('button')
   ).toHaveCount(6);
+  const dock = (await page.getByRole('navigation', { name: 'Application dock' }).boundingBox())!;
+  const viewport = page.viewportSize()!;
+  expect(Math.abs(dock.x + dock.width / 2 - viewport.width / 2)).toBeLessThan(3);
+  expect(dock.y).toBeGreaterThan(viewport.height * 0.7);
   await open(page, 'Resume');
   const resume = page.locator('[data-window-id="resume"]');
   await expect(resume).toContainText('Microsoft');
@@ -176,6 +193,7 @@ test('windows drag, resize, maximize and restore without leaving the viewport', 
     'Mobile applications intentionally use a full-screen window.'
   );
   await page.goto('/');
+  await open(page, 'Terminal');
   const terminal = page.locator('[data-window-id="terminal"]');
   const before = (await terminal.boundingBox())!;
   const title = terminal.getByRole('button', { name: 'Move Terminal window' });
@@ -205,10 +223,19 @@ test('windows drag, resize, maximize and restore without leaving the viewport', 
     .poll(async () => (await terminal.boundingBox())!.width)
     .toBeCloseTo(resized.width, 0);
   await page.setViewportSize({ width: 800, height: 650 });
-  const bounds = (await terminal.boundingBox())!;
-  expect(bounds.x).toBeGreaterThanOrEqual(0);
-  expect(bounds.x + bounds.width).toBeLessThanOrEqual(800);
-  expect(bounds.y + bounds.height).toBeLessThanOrEqual(650);
+  await expect
+    .poll(async () => {
+      const bounds = (await terminal.boundingBox())!;
+      return bounds.x + bounds.width;
+    })
+    .toBeLessThanOrEqual(800);
+  await expect
+    .poll(async () => {
+      const bounds = (await terminal.boundingBox())!;
+      return bounds.y + bounds.height;
+    })
+    .toBeLessThanOrEqual(650);
+  expect((await terminal.boundingBox())!.x).toBeGreaterThanOrEqual(0);
 });
 
 test('desktop settings persist and app deep links survive reload', async ({ page }) => {
@@ -226,11 +253,13 @@ test('desktop settings persist and app deep links survive reload', async ({ page
   await expect(page.locator('[data-os-desktop]')).toHaveAttribute('data-font-size', 'large');
 });
 
-test('the floating treasure opens a real OS vault with honest live and offline states', async ({
+test('the desktop treasure opens a real OS vault with honest live and offline states', async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Open side quests', exact: true }).click();
+  const treasure = page.getByRole('button', { name: 'Open side quests', exact: true });
+  if (testInfo.project.name === 'desktop') await treasure.dblclick();
+  else await treasure.click();
   const vault = page.locator('[data-window-id="vault"]');
   await expect(vault).toBeVisible();
   await expect(vault).toContainText(/pinned/i);
@@ -253,8 +282,11 @@ test('workspace screenshots, keyboard focus, and phone-sized application views',
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.getByRole('textbox', { name: 'Terminal command' })).toBeVisible();
+  await expect(page.locator('[data-window-id]')).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath('desktop.png'), animations: 'disabled' });
+  await open(page, 'Terminal');
+  await expect(page.getByRole('textbox', { name: 'Terminal command' })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('terminal.png'), animations: 'disabled' });
   for (const app of ['Project Explorer', 'AI Lab', 'System Monitor', 'Resume']) {
     await open(page, app);
     await expect(
@@ -365,6 +397,7 @@ test('normal-motion boot and window transitions finish without losing the worksp
   await page.goto('/');
   const skip = page.getByRole('button', { name: /Skip intro/ });
   if (await skip.isVisible()) await skip.click();
+  await open(page, 'Terminal');
   const terminal = page.locator('[data-window-id="terminal"]');
   await expect(terminal).toBeVisible({ timeout: 5000 });
   if (await terminal.getByRole('button', { name: 'Maximize Terminal', exact: true }).isEnabled()) {
@@ -377,6 +410,63 @@ test('normal-motion boot and window transitions finish without losing the worksp
   await expect(terminal).toBeHidden();
   await open(page, 'Terminal');
   await expect(terminal.getByRole('textbox', { name: 'Terminal command' })).toBeVisible();
+});
+
+test('native-style menus launch apps, navigate folders and restore running windows', async ({
+  page,
+}, testInfo) => {
+  await page.goto('/');
+  if (testInfo.project.name === 'desktop') {
+    await page.getByRole('button', { name: 'File menu', exact: true }).click();
+    await expect(page.getByRole('menuitem', { name: 'Close Window', exact: true })).toBeDisabled();
+    await page.getByRole('menuitem', { name: /Open Terminal/ }).click();
+    await expect(page.locator('[data-window-id="terminal"]')).toBeVisible();
+    await page.getByRole('button', { name: 'Go menu', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Projects', exact: true }).click();
+    await expect(page.locator('[data-window-id="explorer"]')).toBeVisible();
+    await expect(page).toHaveURL(/path=%2Fhome%2Fcj%2Fprojects/);
+    await page.getByRole('button', { name: 'View menu', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Show Desktop', exact: true }).click();
+    await expect(page.locator('[data-window-id]:visible')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Window menu', exact: true }).click();
+    await page.getByRole('menuitem', { name: /^Terminal.*minimized/ }).click();
+    await expect(page.locator('[data-window-id="terminal"]')).toBeVisible();
+    await expect(page.locator('[data-window-id="terminal"]')).toHaveCount(1);
+    const input = page.getByRole('textbox', { name: 'Terminal command' });
+    await input.fill('copy from my workspace');
+    await input.selectText();
+    await page.evaluate(() =>
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: {
+          writeText: async (text: string) => {
+            document.documentElement.dataset.copied = text;
+          },
+        },
+      })
+    );
+    await page.getByRole('button', { name: 'Edit menu', exact: true }).click();
+    await page.getByRole('menuitem', { name: /^Copy/ }).click();
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.dataset.copied))
+      .toBe('copy from my workspace');
+    await page.getByRole('button', { name: 'Edit menu', exact: true }).click();
+    await page.getByRole('menuitem', { name: /^Select All/ }).click();
+    expect(
+      await input.evaluate(element => {
+        const field = element as HTMLInputElement;
+        return field.selectionStart === 0 && field.selectionEnd === field.value.length;
+      })
+    ).toBe(true);
+  } else {
+    await open(page, 'Terminal');
+    await page.getByRole('button', { name: 'CJ OS menu', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Show Desktop', exact: true }).click();
+    await expect(page.locator('[data-window-id]:visible')).toHaveCount(0);
+    await page.getByRole('button', { name: 'CJ OS menu', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'System Settings…', exact: true }).click();
+    await expect(page.locator('[data-window-id="settings"]')).toBeVisible();
+  }
 });
 
 test('the desktop still opens when browser preference storage is unavailable', async ({ page }) => {

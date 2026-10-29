@@ -8,7 +8,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Treasure } from '../components/layout/Treasure/Treasure';
 import { usePinnedQuests } from '../hooks/usePinnedQuests';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { APPS, HOME, OS_VERSION, getApp } from './registry';
@@ -27,6 +26,8 @@ import { DesktopWindow } from './Window';
 import { CommandPalette } from './Palette';
 import { SettingsApp } from './Settings';
 import { OSIcon } from './Icons';
+import { DesktopIcon } from './DesktopIcon';
+import { MenuBar } from './MenuBar';
 import type {
   AppId,
   AppPayload,
@@ -41,12 +42,17 @@ const LabApp = lazy(() => import('./apps/lab/LabApp').then(module => ({ default:
 const MonitorApp = lazy(() =>
   import('./apps/monitor/MonitorApp').then(module => ({ default: module.MonitorApp }))
 );
-const LAUNCHERS = APPS.filter(app => app.launcher);
+const LAUNCHERS = APPS.filter(app => app.launcher).sort((a, b) =>
+  a.id === 'explorer' ? -1 : b.id === 'explorer' ? 1 : 0
+);
+const SHORTCUTS = ['explorer', 'resume', 'terminal', 'lab', 'monitor', 'vault'].map(id =>
+  getApp(id as AppId)
+);
 
 function viewport(): Viewport {
   return {
-    width: Math.max(1, window.innerWidth - (window.innerWidth <= 760 ? 16 : 108)),
-    height: Math.max(1, window.innerHeight - (window.innerWidth <= 760 ? 124 : 70)),
+    width: Math.max(1, window.innerWidth - (window.innerWidth <= 760 ? 16 : 28)),
+    height: Math.max(1, window.innerHeight - (window.innerWidth <= 760 ? 128 : 148)),
   };
 }
 function hashFor(appId: AppId, payload: AppPayload = {}): string {
@@ -117,13 +123,13 @@ export function Desktop() {
     }
   });
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState<AppId | null>(null);
   const [toast, setToast] = useState('');
   const [clock, setClock] = useState(() => new Date());
   const [labRuns, setLabRuns] = useState<LabRun[]>([]);
   const [startedAt] = useState(Date.now);
   const workspace = useRef<HTMLElement>(null);
-  const menu = useRef<HTMLDivElement>(null);
+  const iconList = useRef<HTMLDivElement>(null);
   const toastTimer = useRef(0);
   const files = useMemo(() => buildPortfolioFiles(feed.data), [feed.data]);
   const projects = useMemo(() => buildProjectCaseStudies(feed.data), [feed.data]);
@@ -200,7 +206,7 @@ export function Desktop() {
           ? data.current.files.find(file => file.path === payload.path)?.name || 'Document'
           : getApp(appId).title;
     dispatch({ type: 'open', appId, payload, title });
-    setMenuOpen(false);
+    setSelectedIcon(null);
     const hash = hashFor(appId, payload);
     if (window.location.hash !== hash) window.history.pushState(null, '', hash);
   }, []);
@@ -264,25 +270,16 @@ export function Desktop() {
         event.preventDefault();
         openApp('terminal');
       } else if (event.key === 'Escape') {
-        setMenuOpen(false);
+        setSelectedIcon(null);
         if (booting) finishBoot();
       }
     };
-    const outside = (event: globalThis.PointerEvent) => {
-      if (!menu.current?.contains(event.target as Node)) setMenuOpen(false);
-    };
     window.addEventListener('keydown', keydown);
-    window.addEventListener('pointerdown', outside);
     return () => {
       window.removeEventListener('keydown', keydown);
-      window.removeEventListener('pointerdown', outside);
     };
   }, [openApp, booting, finishBoot]);
 
-  const dockAction = (appId: AppId) => {
-    if (active?.appId === appId && !active.minimized) dispatch({ type: 'minimize', id: active.id });
-    else openApp(appId);
-  };
   const showDesktop = () =>
     state.windows.forEach(item => dispatch({ type: 'minimize', id: item.id }));
 
@@ -302,109 +299,90 @@ export function Desktop() {
         <div />
         <div />
       </div>
-      <header className={styles.menuBar}>
-        <div ref={menu} className={styles.menuRoot}>
-          <button
-            className={styles.osMenu}
-            aria-label="CJ OS menu"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen(previous => !previous)}
-          >
-            cj<span>✳</span>
-          </button>
-          {menuOpen && (
-            <div className={styles.systemMenu} role="menu" aria-label="CJ OS applications">
-              <strong>
-                CJ OS <span>v{OS_VERSION}</span>
-              </strong>
-              {LAUNCHERS.map(app => (
-                <button key={app.id} role="menuitem" onClick={() => openApp(app.id)}>
-                  <OSIcon name={app.icon} size={16} />
-                  {app.title}
-                </button>
-              ))}
-              <hr />
-              <button role="menuitem" onClick={() => openApp('settings')}>
-                <OSIcon name="settings" size={16} />
-                Desktop settings
-              </button>
-              <button role="menuitem" onClick={showDesktop}>
-                <OSIcon name="home" size={16} />
-                Show desktop
-              </button>
-            </div>
-          )}
-        </div>
-        <span className={styles.menuApp}>{active?.title || 'Desktop'}</span>
-        <span className={styles.menuHint}>A personal computer. On the web.</span>
-        <div className={styles.menuRight}>
-          <button
-            aria-label="Open command palette"
-            title="Search everything (Ctrl+K / Cmd+K)"
-            onClick={() => setPaletteOpen(true)}
-          >
-            <OSIcon name="search" size={15} />
-            <kbd>⌘ K</kbd>
-          </button>
-          <button className={styles.contactShortcut} onClick={() => openPath(`${HOME}/contact.md`)}>
-            Contact CJ <OSIcon name="arrow" size={12} />
-          </button>
-          <time dateTime={clock.toISOString()}>
-            {clock.toLocaleDateString('en-US', { weekday: 'short' })}{' '}
-            <span>
-              {clock.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-              })}
-            </span>
-          </time>
-        </div>
-      </header>
+      <MenuBar
+        active={active}
+        windows={state.windows}
+        clock={clock}
+        openApp={openApp}
+        openPath={openPath}
+        showDesktop={showDesktop}
+        dispatch={dispatch}
+        onPalette={() => setPaletteOpen(true)}
+        notify={notify}
+      />
       <main
         ref={workspace}
         id="desktop-workspace"
         className={styles.workspace}
         tabIndex={-1}
         aria-label="Desktop workspace"
+        onPointerDown={event => {
+          if (event.target === event.currentTarget) setSelectedIcon(null);
+        }}
       >
-        <div className={styles.desktopIdentity}>
-          <span className={styles.desktopEyebrow}>CHIRANJEEV'S PERSONAL WORKSPACE</span>
-          <h1>
-            Chiranjeev Singh<span>.</span>
-          </h1>
-          <p>Software Engineer · Builder · Experimenter</p>
-          <small>
-            Microsoft / Azure Direct Drive. Distributed systems, useful AI, and a few side quests.
-          </small>
-          <div>
-            <button onClick={() => openApp('resume')}>
-              Resume &amp; experience <OSIcon name="arrow" size={14} />
-            </button>
-            <button onClick={() => openPath(`${HOME}/contact.md`)}>
-              Say hello <OSIcon name="arrow" size={14} />
-            </button>
-          </div>
-        </div>
-        <div className={styles.desktopIcons} aria-label="Desktop applications">
-          {LAUNCHERS.map(app => (
+        <h1 className={styles.screenReaderOnly}>
+          Chiranjeev Singh — software engineer, builder, and experimenter
+        </h1>
+        <div
+          ref={iconList}
+          className={styles.desktopIcons}
+          role="group"
+          aria-label="Desktop applications"
+        >
+          {SHORTCUTS.map(app => (
             <button
               key={app.id}
+              data-shortcut={app.id}
+              aria-pressed={selectedIcon === app.id}
               onDoubleClick={() => openApp(app.id)}
-              onClick={() => mobile && openApp(app.id)}
-              onKeyDown={event => {
-                if (event.key === 'Enter') openApp(app.id);
+              onClick={() => {
+                setSelectedIcon(app.id);
+                if (mobile) openApp(app.id);
               }}
-              aria-label={`Open ${app.title}`}
+              onKeyDown={event => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  openApp(app.id);
+                }
+                if (
+                  ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft', 'Home', 'End'].includes(
+                    event.key
+                  )
+                ) {
+                  event.preventDefault();
+                  const buttons = Array.from(
+                    iconList.current?.querySelectorAll<HTMLButtonElement>('button') || []
+                  );
+                  const index = buttons.indexOf(event.currentTarget);
+                  const next =
+                    event.key === 'Home'
+                      ? 0
+                      : event.key === 'End'
+                        ? buttons.length - 1
+                        : (index +
+                            (['ArrowDown', 'ArrowRight'].includes(event.key)
+                              ? 1
+                              : buttons.length - 1)) %
+                          buttons.length;
+                  buttons[next]?.focus();
+                  setSelectedIcon(SHORTCUTS[next].id);
+                }
+              }}
+              aria-label={app.id === 'vault' ? 'Open side quests' : `Open ${app.title}`}
               title={app.description}
             >
-              <span
-                className={styles.appIcon}
-                style={{ '--app-color': app.color } as React.CSSProperties}
-              >
-                <OSIcon name={app.icon} size={27} />
+              <span className={styles.desktopIconImage}>
+                <DesktopIcon appId={app.id} />
               </span>
-              <span>{app.title}</span>
+              <span className={styles.desktopIconLabel}>
+                {app.id === 'explorer'
+                  ? 'Projects'
+                  : app.id === 'resume'
+                    ? 'Resume.pdf'
+                    : app.id === 'vault'
+                      ? 'Side quests'
+                      : app.title}
+              </span>
             </button>
           ))}
         </div>
@@ -465,18 +443,12 @@ export function Desktop() {
             <button
               key={app.id}
               aria-label={app.title}
-              title={app.title}
               aria-pressed={active?.appId === app.id}
               data-running={Boolean(running)}
               data-minimized={running?.minimized || false}
-              onClick={() => dockAction(app.id)}
+              onClick={() => openApp(app.id)}
             >
-              <span
-                className={styles.appIcon}
-                style={{ '--app-color': app.color } as React.CSSProperties}
-              >
-                <OSIcon name={app.icon} size={24} />
-              </span>
+              <DesktopIcon appId={app.id} size={52} />
               <span className={styles.dockLabel}>
                 {app.title === 'Project Explorer'
                   ? 'Projects'
@@ -489,33 +461,11 @@ export function Desktop() {
           );
         })}
         <span className={styles.dockDivider} />
-        <button
-          aria-label="Desktop Settings"
-          title="Desktop settings"
-          onClick={() => openApp('settings')}
-        >
-          <span
-            className={styles.appIcon}
-            style={{ '--app-color': '#aeb8ca' } as React.CSSProperties}
-          >
-            <OSIcon name="settings" size={23} />
-          </span>
+        <button aria-label="Desktop Settings" onClick={() => openApp('settings')}>
+          <DesktopIcon appId="settings" size={52} />
           <span className={styles.dockLabel}>Settings</span>
         </button>
       </nav>
-      <div className={styles.desktopFoot}>
-        <span>CJ OS v{OS_VERSION}</span>
-        <span>{LAUNCHERS.length} apps. A few secrets. Entirely yours to explore.</span>
-        <button onClick={() => setPaletteOpen(true)}>Ctrl / ⌘ K to find anything</button>
-      </div>
-      <div className={styles.treasureLayer}>
-        <Treasure
-          onTreasureClick={() => {
-            openApp('vault');
-            notify('Hidden layer unlocked. Curiosity looks good on you.');
-          }}
-        />
-      </div>
       {toast && (
         <div className={styles.toast} role="status">
           <OSIcon name="spark" size={16} />

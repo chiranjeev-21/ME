@@ -235,9 +235,11 @@ export function DesktopWindow({
           </span>
           {item.title}
         </div>
-        <span className={styles.windowScope}>CJ OS</span>
+        <span className={styles.windowScope} aria-hidden="true" />
       </header>
-      <div className={styles.windowBody}>{children}</div>
+      <div className={styles.windowBody} data-window-body>
+        {children}
+      </div>
       {!mobile && !item.maximized && (
         <button
           className={styles.resizeHandle}

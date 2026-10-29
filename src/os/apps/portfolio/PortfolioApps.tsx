@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { KeyboardEvent, ReactNode } from 'react';
 import { EDUCATION, EMAIL, EXPERIENCE, HERO_SKILLS, SOCIAL_LINKS } from '../../../constants';
 import { OSIcon } from '../../Icons';
+import { DesktopIcon } from '../../DesktopIcon';
 import { portfolioFeedLabel, portfolioText, portfolioWebUrl } from '../../filesystem.ts';
 import type { DesktopAppProps, ProjectCaseStudy, VfsEntry } from '../../types';
 import styles from './PortfolioApps.module.css';
@@ -63,7 +64,7 @@ export function ExplorerApp(props: DesktopAppProps) {
   const requestedPath = (props.window.payload.path ?? HOME).replace(/\/+$/, '') || '/';
   const [path, setPath] = useState(requestedPath);
   const [showHidden, setShowHidden] = useState(false);
-  const [view, setView] = useState<'list' | 'grid'>('list');
+  const [view, setView] = useState<'list' | 'grid'>('grid');
   const [query, setQuery] = useState('');
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
 
@@ -230,17 +231,17 @@ export function ExplorerApp(props: DesktopAppProps) {
                         aria-pressed={selectedPath === entry.path}
                       >
                         <span className={styles.fileIcon}>
-                          <OSIcon
-                            name={
-                              entry.kind === 'directory'
-                                ? 'folder'
-                                : entry.mime?.startsWith('image/')
-                                  ? 'image'
-                                  : entry.appId === 'vault'
-                                    ? 'vault'
-                                    : 'file'
+                          <DesktopIcon
+                            appId={
+                              entry.kind === 'directory' || entry.appId === 'project'
+                                ? 'explorer'
+                                : entry.appId === 'vault'
+                                  ? 'vault'
+                                  : entry.mime === 'application/pdf'
+                                    ? 'resume'
+                                    : 'reader'
                             }
-                            size={24}
+                            size={view === 'grid' ? 52 : 30}
                           />
                         </span>
                         <span className={styles.fileLabel}>
