@@ -7,7 +7,7 @@ export function HeroContent() {
     <div className={styles.content}>
       <div className={styles.statusTag} aria-label="Availability status">
         <span className={styles.statusDot} />
-        Open to Opportunities
+        Currently at Microsoft
       </div>
 
       <h1 className={styles.heading}>
@@ -19,7 +19,7 @@ export function HeroContent() {
       <p className={styles.description}>
         Building <strong>production-grade AI systems</strong> at the intersection of LLMs, agentic
         workflows, and scalable backend engineering. Currently SDE at{' '}
-        <strong>Amazon JWO Tech</strong>, Bengaluru.
+        <strong>Microsoft · Azure Direct Drive</strong>, Bengaluru.
       </p>
 
       <div className={styles.ctaRow}>

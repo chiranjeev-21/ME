@@ -1,51 +1,155 @@
-import { useState } from 'react';
-import { Cursor } from '@/components/layout/Cursor/Cursor';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { CloudTransition } from '@/components/layout/CloudTransition/CloudTransition';
-import { Hero } from '@/components/sections/Hero/Hero';
-import { Experience } from '@/components/sections/Experience/Experience';
-import { SideQuests } from '@/components/sections/SideQuests/SideQuests';
-import { CTA } from '@/components/sections/CTA/CTA';
+import { Treasure } from '@/components/layout/Treasure/Treasure';
+import { Portfolio } from '@/components/portfolio/Portfolio';
+import { Terminal } from '@/components/portfolio/Terminal';
+import { ACTIVE_CONCEPT, CONCEPTS } from '@/constants/concept';
+import { usePinnedQuests } from '@/hooks/usePinnedQuests';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
-type View = 'main' | 'side-quests';
+const SideQuests = lazy(() =>
+  import('@/components/sections/SideQuests/SideQuests').then(module => ({
+    default: module.SideQuests,
+  }))
+);
+
+type View = 'main' | 'vault';
 
 function App() {
   const [view, setView] = useState<View>('main');
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [targetView, setTargetView] = useState<View | null>(null);
+  const [transitioning, setTransitioning] = useState(false);
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  const timeoutRef = useRef(0);
+  const savedScroll = useRef(0);
+  const destination = useRef<string | null>(window.location.hash.slice(1) || null);
+  const focusReturn = useRef<HTMLElement | null>(null);
+  const quests = usePinnedQuests();
+  const reducedMotion = useReducedMotion();
 
-  const startTransition = (next: View) => {
-    if (isTransitioning || view === next) return;
-    setTargetView(next);
-    setIsTransitioning(true);
+  useEffect(() => {
+    document.title = `Chiranjeev Singh — ${CONCEPTS[ACTIVE_CONCEPT].name}`;
+    return () => window.clearTimeout(timeoutRef.current);
+  }, []);
 
-    window.setTimeout(() => {
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      if (view === 'main' && destination.current) {
+        const section = document.getElementById(destination.current);
+        section?.scrollIntoView();
+        const heading = section?.querySelector<HTMLElement>('h1, h2');
+        heading?.setAttribute('tabindex', '-1');
+        heading?.focus({ preventScroll: true });
+        destination.current = null;
+      } else {
+        window.scrollTo({ top: view === 'vault' ? 0 : savedScroll.current, behavior: 'instant' });
+        if (view === 'main' && focusReturn.current) {
+          document
+            .querySelector<HTMLElement>(
+              savedScroll.current > 0 ? '[data-vault-trigger]' : '[aria-label="Open hidden vault"]'
+            )
+            ?.focus({ preventScroll: true });
+        }
+      }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [view]);
+
+  const closeTerminal = useCallback(() => {
+    setTerminalOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (terminalOpen) return;
+    const frame = requestAnimationFrame(() => {
+      if (focusReturn.current?.isConnected) focusReturn.current.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [terminalOpen]);
+
+  const openTerminal = useCallback(() => {
+    focusReturn.current = document.activeElement as HTMLElement | null;
+    setTerminalOpen(true);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        if (terminalOpen) closeTerminal();
+        else openTerminal();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [terminalOpen, closeTerminal, openTerminal]);
+
+  const changeView = (next: View) => {
+    if (transitioning || next === view) return;
+    setTerminalOpen(false);
+    if (next === 'vault') {
+      savedScroll.current = window.scrollY;
+      focusReturn.current = document.activeElement as HTMLElement | null;
+    }
+    if (reducedMotion) {
       setView(next);
-      window.requestAnimationFrame(() => {
-        window.scrollTo(0, 0);
-      });
-      setIsTransitioning(false);
-      setTargetView(null);
-    }, 2000);
+      return;
+    }
+    setTransitioning(true);
+    timeoutRef.current = window.setTimeout(() => {
+      setView(next);
+      setTransitioning(false);
+    }, 700);
   };
 
-  const handleOpenSideQuests = () => startTransition('side-quests');
-  const handleReturnToMain = () => startTransition('main');
+  const navigate = (section: string) => {
+    closeTerminal();
+    if (view === 'vault') {
+      destination.current = section;
+      changeView('main');
+    } else {
+      const target = document.getElementById(section);
+      target?.scrollIntoView();
+      const heading = target?.querySelector<HTMLElement>('h1, h2');
+      heading?.setAttribute('tabindex', '-1');
+      if (heading) focusReturn.current = heading;
+    }
+  };
 
   return (
     <>
-      <Cursor />
-      <main>
-        {view === 'main' ? (
-          <>
-            <Hero onTreasureClick={handleOpenSideQuests} />
-            <Experience />
-            <CTA />
-          </>
-        ) : (
-          <SideQuests onBack={handleReturnToMain} />
-        )}
-      </main>
-      <CloudTransition visible={isTransitioning && targetView !== null} />
+      <a className="skip-link" href={view === 'main' ? '#main-content' : '#side-quests'}>
+        Skip to content
+      </a>
+      {view === 'main' ? (
+        <>
+          <Portfolio
+            quests={quests}
+            onVault={() => changeView('vault')}
+            onTerminal={openTerminal}
+          />
+          <Treasure onTreasureClick={() => changeView('vault')} />
+        </>
+      ) : (
+        <main id="main-content">
+          <Suspense
+            fallback={
+              <p role="status" style={{ padding: '100px 24px' }}>
+                Opening the hidden vault...
+              </p>
+            }
+          >
+            <SideQuests quests={quests} onBack={() => changeView('main')} />
+          </Suspense>
+        </main>
+      )}
+      <CloudTransition visible={transitioning} />
+      {terminalOpen && (
+        <Terminal
+          onClose={closeTerminal}
+          onNavigate={navigate}
+          onVault={() => changeView('vault')}
+        />
+      )}
     </>
   );
 }

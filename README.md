@@ -4,7 +4,12 @@ A personal portfolio for **Chiranjeev Singh**, focused on software engineering, 
 
 Built with **React 18**, **TypeScript 5**, and **Vite 5**.
 
-<img width="1875" height="912" alt="image" src="https://github.com/user-attachments/assets/8a23c14c-9724-44d3-b3e5-085cc2be1c4a" />
+The redesign is available as three independent design branches: **CJ OS**,
+**Personal Universe**, and **Engineering Command Center**. All preserve the floating
+treasure chest and GitHub-powered hidden vault. `main` remains the production branch.
+
+See [deployment and preview instructions](docs/DEPLOYMENT.md) for branch previews,
+optional exact GitHub pins, and choosing a production design.
 
 ## Getting Started
 
@@ -24,14 +29,18 @@ npm run preview     # preview the production build locally
 npm run type-check  # run TypeScript checks
 npm run lint        # run ESLint
 npm run format      # format source files with Prettier
+npm test            # GitHub API regression tests
+npm run test:e2e    # desktop/mobile browser tests (install Chromium first)
 ```
 
 ## What The Project Contains
 
-- A full-screen hero section with animated visuals and interactive navigation.
-- A professional experience section with role highlights, stats, and featured work.
-- A hidden vault experience for secondary projects and experimental work.
-- A contact section with social links and direct outreach actions.
+- Three creative directions with distinct interactive hero visuals.
+- Resume-driven Microsoft, Amazon, and Oyo experience; distributed computing and AI skills.
+- Scroll reveals, reading progress, sticky timeline context, skill filters, and a navigation dock.
+- A keyboard-accessible command terminal (`Ctrl+K` / `Cmd+K`) with history and real navigation.
+- A floating treasure chest and hidden vault with live GitHub data and honest offline states.
+- Responsive layouts, reduced-motion support, contact links, and email copying.
 
 ## Tech Stack
 
@@ -50,6 +59,7 @@ portfolio_final/
 ├── src/
 │   ├── components/
 │   │   ├── layout/
+│   │   ├── portfolio/
 │   │   ├── sections/
 │   │   └── ui/
 │   ├── constants/
@@ -61,6 +71,7 @@ portfolio_final/
 │   └── main.tsx
 ├── api/
 ├── server/
+├── tests/
 ├── index.html
 ├── package.json
 └── vite.config.ts

@@ -2,7 +2,8 @@
   position: fixed;
   inset: 0;
   z-index: 80;
-  background: radial-gradient(ellipse at 50% 0%, #0f172a 0%, #020617 55%, #000 100%);
+  background: radial-gradient(ellipse at 50% 50%, #283520 0%, #10110f 70%);
+  animation: portal 700ms ease both;
   overflow: hidden;
   pointer-events: auto;
 }
@@ -16,7 +17,7 @@
   box-shadow:
     0 24px 40px rgba(15, 23, 42, 0.7),
     40px 0 32px rgba(15, 23, 42, 0.35);
-  opacity: 0.95;
+  opacity: 0.2;
   filter: blur(0.3px);
 }
 
@@ -45,14 +46,14 @@
 .cloud1 {
   top: 10%;
   left: -380px;
-  animation: sweep 2s ease-in-out forwards;
+  animation: sweep 700ms ease-in-out forwards;
 }
 
 .cloud2 {
   top: 38%;
   left: -420px;
   transform: scale(1.1);
-  animation: sweep 2s ease-in-out forwards;
+  animation: sweep 700ms ease-in-out forwards;
   animation-delay: 0.1s;
 }
 
@@ -60,7 +61,7 @@
   top: 62%;
   left: -360px;
   transform: scale(0.95);
-  animation: sweep 2s ease-in-out forwards;
+  animation: sweep 700ms ease-in-out forwards;
   animation-delay: 0.18s;
 }
 
@@ -69,8 +70,24 @@
   left: -400px;
   transform: scale(0.8);
   opacity: 0.9;
-  animation: sweep 2s ease-in-out forwards;
+  animation: sweep 700ms ease-in-out forwards;
   animation-delay: 0.26s;
+}
+
+@keyframes portal {
+  0% {
+    opacity: 0;
+    clip-path: circle(0% at 50% 50%);
+  }
+  40%,
+  85% {
+    opacity: 1;
+    clip-path: circle(150% at 50% 50%);
+  }
+  100% {
+    opacity: 0;
+    clip-path: circle(150% at 50% 50%);
+  }
 }
 
 @keyframes sweep {
@@ -89,4 +106,3 @@
     opacity: 0;
   }
 }
-

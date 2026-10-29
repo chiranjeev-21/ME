@@ -13,6 +13,31 @@ import type {
 
 export const EXPERIENCE: ExperienceItem[] = [
   {
+    id: 'microsoft-azure',
+    company: 'Microsoft',
+    role: 'Software Engineer · L60',
+    period: '04/2026 — Present',
+    location: 'Bengaluru, India',
+    logoInitial: 'M',
+    logoVariant: 'microsoft',
+    highlights: [
+      'Working on <strong>Azure Direct Drive</strong>, with a focus on distributed computing, storage reliability, and performance.',
+      'Built anomaly detection for Blips & Pauses, improving detection of unexplained IO latency anomalies by <strong>~20%</strong> using large-scale telemetry and unsupervised ML. Developed a release comparison framework across IO latency, workload, and network metrics.',
+      'Contributed to overprovisioning and capacity throttling mechanisms, improving resource utilization efficiency by <strong>~15%</strong> under bursty IO workloads.',
+      'Developed and validated <strong>Per-Disk Policy</strong> for automatic disk recovery on IO timeouts (E17), reducing VM downtime scenarios by <strong>~80% in failure testing</strong>.',
+      'Worked on distributed storage architecture involving <strong>slice-based replication</strong> and Block Storage Services (BSS), strengthening durability and reliability.',
+    ],
+    tags: [
+      'Distributed Computing',
+      'Azure',
+      'Direct Drive',
+      'Distributed Storage',
+      'Telemetry',
+      'Unsupervised ML',
+      'System Design',
+    ],
+  },
+  {
     id: 'amazon-jwo',
     company: 'Amazon',
     role: 'SDE — JWO Tech',
@@ -45,13 +70,14 @@ export const EXPERIENCE: ExperienceItem[] = [
     id: 'oyo-sde1',
     company: 'Oyo',
     role: 'SDE 1',
-    period: '06/2024 — 04/2025',
+    period: '07/2024 — 04/2025',
     location: 'Gurugram, India',
     logoInitial: 'O',
     logoVariant: 'oyo',
     highlights: [
       'Led development of a <strong>Call Center Automation data pipeline</strong> using Azure ACS & Cognitive Services, driving a projected <strong>20% cost reduction</strong> for Belvilla and Dancenter.',
       'Built a <strong>voice processing pipeline</strong> achieving <strong>86% sentiment accuracy</strong> on 1,000+ clips, improving issue resolution by 20%.',
+      'Improved digital audit efficiency by optimizing and migrating pipelines, boosting performance and reducing latency.',
       'Optimized <strong>RAG workflows for chatbots</strong> across multiple brands, increasing search speed by 15% and handling <strong>2,000+ daily queries</strong> per department.',
     ],
     tags: [
@@ -70,7 +96,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     id: 'oyo-intern',
     company: 'Oyo',
     role: 'SDE Intern',
-    period: '01/2024 — 06/2024',
+    period: '01/2024 — 07/2024',
     location: 'Gurugram, India',
     logoInitial: 'O',
     logoVariant: 'oyo',
@@ -79,19 +105,6 @@ export const EXPERIENCE: ExperienceItem[] = [
       'Developed a <strong>GenAI pipeline for hero image selection</strong> using advanced masking, contributing to a <strong>20% increase in hotel booking conversion rates</strong>.',
     ],
     tags: ['DBSCAN', 'HDBSCAN', 'GenAI', 'Computer Vision', 'Python'],
-  },
-  {
-    id: 'samsung-intern',
-    company: 'Samsung',
-    role: 'Research Intern',
-    period: '10/2022 — 06/2023',
-    location: 'Samsung R&D Institute',
-    logoInitial: 'S',
-    logoVariant: 'samsung',
-    highlights: [
-      'Led implementation of <strong>data workflows for Keyframe Extraction and Summarization</strong> in large-scale video datasets, coordinating a team of four researchers.',
-    ],
-    tags: ['Computer Vision', 'Video ML', 'Data Pipelines', 'Research'],
   },
 ];
 
@@ -113,6 +126,8 @@ export const PROJECTS: ProjectItem[] = [
 // ─── Hero Skills ───────────────────────────────────────────────────────────────
 
 export const HERO_SKILLS: SkillItem[] = [
+  { label: 'Distributed Computing', hot: true },
+  { label: 'Azure', hot: true },
   { label: 'Agentic AI', hot: true },
   { label: 'LLM / RAG', hot: true },
   { label: 'Java', hot: true },
@@ -131,10 +146,10 @@ export const HERO_SKILLS: SkillItem[] = [
 
 export const HERO_BADGES: HeroBadge[] = [
   {
-    id: 'amazon',
+    id: 'microsoft',
     icon: '☁',
-    title: 'Amazon SDE',
-    subtitle: 'JWO Tech · Bengaluru',
+    title: 'Microsoft SDE',
+    subtitle: 'Azure Direct Drive',
     iconVariant: 'gold',
     position: 'topLeft',
   },
@@ -149,8 +164,8 @@ export const HERO_BADGES: HeroBadge[] = [
   {
     id: 'open',
     icon: '✦',
-    title: 'Open to Work',
-    subtitle: 'Remote · Worldwide',
+    title: 'Always Curious',
+    subtitle: 'Systems · AI · Experiments',
     iconVariant: 'pink',
     position: 'bottomLeft',
   },
@@ -160,7 +175,7 @@ export const HERO_BADGES: HeroBadge[] = [
 
 export const STATS: StatItem[] = [
   { value: '2', suffix: '+', label: 'Years Experience' },
-  { value: '2', label: 'Companies' },
+  { value: '3', label: 'Companies' },
   { value: '9.30', label: 'CGPA · Thapar' },
   { value: '200', suffix: '+', label: 'AI Session Attendees' },
 ];
@@ -178,7 +193,7 @@ export const EDUCATION: EducationItem[] = [
     id: 'azure',
     icon: '☁',
     title: 'Microsoft Azure Data Scientist Associate',
-    subtitle: 'Certified · <strong>AI-900 · Nanodegrees</strong>',
+    subtitle: 'Certified · <strong>Azure AI Fundamentals (AI-900)</strong>',
   },
   {
     id: 'aws',
@@ -191,17 +206,18 @@ export const EDUCATION: EducationItem[] = [
 // ─── Navigation ────────────────────────────────────────────────────────────────
 
 export const NAV_LINKS: NavLink[] = [
-  { label: 'Home', href: '#hero' },
   { label: 'Experience', href: '#work' },
+  { label: 'Systems', href: '#systems' },
   { label: 'Projects', href: '#projects' },
-  { label: 'Contact Me', href: '#cta', cta: true },
+  { label: 'About', href: '#about' },
+  { label: 'Contact', href: '#cta', cta: true },
 ];
 
 // ─── Contact / Social ──────────────────────────────────────────────────────────
 
 export const SOCIAL_LINKS: SocialLink[] = [
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/ch1ranjeevs1ngh' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/chiranjeev-singh-2a012b219/' },
   { label: 'GitHub', href: 'https://github.com/chiranjeev-21' },
 ];
 
-export const EMAIL = 'chiranjeev21012003@gmail.com';
+export const EMAIL = 'chiranj33v.singh@gmail.com';

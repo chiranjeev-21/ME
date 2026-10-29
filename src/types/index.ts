@@ -7,7 +7,7 @@ export interface ExperienceItem {
   period: string;
   location: string;
   logoInitial: string;
-  logoVariant: 'amazon' | 'oyo' | 'samsung';
+  logoVariant: 'microsoft' | 'amazon' | 'oyo' | 'samsung';
   highlights: string[];
   tags: string[];
 }
@@ -52,6 +52,7 @@ export interface HiddenQuestProfile {
 
 export interface HiddenQuestResponse {
   source: HiddenQuestSource;
+  selection?: 'pinned' | 'recent';
   profile: HiddenQuestProfile;
   items: HiddenQuestProject[];
   message?: string;

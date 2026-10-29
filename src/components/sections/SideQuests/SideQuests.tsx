@@ -1,10 +1,12 @@
+import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
-import { usePinnedQuests } from '@/hooks/usePinnedQuests';
+import type { UsePinnedQuestsState } from '@/hooks/usePinnedQuests';
 import type { HiddenQuestProject } from '@/types';
 import styles from './SideQuests.module.css';
 
 interface SideQuestsProps {
   onBack?: () => void;
+  quests: UsePinnedQuestsState;
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -92,8 +94,12 @@ function QuestMeta({ item }: { item: HiddenQuestProject }) {
   );
 }
 
-export function SideQuests({ onBack }: SideQuestsProps) {
-  const { data, isLoading, notice } = usePinnedQuests();
+export function SideQuests({ onBack, quests }: SideQuestsProps) {
+  const { data, isLoading, notice } = quests;
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    headingRef.current?.focus({ preventScroll: true });
+  }, []);
   const [featuredQuest, ...otherQuests] = data.items;
   const totalEngagement = data.items.reduce(
     (sum, item) => sum + item.stargazerCount + item.forkCount,
@@ -184,7 +190,7 @@ export function SideQuests({ onBack }: SideQuestsProps) {
       : 'Vault fallback';
 
   return (
-    <section id="side-quests" className={styles.section} aria-label="Hidden vault">
+    <section id="side-quests" className={styles.section} aria-label="Hidden vault" tabIndex={-1}>
       <div className={styles.cloudLayer} aria-hidden="true">
         <div className={`${styles.cloud} ${styles.cloud1}`} />
         <div className={`${styles.cloud} ${styles.cloud2}`} />
@@ -214,7 +220,7 @@ export function SideQuests({ onBack }: SideQuestsProps) {
         <div className={styles.heroGrid}>
           <div className={styles.copyCol}>
             <div className={styles.badge}>Hidden Vault</div>
-            <h1 className={styles.heading}>
+            <h1 ref={headingRef} className={styles.heading} tabIndex={-1} data-vault-heading>
               Secret experiments,
               <br />
               <span className={styles.accent}>off the main path.</span>
@@ -234,6 +240,15 @@ export function SideQuests({ onBack }: SideQuestsProps) {
                 {`Explore @${data.profile.login} ↗`}
               </a>
             </div>
+            <p className={styles.notice} role="status">
+              {isLoading
+                ? 'Scanning GitHub...'
+                : data.source === 'github'
+                  ? data.selection === 'recent'
+                    ? 'Live GitHub · Recent public repositories'
+                    : 'Live GitHub · Pinned repositories'
+                  : 'Local artifact · Live sync unavailable'}
+            </p>
             {notice && <p className={styles.notice}>{notice}</p>}
           </div>
 
@@ -275,7 +290,7 @@ export function SideQuests({ onBack }: SideQuestsProps) {
           </aside>
         </div>
 
-        {featuredQuest && (
+        {!isLoading && featuredQuest && (
           <div className={styles.questSection}>
             <div className={styles.sectionIntro}>
               <div>
@@ -308,10 +323,20 @@ export function SideQuests({ onBack }: SideQuestsProps) {
 
               <QuestMeta item={featuredQuest} />
             </a>
+            {featuredQuest.homepageUrl && (
+              <a
+                className={styles.profileLink}
+                href={featuredQuest.homepageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open live demo ↗
+              </a>
+            )}
           </div>
         )}
 
-        {otherQuests.length > 0 && (
+        {!isLoading && otherQuests.length > 0 && (
           <div className={styles.questSection}>
             <div className={styles.sectionIntro}>
               <div>

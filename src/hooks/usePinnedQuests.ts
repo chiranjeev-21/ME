@@ -29,10 +29,19 @@ const FALLBACK_RESPONSE: HiddenQuestResponse = {
   message: 'Showing the local fallback artifact while the vault connection is unavailable.',
 };
 
-interface UsePinnedQuestsState {
+export interface UsePinnedQuestsState {
   data: HiddenQuestResponse;
   isLoading: boolean;
   notice?: string;
+}
+
+function isWebUrl(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  try {
+    return ['https:', 'http:'].includes(new URL(value).protocol);
+  } catch {
+    return false;
+  }
 }
 
 function isHiddenQuestResponse(value: unknown): value is HiddenQuestResponse {
@@ -44,8 +53,32 @@ function isHiddenQuestResponse(value: unknown): value is HiddenQuestResponse {
     (candidate.source === 'github' || candidate.source === 'fallback') &&
     !!candidate.profile &&
     typeof candidate.profile.login === 'string' &&
-    typeof candidate.profile.url === 'string' &&
-    Array.isArray(candidate.items)
+    isWebUrl(candidate.profile.url) &&
+    (candidate.message === undefined || typeof candidate.message === 'string') &&
+    (candidate.selection === undefined ||
+      candidate.selection === 'pinned' ||
+      candidate.selection === 'recent') &&
+    Array.isArray(candidate.items) &&
+    candidate.items.length > 0 &&
+    candidate.items.every(
+      item =>
+        item &&
+        typeof item.id === 'string' &&
+        typeof item.name === 'string' &&
+        typeof item.description === 'string' &&
+        isWebUrl(item.url) &&
+        (!item.homepageUrl || isWebUrl(item.homepageUrl)) &&
+        Number.isFinite(item.stargazerCount) &&
+        Number.isFinite(item.forkCount) &&
+        typeof item.updatedAt === 'string' &&
+        Number.isFinite(Date.parse(item.updatedAt)) &&
+        (!item.primaryLanguage ||
+          (typeof item.primaryLanguage.name === 'string' &&
+            (item.primaryLanguage.color == null ||
+              typeof item.primaryLanguage.color === 'string'))) &&
+        Array.isArray(item.topics) &&
+        item.topics.every((topic: unknown) => typeof topic === 'string')
+    )
   );
 }
 
@@ -58,6 +91,7 @@ export function usePinnedQuests(): UsePinnedQuestsState {
 
   useEffect(() => {
     const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort('timeout'), 15000);
 
     const loadPinnedQuests = async () => {
       try {
@@ -86,7 +120,7 @@ export function usePinnedQuests(): UsePinnedQuestsState {
           notice: payload.message,
         });
       } catch (error) {
-        if (controller.signal.aborted) return;
+        if (controller.signal.aborted && controller.signal.reason !== 'timeout') return;
 
         const fallbackNotice =
           error instanceof Error
@@ -98,12 +132,17 @@ export function usePinnedQuests(): UsePinnedQuestsState {
           isLoading: false,
           notice: fallbackNotice,
         });
+      } finally {
+        window.clearTimeout(timeout);
       }
     };
 
     void loadPinnedQuests();
 
-    return () => controller.abort();
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
   }, []);
 
   return state;

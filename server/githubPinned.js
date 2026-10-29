@@ -57,7 +57,14 @@ const PINNED_REPOSITORIES_QUERY = `
 function sendJson(res, statusCode, payload) {
   res.statusCode = statusCode;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400');
+  res.setHeader(
+    'Cache-Control',
+    statusCode !== 200
+      ? 'no-store'
+      : payload.source === 'fallback'
+        ? 's-maxage=60, stale-while-revalidate=300'
+        : 's-maxage=900, stale-while-revalidate=86400'
+  );
   res.end(JSON.stringify(payload));
 }
 
@@ -80,7 +87,7 @@ function mapRepository(repository) {
     name: repository.name,
     description: repository.description || 'No description added yet.',
     url: repository.url,
-    homepageUrl: repository.homepageUrl,
+    homepageUrl: isPublicUrl(repository.homepageUrl) ? repository.homepageUrl : null,
     primaryLanguage: repository.primaryLanguage
       ? {
           name: repository.primaryLanguage.name,
@@ -104,6 +111,7 @@ async function fetchPinnedRepositories(login, token) {
       Authorization: `Bearer ${token}`,
       'User-Agent': 'chiranjeev-portfolio-hidden-vault',
     },
+    signal: AbortSignal.timeout(6000),
     body: JSON.stringify({
       query: PINNED_REPOSITORIES_QUERY,
       variables: { login },
@@ -127,17 +135,79 @@ async function fetchPinnedRepositories(login, token) {
   }
 
   const items = (user.pinnedItems?.nodes || [])
-    .filter(repository => repository && !repository.isPrivate)
+    .filter(repository => repository && !repository.isPrivate && isPublicUrl(repository.url))
     .map(mapRepository);
 
   return {
     source: 'github',
+    selection: 'pinned',
     profile: {
       login: user.login,
       name: user.name,
       url: user.url,
     },
     items,
+  };
+}
+
+function isPublicUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
+async function fetchRecentRepositories(login) {
+  const response = await fetch(
+    `https://api.github.com/users/${encodeURIComponent(login)}/repos?type=owner&sort=updated&per_page=18`,
+    {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'chiranjeev-portfolio-hidden-vault',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      signal: AbortSignal.timeout(6000),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Public repository sync unavailable.');
+  }
+
+  const repositories = await response.json();
+
+  if (!Array.isArray(repositories)) {
+    throw new Error('Invalid public repository response.');
+  }
+
+  const items = repositories
+    .filter(
+      repository =>
+        repository && !repository.private && !repository.fork && isPublicUrl(repository.html_url)
+    )
+    .slice(0, 6)
+    .map(repository => ({
+      id: String(repository.id),
+      name: repository.name,
+      description: repository.description || 'An experiment from my open-source workbench.',
+      url: repository.html_url,
+      homepageUrl: isPublicUrl(repository.homepage) ? repository.homepage : null,
+      primaryLanguage: repository.language ? { name: repository.language, color: null } : null,
+      stargazerCount: repository.stargazers_count || 0,
+      forkCount: repository.forks_count || 0,
+      updatedAt: repository.updated_at,
+      topics: Array.isArray(repository.topics) ? repository.topics.slice(0, 4) : [],
+    }));
+
+  return {
+    source: 'github',
+    selection: 'recent',
+    profile: { login, name: null, url: `https://github.com/${login}` },
+    items,
+    message:
+      'Recent public repositories. Exact profile pins are available when pinned sync is configured.',
   };
 }
 
@@ -148,40 +218,54 @@ async function handlePinnedQuestRequest(req, res, env = process.env) {
     return;
   }
 
-  const login = env.GITHUB_PROFILE_LOGIN || DEFAULT_LOGIN;
-  const token = env.GITHUB_TOKEN;
+  const login = (env.GITHUB_PROFILE_LOGIN || DEFAULT_LOGIN).trim();
+  const token = env.GITHUB_TOKEN?.trim();
 
-  if (!token) {
+  if (!/^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(login)) {
     sendJson(
       res,
       200,
-      getFallbackResponse(login, 'Vault sync is in fallback mode right now.')
+      getFallbackResponse(
+        DEFAULT_LOGIN,
+        'Profile sync is not configured correctly. Showing a local artifact.'
+      )
     );
     return;
   }
 
-  try {
-    const payload = await fetchPinnedRepositories(login, token);
-
-    if (!payload.items.length) {
-      sendJson(
-        res,
-        200,
-        getFallbackResponse(
-          login,
-          'No hidden artifacts were found, so the vault is showing its fallback artifact.'
-        )
-      );
-      return;
+  if (token) {
+    try {
+      const payload = await fetchPinnedRepositories(login, token);
+      if (payload.items.length) {
+        sendJson(res, 200, payload);
+        return;
+      }
+    } catch {
+      // Public REST keeps the vault useful if pinned credentials expire.
     }
+  }
 
-    sendJson(res, 200, payload);
-  } catch (error) {
-    const message = error instanceof Error
-      ? 'Vault sync is temporarily unavailable, so the vault is showing its fallback artifact for now.'
-      : 'Vault sync is temporarily unavailable, so the vault is showing its fallback artifact for now.';
-
-    sendJson(res, 200, getFallbackResponse(login, message));
+  try {
+    const payload = await fetchRecentRepositories(login);
+    sendJson(
+      res,
+      200,
+      payload.items.length
+        ? payload
+        : getFallbackResponse(
+            login,
+            'No public repositories found. Here is a local artifact instead.'
+          )
+    );
+  } catch {
+    sendJson(
+      res,
+      200,
+      getFallbackResponse(
+        login,
+        'GitHub is taking a breather. Showing a local artifact; your next visit will try live sync again.'
+      )
+    );
   }
 }
 
