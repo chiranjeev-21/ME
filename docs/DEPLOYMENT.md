@@ -2,6 +2,24 @@
 
 The production branch remains `main`. Nothing needs to be disconnected or reimported.
 
+## Current desktop release
+
+`feature/cj-os-desktop` is the complete OS experience: a shared window manager,
+read-only parsed shell, Project Explorer, local retrieval lab, real-data monitor,
+and conventional résumé/PDF app. The dock, palette, terminal, and virtual files
+launch the same application instances.
+
+The desktop lives in `src/os/Desktop.tsx`; app metadata lives in
+`src/os/registry.ts`. This branch does not use the older `ACTIVE_CONCEPT` switch.
+Direct app links include `/#app=resume`, `/#app=lab`, and
+`/#app=explorer&path=%2Fhome%2Fcj%2Fprojects`.
+
+Push this branch to the existing repository to create a Vercel Preview. No extra
+project, API key, or database is required. The optional GitHub-pin configuration
+below still applies. Promote only after reviewing the desktop preview.
+
+## Earlier visual explorations
+
 | Branch                              | Concept                    | Distinctive interaction                                           |
 | ----------------------------------- | -------------------------- | ----------------------------------------------------------------- |
 | `design/cj-os`                      | CJ OS + Hacker Terminal    | Profile window tabs, command terminal, graphite/lime desktop      |
@@ -120,9 +138,11 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The browser suite covers desktop/mobile layouts, resume content, command history,
-focus restoration, vault entry/return, invalid/offline data, concept-specific
-controls, scroll reveals, and narrow screens. Routine browser tests use fixtures so
+The current browser suite covers desktop/mobile app layouts, the original PDF,
+parsed shell commands, history and completion, shared window identity,
+drag/resize/minimize/maximize, the command palette, deep links, settings,
+hidden files and vault, local retrieval and measured run recording, blocked
+storage, no-JavaScript contact access, and narrow screens. Routine browser tests use fixtures so
 an upstream outage cannot masquerade as a UI regression. Screenshots and traces are
 written to ignored test output.
 

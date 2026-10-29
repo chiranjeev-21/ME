@@ -2,7 +2,7 @@
   "name": "chiranjeev-portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "Chiranjeev Singh — Software Engineer & AI Portfolio",
+  "description": "CJ OS — Chiranjeev Singh's interactive personal desktop",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -11,7 +11,7 @@
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "type-check": "tsc --noEmit",
-    "test": "node --test tests\\github-pinned.test.cjs",
+    "test": "node --test tests\\github-pinned.test.cjs tests\\os-window-state.test.cjs tests\\os-shell.test.cjs tests\\os-portfolio.test.cjs tests\\os-lab.test.cjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {

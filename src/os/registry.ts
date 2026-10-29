@@ -1,0 +1,100 @@
+import type { AppDefinition, AppId } from './types';
+
+export const OS_VERSION = '1.0.0';
+export const HOME = '/home/cj';
+export const APPS: readonly AppDefinition[] = [
+  {
+    id: 'terminal',
+    title: 'Terminal',
+    description: 'Your shell into this little world.',
+    icon: 'terminal',
+    color: '#b7ed83',
+    launcher: true,
+    width: 690,
+    height: 480,
+  },
+  {
+    id: 'explorer',
+    title: 'Project Explorer',
+    description: 'Projects, notes, experiments, and a few secrets.',
+    icon: 'folder',
+    color: '#92b8ff',
+    launcher: true,
+    width: 720,
+    height: 510,
+  },
+  {
+    id: 'lab',
+    title: 'AI Lab',
+    description: 'An inspectable, working local retrieval experiment.',
+    icon: 'spark',
+    color: '#c4a4ff',
+    launcher: true,
+    width: 780,
+    height: 560,
+  },
+  {
+    id: 'monitor',
+    title: 'System Monitor',
+    description: 'Real browser, GitHub, and lab measurements.',
+    icon: 'activity',
+    color: '#f3bd82',
+    launcher: true,
+    width: 720,
+    height: 510,
+  },
+  {
+    id: 'resume',
+    title: 'Resume',
+    description: 'The conventional route. Experience, skills, PDF, contact.',
+    icon: 'file',
+    color: '#dddde8',
+    launcher: true,
+    width: 780,
+    height: 620,
+  },
+  {
+    id: 'project',
+    title: 'Project Investigation',
+    description: 'The story and engineering behind a project.',
+    icon: 'folder',
+    color: '#92b8ff',
+    launcher: false,
+    width: 790,
+    height: 580,
+  },
+  {
+    id: 'reader',
+    title: 'Document',
+    description: 'Read a file from the virtual workspace.',
+    icon: 'file',
+    color: '#dddde8',
+    launcher: false,
+    width: 650,
+    height: 510,
+  },
+  {
+    id: 'vault',
+    title: 'Hidden Vault',
+    description: 'You found the builder’s layer.',
+    icon: 'vault',
+    color: '#eac777',
+    launcher: false,
+    width: 780,
+    height: 550,
+  },
+  {
+    id: 'settings',
+    title: 'Desktop Settings',
+    description: 'Make this workspace feel like yours.',
+    icon: 'settings',
+    color: '#aeb8ca',
+    launcher: false,
+    width: 530,
+    height: 480,
+  },
+];
+
+export function getApp(id: AppId): AppDefinition {
+  return APPS.find(app => app.id === id) ?? APPS[0];
+}

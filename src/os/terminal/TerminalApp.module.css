@@ -1,0 +1,243 @@
+.terminal {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--os-bg, #080b09) 55%, #050706);
+  color: var(--os-text, #e0e6df);
+  font: inherit;
+  font-family: var(--os-mono, monospace);
+  font-size: 0.94em;
+  line-height: 1.65;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--os-line, #253128);
+  color: var(--os-muted, #99a59b);
+  font-size: 0.9em;
+}
+
+.readOnly {
+  color: var(--os-accent, #b7ed83);
+}
+
+.output {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 16px;
+  scrollbar-color: var(--os-line, #253128) transparent;
+}
+
+.line {
+  min-height: 1.65em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+}
+
+.line[data-tone='accent'],
+.inputPrompt {
+  color: var(--os-accent, #b7ed83);
+}
+
+.line[data-intro='true'] {
+  font-size: 1.55em;
+  line-height: 1.4;
+  margin: 4px 0;
+  font-weight: 500;
+}
+
+.line[data-tone='muted'] {
+  color: var(--os-muted, #99a59b);
+}
+
+.line[data-tone='error'] {
+  color: #efbe84;
+}
+
+.promptLine {
+  margin-top: 16px;
+  color: var(--os-accent, #b7ed83);
+}
+
+.terminal button,
+.input {
+  font: inherit;
+}
+
+.terminal button {
+  min-height: 44px;
+  color: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.terminal button:focus-visible,
+.input:focus-visible,
+.output:focus-visible {
+  outline: 2px solid var(--os-accent, #b7ed83);
+  outline-offset: -2px;
+}
+
+.input:focus-visible {
+  outline: none;
+  border-bottom-color: var(--os-accent, #b7ed83);
+}
+
+.outputAction {
+  display: block;
+  max-width: 100%;
+  padding: 7px 4px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--os-line, #253128);
+  text-underline-offset: 4px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.outputAction:hover {
+  background: var(--os-panel, #141a16);
+  color: var(--os-accent, #b7ed83);
+}
+
+.controls {
+  min-width: 0;
+  border-top: 1px solid var(--os-line, #253128);
+  padding: 8px 12px 12px;
+}
+
+.starters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-bottom: 6px;
+}
+
+.starters button,
+.run {
+  padding: 4px 12px;
+  border: 1px solid var(--os-line, #253128);
+  border-radius: 5px;
+  background: var(--os-panel, #141a16);
+}
+
+.starters button:hover,
+.run:hover {
+  border-color: var(--os-accent, #b7ed83);
+  color: var(--os-accent, #b7ed83);
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 140px;
+  overflow: auto;
+  margin: 4px 0 8px;
+}
+
+.suggestions button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 100%;
+  padding: 6px 9px;
+  border: 1px solid var(--os-line, #253128);
+  border-radius: 4px;
+  background: var(--os-panel, #141a16);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.suggestions button:hover {
+  color: var(--os-accent, #b7ed83);
+}
+
+.suggestions small,
+.completionNotice {
+  color: var(--os-muted, #99a59b);
+  font-size: 0.85em;
+}
+
+.completionNotice {
+  margin: 3px 0 8px;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.inputPrompt {
+  max-width: 35%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.input {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  min-height: 44px;
+  padding: 7px 5px;
+  border: 0;
+  border-bottom: 1px solid var(--os-line, #253128);
+  border-radius: 0;
+  background: transparent;
+  color: var(--os-text, #e0e6df);
+  caret-color: var(--os-accent, #b7ed83);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .header,
+  .output {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .controls {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .starters button,
+  .run {
+    padding-right: 9px;
+    padding-left: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal,
+  .terminal * {
+    scroll-behavior: auto;
+    transition: none;
+    animation: none;
+  }
+}
