@@ -25,17 +25,17 @@ below still applies. Promote only after reviewing the desktop preview.
 
 ## Earlier visual explorations
 
-| Branch                              | Concept                    | Distinctive interaction                                           |
-| ----------------------------------- | -------------------------- | ----------------------------------------------------------------- |
-| `design/personal-universe`          | Personal Universe          | Orbital navigation, dimensional planet, lavender/peach atmosphere |
-| `design/engineering-command-center` | Engineering Command Center | Interactive storage/signals/AI focus map, blueprint styling       |
+| Branch                              | Concept               | Distinctive interaction                                                             |
+| ----------------------------------- | --------------------- | ----------------------------------------------------------------------------------- |
+| `design/personal-universe`          | Personal Universe     | Native-scroll planet approach, reversible zoom, surface landing, connected chapters |
+| `design/engineering-command-center` | Engineering Workbench | Scroll-unfolding recovery sketch, keyboard chapters, and resume-backed evidence     |
 
 The visual explorations retain the resume update, scroll interactions, responsive navigation,
 accessible terminal, floating treasure, and live GitHub vault. The selected concept
 is defined in `src/constants/concept.ts`. The focus map is illustrative, not a diagram
 of an employer's production architecture.
 
-## View all three without changing production
+## View the experiences without changing production
 
 1. Sign in at [Vercel](https://vercel.com/dashboard).
 2. Open the existing portfolio project connected to `chiranjeev-21/ME`.

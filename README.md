@@ -105,5 +105,6 @@ Preview deployment when it is pushed. `main` and the production domain are left
 unchanged until the selected design is merged.
 
 See [deployment instructions](docs/DEPLOYMENT.md) for previews, optional exact pins,
-environment variables, and production promotion. The earlier visual concepts
-remain on their own `design/*` branches.
+environment variables, and production promotion. The alternative planet adventure
+and engineering journey remain on `design/personal-universe` and
+`design/engineering-command-center`.
