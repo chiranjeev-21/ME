@@ -2,7 +2,7 @@
   "name": "chiranjeev-portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "Chiranjeev Singh — Software Engineer & AI Portfolio",
+  "description": "CJ Universe — an explorable 3D personal portfolio",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -11,17 +11,21 @@
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "type-check": "tsc --noEmit",
-    "test": "node --test tests\\github-pinned.test.cjs",
+    "test": "node --test tests\\github-pinned.test.cjs tests\\universe-navigation.test.cjs tests\\universe-lab.test.cjs tests\\universe-content.test.cjs tests\\universe-scene.test.cjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "three": "^0.170.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
+    "@types/three": "^0.170.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "@vitejs/plugin-react": "^4.3.1",

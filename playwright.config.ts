@@ -7,7 +7,7 @@ export default defineConfig({
   testDir: './tests/browser',
   fullyParallel: false,
   workers: 1,
-  timeout: 45000,
+  timeout: 60000,
   expect: { timeout: 10000 },
   reporter: 'list',
   use: {
@@ -15,6 +15,9 @@ export default defineConfig({
     reducedMotion: 'reduce',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    launchOptions: {
+      args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+    },
   },
   projects: [
     {
@@ -24,9 +27,9 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['iPhone 13'], defaultBrowserType: 'chromium' } },
   ],
   webServer: {
-    command: `npm run dev -- --host 127.0.0.1 --port ${port} --strictPort`,
+    command: `npm run ${process.env.PORTFOLIO_PREVIEW === '1' ? 'preview' : 'dev'} -- --host 127.0.0.1 --port ${port} --strictPort`,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 30000,
   },
 });

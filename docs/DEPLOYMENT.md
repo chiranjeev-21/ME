@@ -1,118 +1,102 @@
-# Design branches and Vercel previews
+# CJ Universe deployment
 
-The production branch remains `main`. Nothing needs to be disconnected or reimported.
+The 3D release uses **`feature/cj-universe-3d`** and
+**`design/personal-universe`**. Both point to the verified Universe implementation.
+`main`, CJ OS, and Engineering Workbench are not changed by this release.
 
-| Branch                              | Concept                    | Distinctive interaction                                           |
-| ----------------------------------- | -------------------------- | ----------------------------------------------------------------- |
-| `design/cj-os`                      | CJ OS + Hacker Terminal    | Profile window tabs, command terminal, graphite/lime desktop      |
-| `design/personal-universe`          | Personal Universe          | Orbital navigation, dimensional planet, lavender/peach atmosphere |
-| `design/engineering-command-center` | Engineering Command Center | Interactive storage/signals/AI focus map, blueprint styling       |
+## Vercel previews
 
-All three share the resume update, scroll interactions, responsive navigation,
-accessible terminal, floating treasure, and live GitHub vault. The selected concept
-is defined in `src/constants/concept.ts`. The focus map is illustrative, not a diagram
-of an employer's production architecture.
-
-## View all three without changing production
-
-1. Sign in at [Vercel](https://vercel.com/dashboard).
+1. Sign in to [Vercel](https://vercel.com/dashboard).
 2. Open the existing portfolio project connected to `chiranjeev-21/ME`.
-3. Open **Settings > Git** and confirm the connected repository is still correct.
-4. Open **Settings > Environments > Production** and confirm branch tracking is `main`.
-   Some dashboard versions show this as **Production Branch** under Git settings.
-5. Open **Deployments**. Filter by each design branch. By default, every push to a
-   non-production branch creates a **Preview** deployment automatically.
-6. Open a deployment, wait for **Ready**, then click **Visit**. Use **Copy URL** to
-   share it. The deployment details show both the branch and commit.
-7. Prefer the branch-specific URL when comparing designs: it follows future commits
-   on that branch. A commit-specific URL is an immutable snapshot.
+3. Confirm **Settings > Git** still points to this repository.
+4. Keep Production branch tracking on **`main`**.
+5. In **Deployments**, filter by either Universe branch.
+6. Wait for **Ready**, open its details, and use **Visit** or **Copy URL**.
+7. Prefer the branch URL for ongoing review; a commit URL is an immutable snapshot.
 
-You do **not** need three Vercel projects. Keeping `main` as the production branch
-leaves `https://chiranjeev.vercel.app` on the existing design.
+Vercel normally creates these Preview deployments automatically on a non-main
+branch push. One project can host the different design previews. No separate
+project, database, model service, or paid API is required.
 
-If a branch has no deployment:
+Build settings are supplied by `vercel.json`:
 
-1. Check that the branch was pushed to GitHub.
-2. In Vercel, verify the GitHub App still has access to this repository.
-3. Check project Git settings for disabled automatic deployments, branch restrictions,
-   or an **Ignored Build Step** that skips non-main branches.
-4. Check the commit's Vercel status on GitHub. Authentication/commit-author errors
-   must be resolved using the owner's Vercel/GitHub account.
-5. In **Deployments**, use **Create Deployment**, choose the branch, and deploy.
-   The precise action label can vary with dashboard updates.
-6. The build settings are **Vite**, `npm run build`, and output directory `dist`.
-   `vercel.json` also configures the GitHub API function. Do not configure a global
-   rewrite that sends `/api/*` to `index.html`.
+- Framework: **Vite**
+- Build command: **`npm run build`**
+- Output directory: **`dist`**
+- GitHub API: **`api/github-pinned.js`**, Node function with a bounded upstream request
 
-Preview URLs may require Vercel authentication. If sharing externally, inspect
-**Settings > Deployment Protection** and choose the sharing/protection behavior
-appropriate for the project. A sign-in page is not evidence that the site failed to build.
+Node.js 24+ is recommended for local core tests. The production client is compiled
+by Vite; the browser does not execute raw TypeScript.
 
-## How the GitHub integration works
+If a push has no deployment, inspect the commit's Vercel status, GitHub App access,
+disabled automatic deployments, branch restrictions, and any Ignored Build Step.
+The deployment dashboard also permits manually creating a deployment from a branch.
+Do not change the production branch merely to review a preview.
 
-`GET /api/github-pinned` runs on the server, both in local Vite development and
-as a Vercel Function in production.
+Preview URLs may use the project's existing **Deployment Protection** and require
+Vercel sign-in. A sign-in page does not mean the build failed. Review sharing settings
+deliberately; this implementation does not disable account protection.
 
-| Configuration/result                                 | What visitors see                                    |
-| ---------------------------------------------------- | ---------------------------------------------------- |
-| Valid optional `GITHUB_TOKEN` and public pins        | Exact **pinned repositories** from GitHub GraphQL    |
-| No token, expired token, or no usable public pins    | Live **recent public repositories** from GitHub REST |
-| GitHub outage, rate limit, or no public repositories | Clearly labeled **local artifact**                   |
+## Direct routes must survive refresh
 
-Recent repositories are never labeled as pins. Private repositories and forks are
-excluded from the recent list. The response includes project links, demo links,
-language, topics, stars, forks, and update times. Upstream requests are bounded;
-successful responses are edge-cached for 15 minutes. Offline fallbacks use a short
-one-minute cache so a transient failure does not linger.
+The application shares one URL/content model across Explore and Browse:
 
-The browser validates the payload and has a 15-second timeout. Loading content is
-not presented as a successfully synced artifact.
+```text
+/?mode=explore
+/?mode=browse
+/world/engineering?mode=browse
+/world/creative?mode=explore
+/projects/cj-os-desktop?mode=browse
+/writing/one-universe-two-ways-in?mode=browse
+```
+
+`vercel.json` rewrites only `/world/*`, `/projects/*`, and `/writing/*` to the client
+entry point. **Do not replace these with a global rewrite that sends `/api/*` to
+`index.html`.** Static assets live under `/images/*`, `/resume/*`, and `/assets/*`.
+
+The same project/article can be opened in either mode. A failed or interrupted
+WebGL context retains the destination and switches to Browse; it does not invent
+a second copy of the project.
+
+## GitHub feed
+
+`GET /api/github-pinned` uses the same handler in Vite development and Vercel.
+
+| Result                                             | Visitor sees                                             |
+| -------------------------------------------------- | -------------------------------------------------------- |
+| Valid optional token and public pins               | Exact **pinned public repositories**                     |
+| No usable token or no public pins                  | Live **recent public repositories**, explicitly not pins |
+| GitHub unavailable/rate-limited or no public repos | Clearly labeled **local fallback**                       |
+
+No token is required for the recent-repository feed. Request timeouts and short
+fallback caching keep transient failures from turning into a long-lived fake
+“live” state. The browser also validates the response.
 
 ### Optional: enable exact profile pins
 
-No paid service or API key is required for the live recent-repository feed.
-For exact pins, create a minimally privileged GitHub token:
+1. Sign in to GitHub and click your avatar, then **Settings**.
+2. Open **Developer settings > Personal access tokens > Fine-grained tokens**.
+3. Click **Generate new token** and complete authentication.
+4. Name it `portfolio-public-pins`, choose an expiration, and select your personal
+   account as Resource owner.
+5. Choose **Public repositories**. Do not grant private-repository or write access.
+6. Leave unnecessary permissions unset, generate the token, and copy it once.
+7. In Vercel, open the project, then **Settings > Environment Variables**.
+8. Add `GITHUB_TOKEN` as a **Secret** for **Preview** and **Production** as desired.
+   Apply it to both Universe preview branches if branch restrictions are offered.
+9. Optionally add `GITHUB_PROFILE_LOGIN=chiranjeev-21` as a Config variable.
+10. Save and **redeploy**. Changed variables do not update older deployments.
+11. Check `/api/github-pinned`: `"source":"github","selection":"pinned"` confirms
+    exact pins. `"recent"` is the usable keyless fallback, not an exact pin result.
 
-1. Sign in to GitHub as the account that owns the public pins.
-2. Click your avatar, then **Settings**.
-3. In the sidebar, open **Developer settings**.
-4. Open **Personal access tokens > Fine-grained tokens**.
-5. Click **Generate new token** and complete any authentication prompt.
-6. Name it `portfolio-public-pins`, choose a sensible expiration, and select your
-   personal account as **Resource owner**.
-7. Under **Repository access**, choose **Public repositories**. Do not grant access
-   to private repositories, organization repositories, or write permissions.
-8. Leave additional permissions unset; public repository information is read-only.
-   Click **Generate token** and copy the token once.
-9. In Vercel, open the portfolio project, then **Settings > Environment Variables**.
-10. Add `GITHUB_TOKEN` as a **Secret**, selecting **Preview** and **Production**.
-    If branch restrictions are offered, apply it to all three design branches.
-11. Optionally add `GITHUB_PROFILE_LOGIN=chiranjeev-21` as a Config variable.
-12. Save, then **redeploy** the relevant branches. Variable changes do not modify
-    already-built deployments.
-13. Visit the deployment's `/api/github-pinned`. A successful pinned response has
-    `"source":"github"` and `"selection":"pinned"`. If it says `"recent"`, check
-    token expiration, resource-owner access, and that your profile has public pins.
+Never put this credential in `VITE_*`, source code, screenshots, or commits.
+Locally, copy `.env.example` to ignored `.env.local`, fill optional values, and
+restart `npm run dev`. Expired credentials should be rotated in Vercel.
 
-Never put this token in a `VITE_*` variable, source code, a screenshot, or a commit.
-For local development, copy `.env.example` to `.env.local`, fill the optional values,
-and restart `npm run dev`. `.env.local` is ignored by git.
-
-## Choose a production design
-
-After comparing previews, merge **one** chosen design branch into `main` through a
-pull request. Vercel will build it for the production domain. Do not merge all three
-branches: they intentionally choose different default concepts.
-
-For permanent independently branded sites rather than previews, create additional
-Vercel projects connected to the same repository and set each project's Production
-branch to the corresponding design branch. Configure domains and environment
-variables separately. This is optional.
-
-## Local checks
+## Verification
 
 ```powershell
-npm install
+npm ci
 npm run build
 npm run lint
 npm test
@@ -120,26 +104,23 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The browser suite covers desktop/mobile layouts, resume content, command history,
-focus restoration, vault entry/return, invalid/offline data, concept-specific
-controls, scroll reveals, and narrow screens. Routine browser tests use fixtures so
-an upstream outage cannot masquerade as a UI regression. Screenshots and traces are
-written to ignored test output.
+For a production-client smoke check, first build and then set
+`PORTFOLIO_PREVIEW=1` when running the browser suite. The preview server is static:
+browser fixtures can exercise the client, while the actual function is tested
+separately through the development middleware or Vercel.
 
-Run the separate real-network smoke check when GitHub is reachable:
+The opt-in live network check uses `LIVE_GITHUB=1`. Routine tests use deterministic
+GitHub fixtures so upstream rate limits are not confused with UI regressions.
 
-```powershell
-$env:LIVE_GITHUB = '1'
-npm run test:e2e -- --grep 'live GitHub smoke'
-Remove-Item Env:\LIVE_GITHUB
-```
+## Promote deliberately
 
-GitHub availability and the unauthenticated REST rate limit can make the opt-in
-check fail; the website itself should still show the labeled local fallback.
+After review, merge the chosen Universe branch into `main` through a pull request.
+That is the step that changes the production website. Do not merge every alternate
+design branch together; they intentionally provide different experiences.
 
 ## References
 
-- [Vercel: Git deployments](https://vercel.com/docs/git)
-- [Vercel: Preview and Production environments](https://vercel.com/docs/deployments/environments)
-- [Vercel: environment variables](https://vercel.com/docs/environment-variables)
-- [GitHub: managing personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+- [Vercel Git deployments](https://vercel.com/docs/git)
+- [Preview and Production environments](https://vercel.com/docs/deployments/environments)
+- [Environment variables](https://vercel.com/docs/environment-variables)
+- [GitHub personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)

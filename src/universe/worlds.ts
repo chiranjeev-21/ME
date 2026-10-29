@@ -1,0 +1,112 @@
+import type { WorldDefinition, WorldId } from './types';
+
+export const WORLDS: readonly WorldDefinition[] = [
+  {
+    id: 'about',
+    name: 'About',
+    number: '01',
+    subtitle: 'The human behind the work',
+    description: 'Background, professional journey, and the questions that keep me building.',
+    color: '#81bbc9',
+    radius: 0.6,
+    orbitRadius: 3.8,
+    orbitalSpeed: 0.019,
+    phase: 0.5,
+    inclination: 0.08,
+    kind: 'ocean',
+  },
+  {
+    id: 'engineering',
+    name: 'Engineering',
+    number: '02',
+    subtitle: 'Systems under pressure',
+    description:
+      'Distributed computing, storage reliability, architecture, and verified engineering evidence.',
+    color: '#c7b398',
+    radius: 0.78,
+    orbitRadius: 5.4,
+    orbitalSpeed: 0.014,
+    phase: 2.7,
+    inclination: -0.07,
+    kind: 'industrial',
+  },
+  {
+    id: 'ai-lab',
+    name: 'AI Lab',
+    number: '03',
+    subtitle: 'Look inside the experiment',
+    description:
+      'A working retrieval lab, inspectable evidence, and useful limits—not manufactured intelligence.',
+    color: '#b3a5d7',
+    radius: 0.7,
+    orbitRadius: 7,
+    orbitalSpeed: 0.011,
+    phase: 4.95,
+    inclination: 0.12,
+    kind: 'research',
+  },
+  {
+    id: 'projects',
+    name: 'Projects',
+    number: '04',
+    subtitle: 'Things that made it out of the notebook',
+    description: 'Products, applications, source code, case studies, and open-source experiments.',
+    color: '#d3a17f',
+    radius: 0.92,
+    orbitRadius: 8.7,
+    orbitalSpeed: 0.008,
+    phase: 3.75,
+    inclination: -0.05,
+    kind: 'terracotta',
+  },
+  {
+    id: 'creative',
+    name: 'Creative',
+    number: '05',
+    subtitle: 'Leave room for play',
+    description:
+      'Original procedural experiments, creative interests, and a place for future original media.',
+    color: '#9ab68d',
+    radius: 0.83,
+    orbitRadius: 10.4,
+    orbitalSpeed: 0.006,
+    phase: 0.7,
+    inclination: 0.1,
+    kind: 'garden',
+  },
+  {
+    id: 'writing',
+    name: 'Writing',
+    number: '06',
+    subtitle: 'Notes from the observatory',
+    description: 'Readable engineering notes on decisions, trade-offs, and building this universe.',
+    color: '#cdd5df',
+    radius: 0.65,
+    orbitRadius: 12,
+    orbitalSpeed: 0.0045,
+    phase: 5.85,
+    inclination: -0.08,
+    kind: 'archive',
+  },
+  {
+    id: 'contact',
+    name: 'Contact',
+    number: '07',
+    subtitle: 'Send a signal',
+    description: 'A straightforward path to email, professional links, and a good conversation.',
+    color: '#d6bd87',
+    radius: 0.7,
+    orbitRadius: 13.6,
+    orbitalSpeed: 0.0035,
+    phase: 1.65,
+    inclination: 0.04,
+    kind: 'beacon',
+  },
+];
+
+export function isWorldId(value: unknown): value is WorldId {
+  return typeof value === 'string' && WORLDS.some(world => world.id === value);
+}
+export function getWorld(id: WorldId): WorldDefinition {
+  return WORLDS.find(world => world.id === id)!;
+}
