@@ -1,10 +1,18 @@
 # Chiranjeev Singh — Portfolio
 
-**This branch: Personal Universe** — orbital navigation, a dimensional planet,
-and a lavender/peach visual world. Chiranjeev/CJ leads the first screen; select the
-planet to meet the person, or follow its orbits into the work. A warm, paper-like
-toolbox keeps distributed computing, backend engineering, and Agentic AI in one
-personal engineering practice. Compare it with the CJ OS and Command Center previews.
+**This branch: Personal Universe** — a scroll-driven expedition, not a hero animation.
+A 240svh orbital scene (230svh on mobile) uses native scrolling to approach a
+hand-drawn SVG/CSS planet: the camera enlarges it from 1× to 5×, shifts its position,
+and reveals a layered surface. Scrolling back reverses the descent. A field journal
+of Microsoft, Amazon, and Oyo work leads into connected skills, GitHub side quests,
+the person behind the code, and contact. No canvas, model downloads, wheel trapping,
+or timed sequence.
+
+The visible **Skip to work** link and native section anchors bypass the journey.
+Reduced-motion users get an unpinned, static illustrated introduction followed by
+the same readable chapters. The portrait lives in About; the terminal and floating
+treasure/vault remain conventional keyboard-accessible controls. The treasure
+floats at the viewport edge in this concept rather than wandering across the copy.
 
 A personal portfolio for **Chiranjeev Singh**, focused on software engineering, AI systems, and product-quality frontend presentation.
 
@@ -26,7 +34,7 @@ npm run dev
 
 Local development starts on `http://localhost:5173`.
 Parallel browser runs can use an isolated port in PowerShell:
-`$env:PORTFOLIO_TEST_PORT='4172'; npm run test:e2e -- --workers=1`.
+`$env:PORTFOLIO_TEST_PORT='4272'; npm run test:e2e -- --workers=1`.
 The test server uses that port strictly; the default remains 5173.
 
 ## Available Scripts
@@ -46,10 +54,18 @@ npm run test:e2e    # desktop/mobile browser tests (install Chromium first)
 
 - Three creative directions with distinct interactive hero visuals.
 - Resume-driven Microsoft, Amazon, and Oyo experience; distributed computing and AI skills.
-- Scroll reveals, reading progress, sticky timeline context, skill filters, and a navigation dock.
+- A reversible planet approach, contour-inspired chapters, reading progress, skill filters, and a chapter rail.
 - A keyboard-accessible command terminal (`Ctrl+K` / `Cmd+K`) with history and real navigation.
 - A floating treasure chest and hidden vault with live GitHub data and honest offline states.
 - Responsive layouts, reduced-motion support, contact links, and email copying.
+
+The browser suite includes measured planet bounding boxes and transforms before,
+during, and after real wheel scrolling, reverse scrolling, chapter arrival,
+reduced-motion readability, and narrow-screen overflow checks. `journey.spec.ts`
+captures desktop/mobile launch, mid-zoom, landing, and work arrival. Set
+`PORTFOLIO_ARTIFACT_DIR` to an existing absolute directory to save those captures
+outside Playwright's per-test output folders. Live GitHub smoke remains opt-in
+with `LIVE_GITHUB=1`; deterministic browser tests intercept the API.
 
 ## Tech Stack
 

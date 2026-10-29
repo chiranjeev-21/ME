@@ -140,7 +140,7 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
         <div className={styles.headerActions}>
           <button className={styles.commandButton} onClick={onTerminal} aria-label="Open terminal">
             <Icon name="terminal" size={16} />
-            <span>Let&apos;s explore</span>
+            <span>{ACTIVE_CONCEPT === 'universe' ? 'Terminal' : 'Let’s explore'}</span>
             <kbd>Ctrl K</kbd>
           </button>
           <button
@@ -156,91 +156,93 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
       </header>
 
       <main id="main-content" tabIndex={-1}>
-        <section id="hero" data-section className={styles.hero} aria-labelledby="hero-heading">
-          <div className={styles.heroGrid} aria-hidden="true" />
-          <div className={styles.heroTopline}>
-            <span>{concept.eyebrow}</span>
-            <span className={styles.heroEdition}>INDEPENDENT THINKING / CONNECTED SYSTEMS</span>
-          </div>
-          <div className={styles.heroBody}>
-            <div className={styles.heroCopy}>
-              <a href="#work" className={styles.currentStatus}>
-                <span className={styles.statusDot} /> Currently at Microsoft <span>/</span> Azure
-              </a>
-              {ACTIVE_CONCEPT === 'universe' && (
-                <div className={styles.personalGreeting}>
-                  Hello, I&apos;m <span>or CJ, for short.</span>
-                </div>
-              )}
-              <h1 id="hero-heading">
-                {concept.headline} <br />
-                <span>{concept.accent}</span>
-              </h1>
-              {ACTIVE_CONCEPT === 'universe' ? (
-                <p>
-                  <strong>Software engineer. Curious human.</strong>
-                  <br />I build distributed systems, backend services, and useful AI. Currently
-                  working on <strong>Azure Direct Drive</strong>. Previously Amazon &amp; Oyo.
-                </p>
-              ) : (
+        {ACTIVE_CONCEPT === 'universe' ? (
+          <Visual onTerminal={onTerminal} onVault={onVault} />
+        ) : (
+          <section id="hero" data-section className={styles.hero} aria-labelledby="hero-heading">
+            <div className={styles.heroGrid} aria-hidden="true" />
+            <div className={styles.heroTopline}>
+              <span>{concept.eyebrow}</span>
+              <span className={styles.heroEdition}>INDEPENDENT THINKING / CONNECTED SYSTEMS</span>
+            </div>
+            <div className={styles.heroBody}>
+              <div className={styles.heroCopy}>
+                <a href="#work" className={styles.currentStatus}>
+                  <span className={styles.statusDot} /> Currently at Microsoft <span>/</span> Azure
+                </a>
+                <h1 id="hero-heading">
+                  {concept.headline} <br />
+                  <span>{concept.accent}</span>
+                </h1>
                 <p>
                   I&apos;m <strong>Chiranjeev Singh</strong> — a software engineer making
                   distributed systems more reliable and AI more useful. Currently building on{' '}
                   <strong>Azure Direct Drive</strong>. Previously Amazon &amp; Oyo.
                 </p>
-              )}
-              {ACTIVE_CONCEPT === 'universe' && (
-                <ul className={styles.heroSkills} aria-label="Engineering toolkit">
-                  <li>Distributed Computing</li>
-                  <li>Backend Engineering</li>
-                  <li>Agentic AI</li>
-                </ul>
-              )}
-              <div className={styles.heroButtons}>
-                <a className={styles.primaryButton} href="#work">
-                  Explore my work <Icon name="down" size={18} />
-                </a>
-                <a className={styles.secondaryButton} href={`mailto:${EMAIL}`}>
-                  Let&apos;s talk <Icon name="arrow" size={18} />
-                </a>
+                <div className={styles.heroButtons}>
+                  <a className={styles.primaryButton} href="#work">
+                    Explore my work <Icon name="down" size={18} />
+                  </a>
+                  <a className={styles.secondaryButton} href={`mailto:${EMAIL}`}>
+                    Let&apos;s talk <Icon name="arrow" size={18} />
+                  </a>
+                </div>
+                <div className={styles.heroSignature}>
+                  <span className={styles.signatureMark} aria-hidden="true">
+                    *
+                  </span>
+                  <span>
+                    {concept.note}
+                    <br />
+                    <small>Scroll a little. There&apos;s more beneath the surface.</small>
+                  </span>
+                </div>
               </div>
-              <div className={styles.heroSignature}>
-                <span className={styles.signatureMark} aria-hidden="true">
-                  *
-                </span>
-                <span>
-                  {concept.note}
-                  <br />
-                  <small>Scroll a little. There&apos;s more beneath the surface.</small>
-                </span>
+              <div className={styles.heroVisual}>
+                <Visual onTerminal={onTerminal} onVault={onVault} />
               </div>
             </div>
-            <div className={styles.heroVisual}>
-              <Visual onTerminal={onTerminal} onVault={onVault} />
+            <div className={styles.heroBottom}>
+              <div className={styles.companyTrail}>
+                <span>THE JOURNEY SO FAR</span>
+                <strong>Microsoft</strong>
+                <i />
+                Amazon
+                <i />
+                Oyo
+              </div>
+              <a href="#work" className={styles.scrollCue}>
+                SCROLL TO DISCOVER <Icon name="down" size={15} />
+              </a>
             </div>
-          </div>
-          <div className={styles.heroBottom}>
-            <div className={styles.companyTrail}>
-              <span>THE JOURNEY SO FAR</span>
-              <strong>Microsoft</strong>
-              <i />
-              Amazon
-              <i />
-              Oyo
-            </div>
-            <a href="#work" className={styles.scrollCue}>
-              SCROLL TO DISCOVER <Icon name="down" size={15} />
-            </a>
-          </div>
-        </section>
+          </section>
+        )}
 
-        <div className={styles.statement} aria-label="Engineering focus">
-          <span>Distributed by design.</span>
-          <Icon name="spark" size={30} />
-          <span>Curious by default.</span>
-          <Icon name="spark" size={30} />
-          <span>Human at the core.</span>
-        </div>
+        {ACTIVE_CONCEPT === 'universe' ? (
+          <div className={styles.landingBridge}>
+            <span className={styles.eyebrow}>01 / LANDED IN THE REAL WORLD</span>
+            <p>
+              Curiosity is the starting point.
+              <br />
+              <em>What you build is the story.</em>
+            </p>
+            <div className={styles.landingTrail} aria-label="The journey so far">
+              <span>Microsoft</span>
+              <i aria-hidden="true" />
+              <span>Amazon</span>
+              <i aria-hidden="true" />
+              <span>Oyo</span>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.statement} aria-label="Engineering focus">
+            <span>Distributed by design.</span>
+            <Icon name="spark" size={30} />
+            <span>Curious by default.</span>
+            <Icon name="spark" size={30} />
+            <span>Human at the core.</span>
+          </div>
+        )}
 
         <section
           id="work"
@@ -250,18 +252,19 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
         >
           <aside className={styles.workAside}>
             <div className={styles.eyebrow}>
-              <span>01</span> / THE TRACK RECORD
+              <span>01</span> /{' '}
+              {ACTIVE_CONCEPT === 'universe' ? 'FIELD NOTES / EXPERIENCE' : 'THE TRACK RECORD'}
             </div>
             <h2 id="work-heading" data-reveal>
-              {ACTIVE_CONCEPT === 'universe' ? 'A few chapters.' : 'Real problems.'}
+              {ACTIVE_CONCEPT === 'universe' ? 'The work.' : 'Real problems.'}
               <br />
               <span>
-                {ACTIVE_CONCEPT === 'universe' ? 'Still writing the story.' : 'Measurable impact.'}
+                {ACTIVE_CONCEPT === 'universe' ? 'Beneath the surface.' : 'Measurable impact.'}
               </span>
             </h2>
             <p data-reveal>
-              From AI-driven experiences to the distributed systems underneath them. A few chapters
-              from the journey.
+              From AI-driven experiences to the distributed systems underneath them. The real
+              problems, and the engineering behind them.
             </p>
             <div className={styles.asideNote} data-reveal>
               <span>NOW</span>
@@ -336,13 +339,15 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           <div className={styles.sectionTop}>
             <SectionHeading
               number="02"
-              label="THE TOOLBOX"
+              label={
+                ACTIVE_CONCEPT === 'universe' ? 'THE CONNECTED TERRAIN / SKILLS' : 'THE TOOLBOX'
+              }
               title={
                 ACTIVE_CONCEPT === 'universe'
-                  ? 'Many tools. One curious mind.'
+                  ? 'Nothing exists in isolation.'
                   : 'Different layers. Same curiosity.'
               }
-              text="Not a wall of logos. A few connected ways I like to solve problems."
+              text="Distributed computing. Backend engineering. Agentic AI. Different layers of the same connected world."
             />
             <span className={styles.sectionSideNote}>
               <Icon name="code" size={22} /> THINK IN SYSTEMS.
@@ -406,7 +411,9 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           <div className={styles.sectionTop}>
             <SectionHeading
               number="03"
-              label="OFF THE MAIN PATH"
+              label={
+                ACTIVE_CONCEPT === 'universe' ? 'OTHER ORBITS / SIDE QUESTS' : 'OFF THE MAIN PATH'
+              }
               title={concept.projectTitle}
               text="Open-source work, research, and ideas that refused to stay in a notes app."
             />
@@ -509,7 +516,9 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           <div className={styles.aboutCopy}>
             <SectionHeading
               number="04"
-              label="A HUMAN, NOT JUST A STACK"
+              label={
+                ACTIVE_CONCEPT === 'universe' ? 'THE EXPLORER / ABOUT' : 'A HUMAN, NOT JUST A STACK'
+              }
               title="Good engineering starts with good questions."
             />
             <p data-reveal>
@@ -616,7 +625,20 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           BACK TO TOP <Icon name="down" size={13} style={{ transform: 'rotate(180deg)' }} />
         </a>
       </footer>
-      <nav className={styles.dock} aria-label="Quick navigation">
+      <nav
+        className={ACTIVE_CONCEPT === 'universe' ? styles.chapterRail : styles.dock}
+        aria-label="Quick navigation"
+      >
+        {ACTIVE_CONCEPT === 'universe' && (
+          <a
+            href="#hero"
+            aria-label="Return to orbit"
+            aria-current={activeSection === 'hero' ? 'location' : undefined}
+          >
+            <span>Orbit</span>
+            <i aria-hidden="true" />
+          </a>
+        )}
         <a
           href="#work"
           aria-label="Experience"
@@ -633,14 +655,22 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           <Icon name="code" />
           <span>Systems</span>
         </a>
-        <button onClick={onVault} aria-label="Open hidden vault">
+        <button
+          onClick={onVault}
+          aria-label="Open hidden vault"
+          aria-current={
+            ACTIVE_CONCEPT === 'universe' && activeSection === 'projects' ? 'location' : undefined
+          }
+        >
           <Icon name="spark" />
           <span>Vault</span>
         </button>
-        <button onClick={onTerminal} aria-label="Open command terminal">
-          <Icon name="terminal" />
-          <span>Terminal</span>
-        </button>
+        {ACTIVE_CONCEPT !== 'universe' && (
+          <button onClick={onTerminal} aria-label="Open command terminal">
+            <Icon name="terminal" />
+            <span>Terminal</span>
+          </button>
+        )}
         <a
           href="#cta"
           aria-label="Contact"

@@ -18,8 +18,8 @@ export const CONCEPTS = {
     eyebrow: 'A PERSONAL UNIVERSE / BY CHIRANJEEV SINGH',
     headline: 'Chiranjeev',
     accent: 'Singh.',
-    note: 'Pick an orbit. Take the scenic route.',
-    projectTitle: 'Dispatches from other orbits.',
+    note: 'From orbit to the details. One scroll at a time.',
+    projectTitle: 'A little beyond the main orbit.',
   },
   command: {
     name: 'CJ / Control',

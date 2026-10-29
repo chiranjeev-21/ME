@@ -164,25 +164,21 @@ test('concept-specific visual controls are functional', async ({ page }, testInf
     await expect(page.getByRole('heading', { name: 'AI that leaves the notebook.' })).toBeVisible();
   } else {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chiranjeev Singh.');
-    await expect(page.getByLabel('Engineering toolkit')).toContainText('Agentic AI');
-    const meetCJ = page.getByRole('button', { name: 'Meet CJ', exact: true });
-    await meetCJ.focus();
+    const skip = page.getByRole('link', { name: 'Skip to work', exact: true });
+    await skip.focus();
     await page.keyboard.press('Enter');
-    const returnToMap = page.getByRole('button', { name: 'Return to the orbit map' });
-    await expect(returnToMap).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.locator('#universe-person')).toBeVisible();
-    await expect(returnToMap.getByRole('img', { name: 'Chiranjeev Singh' })).toBeVisible();
-    await page.screenshot({ path: testInfo.outputPath('meet-cj.png'), animations: 'disabled' });
-    await page.locator('#universe-person').getByRole('link').click();
-    await expect(page.locator('#about')).toBeInViewport();
-    await page.locator('#hero').scrollIntoViewIfNeeded();
-    await returnToMap.click();
-    await expect(meetCJ).toHaveAttribute('aria-expanded', 'false');
-    await expect(page.locator('#universe-person')).toBeHidden();
-    await page.getByRole('link', { name: '02 / Systems' }).click();
+    await expect(page.locator('#work')).toBeInViewport();
+    await page
+      .getByRole('navigation', { name: 'Quick navigation' })
+      .getByRole('link', { name: 'Systems and skills' })
+      .click();
     await expect(page.locator('#systems')).toBeInViewport();
-    await page.locator('#hero').scrollIntoViewIfNeeded();
-    await page.getByRole('button', { name: '?? / Side quests' }).click();
+    await expect(page.locator('#systems').getByText('Agentic AI', { exact: true })).toBeVisible();
+    await page.locator('#about').scrollIntoViewIfNeeded();
+    await expect(
+      page.locator('#about').getByRole('img', { name: 'Chiranjeev Singh' })
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Open hidden vault', exact: true }).click();
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Secret experiments');
   }
 });

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ACTIVE_CONCEPT } from '@/constants/concept';
 import { Icon } from './Icon';
 import styles from './Portfolio.module.css';
+import journey from './Journey.module.css';
 
 function OSVisual({ onTerminal }: { onTerminal: () => void }) {
   const [tab, setTab] = useState('profile');
@@ -151,65 +152,146 @@ function OSVisual({ onTerminal }: { onTerminal: () => void }) {
   );
 }
 
-function UniverseVisual({ onVault }: { onVault: () => void }) {
-  const [showPerson, setShowPerson] = useState(false);
+function UniverseVisual() {
   return (
-    <div className={styles.universeScene} aria-label="Explore the personal universe">
-      <div className={styles.starField} aria-hidden="true" />
-      <div className={styles.orbitOuter} aria-hidden="true" />
-      <div className={styles.orbitInner} aria-hidden="true" />
-      <span className={styles.orbitDoodle} aria-hidden="true">
-        ✳
-      </span>
-      <span className={styles.orbitAnnotation} aria-hidden="true">
-        a small world,
-        <br />a real person.
-      </span>
-      <button
-        className={styles.planet}
-        aria-label={showPerson ? 'Return to the orbit map' : 'Meet CJ'}
-        aria-expanded={showPerson}
-        aria-controls="universe-person"
-        data-person={showPerson}
-        onClick={() => setShowPerson(!showPerson)}
-      >
-        {showPerson && (
-          <img
-            className={styles.planetPortrait}
-            src="/images/photo.jpeg"
-            width="280"
-            height="280"
-            alt="Chiranjeev Singh"
-          />
-        )}
-        <span aria-hidden="true">
-          CJ<span>.</span>
-        </span>
-        <small>{showPerson ? 'BACK TO MY UNIVERSE ↗' : 'MEET THE HUMAN ↗'}</small>
-      </button>
-      <a href="#work" className={`${styles.orbitNode} ${styles.nodeOne}`}>
-        <i />
-        01 / Experience
-        <Icon name="arrow" size={14} />
-      </a>
-      <a href="#systems" className={`${styles.orbitNode} ${styles.nodeTwo}`}>
-        <i />
-        02 / Systems
-        <Icon name="arrow" size={14} />
-      </a>
-      <button onClick={onVault} className={`${styles.orbitNode} ${styles.nodeThree}`}>
-        <i />
-        ?? / Side quests
-        <Icon name="spark" size={14} />
-      </button>
-      <div id="universe-person" className={styles.personNote} hidden={!showPerson}>
-        <span>Not an avatar. Just me.</span>
-        <a href="#about">
-          The person behind the code <Icon name="arrow" size={14} />
-        </a>
+    <section
+      id="hero"
+      data-section
+      data-journey
+      className={journey.journey}
+      aria-labelledby="hero-heading"
+    >
+      <div className={journey.scene} data-journey-scene>
+        <div className={journey.stars} aria-hidden="true" />
+        <div className={journey.orbitalPath} aria-hidden="true" />
+        <div className={journey.planetWorld} data-planet-world aria-hidden="true">
+          <div className={journey.ring} />
+          <div className={journey.planet}>
+            <svg className={journey.terrain} viewBox="0 0 600 600" fill="none">
+              <defs>
+                <linearGradient
+                  id="land"
+                  x1="120"
+                  y1="0"
+                  x2="520"
+                  y2="580"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#f1dfb8" />
+                  <stop offset=".5" stopColor="#cead88" />
+                  <stop offset="1" stopColor="#84988f" />
+                </linearGradient>
+                <pattern id="contours" width="160" height="140" patternUnits="userSpaceOnUse">
+                  <path
+                    d="M-20 30Q40-15 80 30T180 30M-20 40Q40-5 80 40T180 40M-20 50Q40 5 80 50T180 50M-20 60Q40 15 80 60T180 60M-20 70Q40 25 80 70T180 70M-20 80Q40 35 80 80T180 80M-20 90Q40 45 80 90T180 90M-20 100Q40 55 80 100T180 100"
+                    stroke="#fcf1d2"
+                    strokeWidth=".7"
+                    opacity=".3"
+                  />
+                </pattern>
+              </defs>
+              <g fill="url(#land)" stroke="#d9d5b3" strokeWidth="2">
+                <path d="M-30 70C40 20 70 35 110 0L260-30C270 42 345 64 310 120S190 130 210 198 139 260 107 220 20 251-30 202Z" />
+                <path d="M460-20C370 50 420 140 370 184S262 198 275 270 387 291 358 354 379 440 443 409 490 456 550 417 590 318 650 326L650-30Z" />
+                <path d="M-30 370C32 339 50 393 111 370S196 388 177 437 237 483 204 544 120 567 120 630L-30 630Z" />
+                <path d="M330 517C350 470 429 487 440 534S516 568 502 630H310Z" />
+                <path d="M180 306C160 278 191 249 216 274S229 326 207 333Z" />
+              </g>
+              <path
+                d="M15 140C105 90 125 168 165 152S206 95 255 83M465 60C426 128 484 141 439 210S348 204 331 264M421 283C395 323 474 331 441 377M18 433C100 398 120 458 137 483S124 542 91 568M350 550Q408 512 449 590"
+                stroke="#f8e5bb"
+                strokeWidth="10"
+                opacity=".33"
+              />
+              <path
+                d="M15 140C105 90 125 168 165 152S206 95 255 83M465 60C426 128 484 141 439 210S348 204 331 264M421 283C395 323 474 331 441 377M18 433C100 398 120 458 137 483S124 542 91 568"
+                stroke="#7b968f"
+                strokeWidth="2"
+                opacity=".7"
+              />
+              <path
+                d="M95-20Q160 240 390 163T650 219M-40 300Q145 145 241 400T690 459M-30 510Q189 357 301 590"
+                stroke="#eaf1dd"
+                strokeWidth="20"
+                opacity=".15"
+              />
+              <path d="M0 0H600V600H0Z" fill="url(#contours)" />
+              <g stroke="#ebead0" opacity=".23">
+                <ellipse cx="300" cy="300" rx="120" ry="290" />
+                <ellipse cx="300" cy="300" rx="230" ry="290" />
+                <path d="M0 200Q300 260 600 200M0 400Q300 460 600 400" />
+              </g>
+            </svg>
+          </div>
+          <div className={`${journey.ring} ${journey.ringFront}`} />
+        </div>
+        <div className={journey.shade} aria-hidden="true" />
+        <div className={journey.intro} data-departure>
+          <span className={journey.eyebrow}>A personal universe / Hello, I&apos;m</span>
+          <h1 id="hero-heading">
+            Chiranjeev <em>Singh.</em>
+          </h1>
+          <p>
+            <strong>Software engineer. Curious human.</strong>
+            <br />A small world of distributed systems, useful AI, and the ideas that connect them.
+          </p>
+          <span className={journey.role}>MICROSOFT / AZURE DIRECT DRIVE</span>
+          <a className={journey.skip} href="#work">
+            Skip to work <Icon name="arrow" size={16} />
+          </a>
+        </div>
+        <div className={journey.worldNote} aria-hidden="true">
+          <span>Not another destination.</span>
+          A world to get
+          <br />a little closer to.
+        </div>
+        <div className={journey.approach} aria-hidden="true">
+          <span className={journey.eyebrow}>Orbit → approach</span>
+          <p>
+            Big picture.
+            <br />
+            <em>Little details.</em>
+          </p>
+        </div>
+        <div className={journey.arrival} data-arrival aria-hidden="true">
+          <span className={journey.eyebrow}>Approach → surface</span>
+          <h2>
+            Every world
+            <br />
+            has <em>a story.</em>
+          </h2>
+          <p>This one is built on real systems, good questions, and a little curiosity.</p>
+          <a className={journey.skip} href="#work" tabIndex={-1}>
+            Read the chapters <Icon name="down" size={16} />
+          </a>
+        </div>
+        <svg
+          className={journey.surface}
+          viewBox="0 0 1440 360"
+          preserveAspectRatio="none"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M0 210Q270 165 530 228T1040 124 1440 88V360H0Z" fill="#72868a" />
+          <path d="M0 260Q220 135 440 237T940 216 1440 156V360H0Z" fill="#a8ada0" />
+          <path d="M0 279Q330 206 612 286T1160 240 1440 248V360H0Z" fill="#e9e2d4" />
+          <g stroke="#7d8d871f">
+            <path d="M0 301Q330 228 612 308T1160 262 1440 270M0 316Q330 243 612 323T1160 277 1440 285M0 331Q330 258 612 338T1160 292 1440 300" />
+          </g>
+        </svg>
+        <div className={journey.bottom} aria-hidden="true">
+          <div className={journey.scroll}>
+            <Icon name="down" size={16} /> SCROLL TO GET CLOSER
+          </div>
+          <span>
+            A NATIVE-SCROLL JOURNEY <em> / </em> TAKE YOUR TIME
+          </span>
+        </div>
+        <p className={journey.motionNote}>
+          A quieter route. Same universe. Continue below for the work.
+        </p>
       </div>
-      {!showPerson && <span className={styles.coordinate}>MY LITTLE CORNER OF THE INTERNET</span>}
-    </div>
+    </section>
   );
 }
 
@@ -273,8 +355,8 @@ function CommandVisual() {
   );
 }
 
-export function Visual({ onTerminal, onVault }: { onTerminal: () => void; onVault: () => void }) {
-  if (ACTIVE_CONCEPT === 'universe') return <UniverseVisual onVault={onVault} />;
+export function Visual({ onTerminal }: { onTerminal: () => void; onVault: () => void }) {
+  if (ACTIVE_CONCEPT === 'universe') return <UniverseVisual />;
   if (ACTIVE_CONCEPT === 'command') return <CommandVisual />;
   return <OSVisual onTerminal={onTerminal} />;
 }

@@ -27,6 +27,16 @@
   opacity: 0;
   pointer-events: none;
 }
+.treasure.edgeBound {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition: opacity 220ms ease;
+}
+.edgeBound .treasureChest {
+  width: 38px;
+  height: 38px;
+}
 .treasureAura {
   position: absolute;
   inset: 12px;

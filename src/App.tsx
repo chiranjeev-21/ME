@@ -127,7 +127,10 @@ function App() {
             onVault={() => changeView('vault')}
             onTerminal={openTerminal}
           />
-          <Treasure onTreasureClick={() => changeView('vault')} />
+          <Treasure
+            onTreasureClick={() => changeView('vault')}
+            edgeBound={ACTIVE_CONCEPT === 'universe'}
+          />
         </>
       ) : (
         <main id="main-content">
