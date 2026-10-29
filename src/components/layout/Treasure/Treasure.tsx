@@ -38,11 +38,16 @@ export function Treasure({ onTreasureClick }: HeroProps) {
 
   useEffect(() => {
     if (reducedMotion) {
-      setTreasurePosition({
-        x: Math.max(16, window.innerWidth - 92),
-        y: Math.max(90, window.innerHeight - 190),
-      });
-      return;
+      const positionTreasure = () => {
+        const bounds = treasureRef.current?.getBoundingClientRect();
+        setTreasurePosition({
+          x: Math.max(TREASURE_MARGIN, window.innerWidth - (bounds?.width ?? 72) - TREASURE_MARGIN),
+          y: Math.max(TREASURE_MARGIN, window.innerHeight - (bounds?.height ?? 72) - 110),
+        });
+      };
+      positionTreasure();
+      window.addEventListener('resize', positionTreasure);
+      return () => window.removeEventListener('resize', positionTreasure);
     }
     const getMoveBounds = () => {
       const treasureRect = treasureRef.current?.getBoundingClientRect();

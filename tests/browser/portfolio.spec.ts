@@ -281,6 +281,23 @@ test('scroll animation, desktop/mobile screenshots, and narrow layout', async ({
   expect(errors).toEqual([]);
 });
 
+test('reduced-motion treasure stays in view after resizing', async ({ page }) => {
+  await page.route('**/api/github-pinned', route => route.fulfill({ json: pinned }));
+  await page.goto('/');
+  await page.setViewportSize({ width: 320, height: 640 });
+  const treasure = page.getByRole('button', { name: 'Open side quests', exact: true });
+  await expect(treasure).toBeVisible();
+  await expect
+    .poll(async () => {
+      const bounds = await treasure.boundingBox();
+      return bounds ? bounds.x + bounds.width : Infinity;
+    })
+    .toBeLessThanOrEqual(320);
+  const bounds = await treasure.boundingBox();
+  expect(bounds?.x).toBeGreaterThanOrEqual(0);
+  expect((bounds?.y ?? Infinity) + (bounds?.height ?? 0)).toBeLessThanOrEqual(640);
+});
+
 test('live GitHub smoke', async ({ request }, testInfo) => {
   test.skip(
     process.env.LIVE_GITHUB !== '1' || testInfo.project.name !== 'desktop',
