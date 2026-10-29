@@ -34,6 +34,7 @@ test('resume content, expandable experience, skill filters, and responsive navig
   await amazon.locator('summary').click();
   await expect(amazon.getByText(/reducing SEV2 tickets/)).toBeVisible();
   await page.getByRole('button', { name: 'AI & ML', exact: true }).click();
+  await expect(page.locator('#systems').getByText('Agentic AI', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Less AI theatre/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: /The invisible stuff/ })).toHaveCount(0);
   await page.getByRole('button', { name: 'Distributed systems', exact: true }).click();
@@ -62,6 +63,31 @@ test('resume content, expandable experience, skill filters, and responsive navig
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true
   );
+});
+
+test('personal masthead skill threads navigate to the matching capability', async ({ page }) => {
+  await page.route('**/api/github-pinned', route => route.fulfill({ json: pinned }));
+  await page.goto('/');
+  const threads = page.getByRole('navigation', { name: 'Explore my skills' });
+  for (const [label, filter, skill] of [
+    ['Agentic AI', 'AI & ML', 'Agentic AI'],
+    ['Backend engineering', 'Backend', 'FastAPI'],
+    ['Distributed systems', 'Distributed systems', 'Distributed Computing'],
+  ]) {
+    const link = threads.getByRole('link', { name: label, exact: true });
+    await link.focus();
+    await link.press('Enter');
+    await expect(page).toHaveURL(/#systems$/);
+    await expect(page.locator('#systems')).toBeInViewport();
+    await expect(page.getByRole('button', { name: filter, exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    await expect(page.locator('#systems').getByText(skill, { exact: true })).toBeVisible();
+    await page.locator('#hero').scrollIntoViewIfNeeded();
+  }
+  await page.getByRole('button', { name: 'Everything', exact: true }).click();
+  await expect(page.locator('#systems article')).toHaveCount(3);
 });
 
 test('terminal commands, history, unknown input, focus restoration, and keyboard escape', async ({
@@ -247,6 +273,13 @@ test('scroll animation, desktop/mobile screenshots, and narrow layout', async ({
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
   await expect(page.getByRole('status').filter({ hasText: 'Live GitHub' })).toBeVisible();
+  if (testInfo.project.name === 'mobile') {
+    const primaryAction = await page.getByRole('link', { name: 'Explore my work' }).boundingBox();
+    const dock = await page.getByRole('navigation', { name: 'Quick navigation' }).boundingBox();
+    expect(primaryAction).not.toBeNull();
+    expect(dock).not.toBeNull();
+    expect(primaryAction!.y + primaryAction!.height).toBeLessThan(dock!.y);
+  }
   await page.screenshot({ path: testInfo.outputPath('hero.png'), animations: 'disabled' });
   for (const id of ['work', 'systems', 'projects', 'about', 'cta']) {
     await page.locator(`#${id}`).scrollIntoViewIfNeeded();
@@ -256,6 +289,9 @@ test('scroll animation, desktop/mobile screenshots, and narrow layout', async ({
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
     ).toBe(true);
+    if (id === 'work') {
+      await page.screenshot({ path: testInfo.outputPath('work.png'), animations: 'disabled' });
+    }
   }
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.locator('#hero').scrollIntoViewIfNeeded();

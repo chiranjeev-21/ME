@@ -6,10 +6,10 @@ export const CONCEPTS = {
   os: {
     name: 'CJ OS',
     version: 'personal operating system / 2026',
-    eyebrow: 'ENGINEER BY TRADE. CURIOUS BY DEFAULT.',
-    headline: 'Human curiosity.',
-    accent: 'Engineered impact.',
-    note: 'A small interface to a much bigger world.',
+    eyebrow: "CHIRANJEEV'S CORNER OF THE INTERNET",
+    headline: 'Chiranjeev',
+    accent: 'Singh.',
+    note: 'Good questions. Useful things. A little play.',
     projectTitle: 'Serious work. Side-quest energy.',
   },
   universe: {

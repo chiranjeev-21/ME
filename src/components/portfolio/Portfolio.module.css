@@ -163,10 +163,10 @@
   position: relative;
   display: grid;
   grid-template-columns: 1.13fr 1fr;
-  gap: 50px;
+  gap: 60px;
   align-items: center;
   min-height: 590px;
-  padding: 55px 0 70px;
+  padding: 40px 0 48px;
 }
 .heroCopy {
   position: relative;
@@ -207,6 +207,66 @@
 }
 .hero h1 > span {
   color: var(--accent);
+}
+.site[data-concept='os'] .hero h1 {
+  font-size: clamp(64px, 7vw, 112px);
+  line-height: 0.98;
+  letter-spacing: -0.07em;
+  margin-bottom: 24px;
+}
+.heroGreeting {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+.heroGreeting > span:first-child {
+  color: #e6bca0;
+  font:
+    italic 27px/1.2 Georgia,
+    serif;
+  transform: rotate(-4deg);
+}
+.greetingPortrait {
+  display: none;
+}
+.skillThreads {
+  margin-top: 24px;
+}
+.skillThreads > span {
+  display: block;
+  color: var(--muted);
+  font: 8px var(--font-mono);
+  letter-spacing: 1.3px;
+  margin-bottom: 10px;
+}
+.skillThreads > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+.skillThreads a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  color: #d3dac9;
+  font-size: 11px;
+  border-bottom: 1px solid #ffffff25;
+  transition:
+    color 180ms,
+    border-color 180ms;
+}
+.skillThreads a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.skillThreads a svg {
+  color: var(--accent);
+  transition: transform 180ms;
+}
+.skillThreads a:hover svg {
+  transform: translate(2px, -2px);
 }
 .heroCopy > p {
   max-width: 480px;
@@ -263,7 +323,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 36px;
+  margin-top: 26px;
   font-size: 10px;
   line-height: 1.8;
   color: #c5cabb;
@@ -1235,27 +1295,40 @@
 /* The visual windows are lightweight HTML and CSS, not a canvas. */
 .osScene {
   position: relative;
-  height: 438px;
-  padding: 15px 25px;
+  padding: 20px 20px 28px;
 }
 .sceneCross {
   position: absolute;
   font: 300 180px var(--font-display);
-  right: -24px;
-  top: -50px;
-  color: #c1fa6a1a;
+  right: -16px;
+  top: -58px;
+  color: #e6bca025;
   transform: rotate(12deg);
+}
+.desktopNote {
+  position: absolute;
+  z-index: 1;
+  right: -12px;
+  top: -14px;
+  padding: 10px 15px;
+  color: #30271f;
+  background: #e6bca0;
+  box-shadow: 0 6px 20px #0003;
+  font:
+    italic 15px/1.4 Georgia,
+    serif;
+  transform: rotate(7deg);
 }
 .window {
   position: relative;
   width: 100%;
   max-width: 440px;
   margin: auto;
-  background: #1b1e18;
-  border: 1px solid #697b4c60;
+  background: #20231d;
+  border: 1px solid #87957650;
   border-radius: 10px;
   box-shadow: 0 25px 80px #0004;
-  transform: rotate(-3deg);
+  transform: rotate(-2deg);
 }
 .windowBar {
   display: flex;
@@ -1291,6 +1364,7 @@
   background: transparent;
   color: #96a38c;
   font: 9px var(--font-mono);
+  min-height: 44px;
   padding: 13px 20px;
   border-right: 1px solid #ffffff14;
   border-bottom: 1px solid transparent;
@@ -1301,51 +1375,62 @@
   background: #c1fa6a07;
 }
 .windowContent {
-  padding: 28px;
-  min-height: 275px;
+  padding: 20px;
+  min-height: 318px;
 }
-.profileRow {
+.profilePortrait {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #343c30;
+}
+.profilePortrait > img {
+  width: 100%;
+  height: 206px;
+  object-fit: cover;
+  object-position: 55% 61%;
+}
+.profilePortrait > span {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 6px 9px;
+  background: #10110fe8;
+  color: #f0f0e9;
+  font: 9px var(--font-mono);
+  border-radius: 3px;
+}
+.profileCaption {
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 19px;
 }
-.avatar {
-  width: 78px;
-  height: 85px;
-  border-radius: 9px;
-  object-fit: cover;
-  object-position: center 18%;
+.profileCaption > a {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
   border: 1px solid #c1fa6a40;
-  filter: saturate(0.7);
+  border-radius: 50%;
+  color: #c1fa6a;
+  transition: background 180ms;
+}
+.profileCaption > a:hover {
+  background: #c1fa6a15;
 }
 .mono {
   color: #a1af95;
   font: 7px/1.6 var(--font-mono);
   letter-spacing: 1px;
 }
-.profileRow h2 {
-  font: 500 30px/1.1 var(--font-display);
+.profileCaption h2 {
+  font: 500 27px/1.15 var(--font-display);
   color: #eff3e8;
   letter-spacing: -1px;
-  margin-top: 8px;
-}
-.profileRow h2 > span {
-  display: block;
-}
-.lime {
-  color: #c1fa6a;
-}
-.codeBlock {
-  margin-top: 25px;
-  color: #bdc5b4;
-  font: 10px/2 var(--font-mono);
-}
-.codeBlock p > span {
-  color: #b0b7f0;
-}
-.codeBlock p > em {
-  color: #c1d9a1;
-  font-style: normal;
+  margin-top: 6px;
 }
 .windowFooter {
   display: flex;
@@ -1361,17 +1446,17 @@
   color: #77866a;
 }
 .miniTerminal {
-  position: absolute;
-  bottom: -4px;
-  right: -7px;
-  width: 295px;
-  padding: 18px;
+  position: relative;
+  display: block;
+  margin: 18px -8px 0 auto;
+  width: 275px;
+  padding: 16px 18px;
   text-align: left;
   border: 1px solid #75866080;
   border-radius: 9px;
-  background: #242a1d;
+  background: #292e24;
   box-shadow: 0 20px 40px #0005;
-  transform: rotate(4deg);
+  transform: rotate(3deg);
   transition: transform 200ms;
 }
 .miniTerminal:hover {
@@ -1386,7 +1471,7 @@
 }
 .miniTerminal > strong {
   display: block;
-  margin-top: 18px;
+  margin-top: 12px;
   font: 11px var(--font-mono);
   color: #d5e0c9;
   white-space: nowrap;
@@ -1401,7 +1486,7 @@
   gap: 20px;
   font: 8px var(--font-mono);
   color: #adba9d;
-  margin-top: 15px;
+  margin-top: 12px;
 }
 .caret {
   display: inline-block;
@@ -1417,11 +1502,11 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  left: 25px;
-  bottom: -27px;
+  left: 16px;
+  bottom: -5px;
   color: #b7c8a4;
   font: 8px var(--font-mono);
-  transform: rotate(-4deg);
+  transform: rotate(-2deg);
 }
 .tabCopy h2 {
   margin-top: 18px;
@@ -1827,9 +1912,6 @@
   .hero h1 {
     font-size: 88px;
   }
-  .osScene {
-    scale: 1.12;
-  }
   .heroVisual {
     max-width: 570px;
   }
@@ -1859,31 +1941,18 @@
   }
   .osScene {
     padding: 20px 8px;
-    height: 420px;
   }
   .windowContent {
     padding: 24px;
   }
   .miniTerminal {
-    right: 0;
     width: 260px;
-    bottom: -8px;
   }
   .sceneTag {
     display: none;
   }
-  .profileRow {
-    gap: 14px;
-  }
-  .profileRow h2 {
-    font-size: 26px;
-  }
-  .avatar {
-    width: 64px;
-    height: 75px;
-  }
-  .codeBlock {
-    font-size: 9px;
+  .profileCaption h2 {
+    font-size: 24px;
   }
   .workSection {
     gap: 65px;
@@ -1967,12 +2036,11 @@
     margin-left: -10px;
   }
   .osScene {
-    height: 395px;
     padding: 15px 0;
   }
   .windowContent {
     padding: 22px 18px;
-    min-height: 255px;
+    min-height: 318px;
   }
   .windowTabs > button {
     padding: 12px;
@@ -1980,14 +2048,11 @@
   .windowBar {
     padding: 12px;
   }
-  .profileRow h2 {
-    font-size: 23px;
-  }
-  .profileRow .mono {
+  .profileCaption .mono {
     font-size: 6px;
   }
-  .codeBlock {
-    font-size: 8px;
+  .profileCaption h2 {
+    font-size: 21px;
   }
   .windowFooter {
     padding: 12px;
@@ -1995,8 +2060,6 @@
   }
   .miniTerminal {
     width: 235px;
-    bottom: -8px;
-    right: -8px;
   }
   .miniTerminal > strong {
     font-size: 10px;
@@ -2177,7 +2240,7 @@
     border-bottom: 1px solid var(--line);
   }
   .hero {
-    padding-top: 110px;
+    padding-top: 100px;
   }
   .heroTopline {
     font-size: 7px;
@@ -2185,7 +2248,7 @@
   }
   .heroBody {
     grid-template-columns: 1fr;
-    padding: 38px 0 45px;
+    padding: 28px 0 45px;
     gap: 40px;
   }
   .hero h1 {
@@ -2194,18 +2257,19 @@
   }
   .heroCopy > p {
     font-size: 14px;
+    line-height: 1.75;
     max-width: 510px;
   }
   .currentStatus {
     font-size: 9px;
-    margin-bottom: 23px;
+    margin-bottom: 18px;
   }
   .heroSignature {
     display: none;
   }
   .heroButtons {
     gap: 12px;
-    margin-top: 25px;
+    margin-top: 20px;
   }
   .primaryButton,
   .secondaryButton {
@@ -2220,25 +2284,59 @@
     transform: none;
   }
   .osScene {
-    height: 400px;
-    padding: 12px 22px;
+    padding: 12px 10px 26px;
   }
   .windowContent {
-    min-height: 257px;
-    padding: 24px;
+    min-height: 318px;
+    padding: 18px;
   }
-  .profileRow h2 {
-    font-size: 28px;
+  .profileCaption h2 {
+    font-size: 25px;
   }
-  .profileRow .mono {
+  .profileCaption .mono {
     font-size: 7px;
   }
-  .avatar {
-    width: 70px;
-    height: 78px;
+  .desktopNote {
+    right: 0;
+    top: -16px;
+    font-size: 14px;
   }
-  .codeBlock {
-    font-size: 9px;
+  .site[data-concept='os'] .hero h1 {
+    font-size: clamp(52px, 13.4vw, 86px);
+    margin-bottom: 20px;
+  }
+  .greetingPortrait {
+    display: block;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #e6bca080;
+    transform: rotate(6deg);
+  }
+  .greetingPortrait > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% 62%;
+    transform: scale(2);
+    transform-origin: 63% 63%;
+  }
+  .heroGreeting {
+    margin-bottom: 12px;
+  }
+  .heroGreeting > span:first-child {
+    font-size: 25px;
+  }
+  .skillThreads {
+    margin-top: 16px;
+  }
+  .skillThreads > div {
+    gap: 6px 14px;
+  }
+  .skillThreads a {
+    font-size: 11px;
+    min-height: 36px;
   }
   .windowBar {
     padding: 13px;
@@ -2250,9 +2348,8 @@
     font-size: 7px;
   }
   .miniTerminal {
-    right: 0;
-    bottom: -1px;
     width: 255px;
+    margin-right: 0;
   }
   .sceneCross {
     font-size: 140px;

@@ -36,6 +36,8 @@ npm run test:e2e    # desktop/mobile browser tests (install Chromium first)
 ## What The Project Contains
 
 - Three creative directions with distinct interactive hero visuals.
+- CJ OS puts Chiranjeev first: a personal masthead, portrait-led profile window,
+  and “Follow a thread” links that open the corresponding skill filter.
 - Resume-driven Microsoft, Amazon, and Oyo experience; distributed computing and AI skills.
 - Scroll reveals, reading progress, sticky timeline context, skill filters, and a navigation dock.
 - A keyboard-accessible command terminal (`Ctrl+K` / `Cmd+K`) with history and real navigation.
@@ -92,3 +94,16 @@ npm run build
 ```
 
 The production output is generated in `dist/`.
+
+## Isolated Browser Checks
+
+Playwright uses one worker and owns its dev server with a strict port. For parallel
+worktrees, choose a unique port (default `5173`) and keep artifacts outside the repo:
+
+```powershell
+$env:PORTFOLIO_TEST_PORT = '4171'
+npm run test:e2e -- --output 'C:\path\to\verification\cj-os'
+```
+
+The routine suite uses deterministic GitHub fixtures. The live smoke test remains
+opt-in via `LIVE_GITHUB=1`.

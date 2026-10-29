@@ -47,6 +47,12 @@ const FILTERS = [
   { id: 'backend', label: 'Backend' },
 ];
 
+const SKILL_THREADS = [
+  { id: 'distributed', label: 'Distributed systems' },
+  { id: 'ai', label: 'Agentic AI' },
+  { id: 'backend', label: 'Backend engineering' },
+];
+
 interface PortfolioProps {
   quests: UsePinnedQuestsState;
   onVault: () => void;
@@ -160,23 +166,39 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           <div className={styles.heroGrid} aria-hidden="true" />
           <div className={styles.heroTopline}>
             <span>{concept.eyebrow}</span>
-            <span className={styles.heroEdition}>INDEPENDENT THINKING / CONNECTED SYSTEMS</span>
+            <span className={styles.heroEdition}>A PERSONAL SPACE / NOT JUST A RÉSUMÉ</span>
           </div>
           <div className={styles.heroBody}>
             <div className={styles.heroCopy}>
               <a href="#work" className={styles.currentStatus}>
                 <span className={styles.statusDot} /> Currently at Microsoft <span>/</span> Azure
               </a>
+              <div className={styles.heroGreeting}>
+                <span>Hi, I&apos;m CJ.</span>
+                <span className={styles.greetingPortrait}>
+                  <img src="/images/photo.jpeg" width="64" height="64" alt="" />
+                </span>
+              </div>
               <h1 id="hero-heading">
                 {concept.headline}
                 <br />
                 <span>{concept.accent}</span>
               </h1>
               <p>
-                I&apos;m <strong>Chiranjeev Singh</strong> — a software engineer making distributed
-                systems more reliable and AI more useful. Currently building on{' '}
-                <strong>Azure Direct Drive</strong>. Previously Amazon &amp; Oyo.
+                A <strong>software engineer</strong> making distributed systems more reliable and AI
+                more useful. Currently building on <strong>Azure Direct Drive</strong>. Previously
+                Amazon &amp; Oyo.
               </p>
+              <nav className={styles.skillThreads} aria-label="Explore my skills">
+                <span>FOLLOW A THREAD</span>
+                <div>
+                  {SKILL_THREADS.map(item => (
+                    <a key={item.id} href="#systems" onClick={() => setFilter(item.id)}>
+                      {item.label} <Icon name="arrow" size={12} />
+                    </a>
+                  ))}
+                </div>
+              </nav>
               <div className={styles.heroButtons}>
                 <a className={styles.primaryButton} href="#work">
                   Explore my work <Icon name="down" size={18} />
@@ -192,7 +214,7 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
                 <span>
                   {concept.note}
                   <br />
-                  <small>Scroll a little. There&apos;s more beneath the surface.</small>
+                  <small>Stay for the work. Wander for the side quests.</small>
                 </span>
               </div>
             </div>

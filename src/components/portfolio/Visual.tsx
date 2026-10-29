@@ -8,8 +8,9 @@ function OSVisual({ onTerminal }: { onTerminal: () => void }) {
   return (
     <div className={styles.osScene}>
       <div className={styles.sceneCross} aria-hidden="true">
-        +
+        *
       </div>
+      <span className={styles.desktopNote}>a face to the name ↙</span>
       <div className={styles.window}>
         <div className={styles.windowBar}>
           <span className={styles.windowDots} aria-hidden="true">
@@ -17,7 +18,7 @@ function OSVisual({ onTerminal }: { onTerminal: () => void }) {
             <i />
             <i />
           </span>
-          <span>~/chiranjeev</span>
+          <span>~/cj / a work in progress</span>
           <Icon name="code" size={16} />
         </div>
         <div className={styles.windowTabs} role="tablist" aria-label="Profile window">
@@ -56,38 +57,24 @@ function OSVisual({ onTerminal }: { onTerminal: () => void }) {
         >
           {tab === 'profile' && (
             <>
-              <div className={styles.profileRow}>
+              <div className={styles.profilePortrait}>
                 <img
                   src="/images/photo.jpeg"
-                  width="88"
-                  height="88"
+                  width="900"
+                  height="1000"
                   alt="Chiranjeev Singh"
-                  className={styles.avatar}
+                  fetchPriority="high"
                 />
-                <div>
-                  <span className={styles.mono}>HELLO, WORLD. I&apos;M</span>
-                  <h2>
-                    Chiranjeev
-                    <span>
-                      Singh<span className={styles.lime}>.</span>
-                    </span>
-                  </h2>
-                </div>
+                <span>Not just a username.</span>
               </div>
-              <div className={styles.codeBlock}>
-                <p>
-                  <span>const</span> engineer = {'{'}
-                </p>
-                <p>
-                  &nbsp; now: <em>&quot;Microsoft / Azure&quot;</em>,
-                </p>
-                <p>
-                  &nbsp; focus: <em>&quot;Distributed systems&quot;</em>,
-                </p>
-                <p>
-                  &nbsp; fuel: <em>&quot;A good what if?&quot;</em>
-                </p>
-                <p>{'};'}</p>
+              <div className={styles.profileCaption}>
+                <div>
+                  <span className={styles.mono}>THE HUMAN BEHIND THE SYSTEMS</span>
+                  <h2>Nice to meet you.</h2>
+                </div>
+                <a href="#about" aria-label="More about Chiranjeev">
+                  <Icon name="arrow" size={20} />
+                </a>
               </div>
             </>
           )}
@@ -100,11 +87,18 @@ function OSVisual({ onTerminal }: { onTerminal: () => void }) {
                 The real problem.
               </h2>
               <div className={styles.tags}>
-                {['C/C++', 'Python', 'Java', 'Azure', 'AWS', 'PyTorch', 'Kafka', 'Redis'].map(
-                  skill => (
-                    <span key={skill}>{skill}</span>
-                  )
-                )}
+                {[
+                  'C/C++',
+                  'Python',
+                  'Java',
+                  'Azure',
+                  'Agentic AI',
+                  'PyTorch',
+                  'Kafka',
+                  'Redis',
+                ].map(skill => (
+                  <span key={skill}>{skill}</span>
+                ))}
               </div>
               <p>Distributed computing, production AI, and the backend glue in between.</p>
             </div>
@@ -128,7 +122,7 @@ function OSVisual({ onTerminal }: { onTerminal: () => void }) {
           )}
         </div>
         <div className={styles.windowFooter}>
-          <span className={styles.statusDot} /> Curiosity, always on{' '}
+          <Icon name="spark" size={12} /> A person, not a process{' '}
           <span>0{['profile', 'stack', 'notes'].indexOf(tab) + 1} / 03</span>
         </div>
       </div>
@@ -137,15 +131,15 @@ function OSVisual({ onTerminal }: { onTerminal: () => void }) {
           <Icon name="terminal" size={16} /> cj@portfolio:~
         </span>
         <strong>
-          <b>$</b> explore --curiosity
+          <b>$</b> whoami
           <span className={styles.caret} />
         </strong>
         <small>
-          Click to run a command <Icon name="arrow" size={13} />
+          Your keyboard is welcome here <Icon name="arrow" size={13} />
         </small>
       </button>
       <div className={styles.sceneTag}>
-        <Icon name="spark" size={15} /> Built to keep exploring.
+        <Icon name="spark" size={15} /> Serious about the work. Playful about the rest.
       </div>
     </div>
   );
