@@ -15,10 +15,10 @@ export const CONCEPTS = {
   universe: {
     name: 'CJ Universe',
     version: 'a personal universe / 2026',
-    eyebrow: 'A FEW IDEAS. INFINITE POSSIBILITIES.',
-    headline: 'A curious mind.',
-    accent: 'An entire universe.',
-    note: 'Every good system starts with a little exploration.',
+    eyebrow: 'A PERSONAL UNIVERSE / BY CHIRANJEEV SINGH',
+    headline: 'Chiranjeev',
+    accent: 'Singh.',
+    note: 'Pick an orbit. Take the scenic route.',
     projectTitle: 'Dispatches from other orbits.',
   },
   command: {

@@ -1,7 +1,10 @@
 # Chiranjeev Singh — Portfolio
 
 **This branch: Personal Universe** — orbital navigation, a dimensional planet,
-and a lavender/peach visual world. Compare it with the CJ OS and Command Center previews.
+and a lavender/peach visual world. Chiranjeev/CJ leads the first screen; select the
+planet to meet the person, or follow its orbits into the work. A warm, paper-like
+toolbox keeps distributed computing, backend engineering, and Agentic AI in one
+personal engineering practice. Compare it with the CJ OS and Command Center previews.
 
 A personal portfolio for **Chiranjeev Singh**, focused on software engineering, AI systems, and product-quality frontend presentation.
 
@@ -22,6 +25,9 @@ npm run dev
 ```
 
 Local development starts on `http://localhost:5173`.
+Parallel browser runs can use an isolated port in PowerShell:
+`$env:PORTFOLIO_TEST_PORT='4172'; npm run test:e2e -- --workers=1`.
+The test server uses that port strictly; the default remains 5173.
 
 ## Available Scripts
 

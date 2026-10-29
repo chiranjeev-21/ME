@@ -1455,7 +1455,6 @@
 .universeScene {
   position: relative;
   height: 470px;
-  transform: rotate(var(--orbit-turn, 0deg));
 }
 .starField {
   position: absolute;
@@ -1471,7 +1470,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: min(60%, 280px);
+  width: min(64%, 300px);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   display: flex;
@@ -1485,6 +1484,27 @@
     -10px -5px 70px #c298e326,
     50px 35px 100px #40206650;
   animation: planetFloat 7s ease-in-out infinite;
+  isolation: isolate;
+  padding: 0;
+  transition: box-shadow 250ms;
+}
+.planet:hover {
+  box-shadow:
+    inset -20px -20px 50px #10071980,
+    0 0 0 12px #d3b5ff09,
+    0 0 90px #c298e340;
+}
+.planet:focus-visible {
+  outline-color: #f0cbb6;
+  border-radius: 50%;
+}
+.planet::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border: 1px dashed #e2c7ee55;
+  border-radius: 50%;
+  pointer-events: none;
 }
 .planet > span {
   color: #271a3c;
@@ -1495,9 +1515,71 @@
   color: #f3e7d4;
 }
 .planet > small {
-  font: 6px var(--font-mono);
-  color: #f3e7e4;
-  letter-spacing: 2px;
+  position: absolute;
+  bottom: 20%;
+  font: 8px var(--font-mono);
+  color: #fff3e8;
+  letter-spacing: 1px;
+  background: #28183d;
+  border-radius: 100px;
+  padding: 7px 10px;
+}
+.planetPortrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 26%;
+}
+.planet[data-person='true'] > span {
+  visibility: hidden;
+}
+.planet[data-person='true'] > small {
+  bottom: 8%;
+}
+.orbitDoodle {
+  position: absolute;
+  right: 7%;
+  top: 3%;
+  color: #efc5aa;
+  font:
+    86px/1 Georgia,
+    serif;
+  transform: rotate(-15deg);
+}
+.orbitAnnotation {
+  position: absolute;
+  left: 3%;
+  top: 34%;
+  font:
+    italic 18px/1.1 Georgia,
+    serif;
+  color: #e2c3b0;
+  transform: rotate(-10deg);
+}
+.personNote {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #f0cbb6;
+}
+.personNote > span {
+  display: block;
+  font:
+    italic 20px/1.4 Georgia,
+    serif;
+}
+.personNote > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  color: var(--ink);
+  font: 9px var(--font-mono);
 }
 .orbitOuter,
 .orbitInner {
@@ -1508,13 +1590,14 @@
   height: 300px;
   border: 1px solid #cfb3ea35;
   border-radius: 50%;
-  transform: rotate(-28deg);
+  transform: rotate(calc(-28deg + var(--orbit-turn, 0deg)));
 }
 .orbitInner {
   top: 130px;
   height: 200px;
-  transform: rotate(32deg);
+  transform: rotate(calc(32deg - var(--orbit-turn, 0deg)));
   border-color: #cfb3ea25;
+  border-style: dashed;
 }
 .orbitNode {
   position: absolute;
@@ -1571,16 +1654,64 @@
 }
 .site[data-concept='universe'] .hero {
   padding-top: 150px;
-  background: radial-gradient(ellipse at 78% 45%, #75469a16, transparent 55%);
+  background:
+    radial-gradient(ellipse at 78% 45%, #75469a20, transparent 55%),
+    radial-gradient(ellipse at 0% 60%, #c8866520, transparent 40%);
+}
+.site[data-concept='universe'] .heroBody {
+  min-height: 650px;
+  padding-top: 45px;
+}
+.personalGreeting {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 12px;
+  color: #e8dfef;
+  font: 12px var(--font-mono);
+}
+.personalGreeting > span {
+  color: #efc5aa;
+  font:
+    italic 18px Georgia,
+    serif;
+  transform: rotate(-6deg);
+}
+.heroSkills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 15px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  color: #d7c6e7;
+  font: 9px/1.8 var(--font-mono);
+}
+.heroSkills li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.heroSkills li::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: #edc0a3;
+  border-radius: 50%;
 }
 .site[data-concept='universe'] .hero h1 {
+  font-size: clamp(62px, 7.3vw, 112px);
   font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: -0.075em;
+  margin-bottom: 28px;
 }
 .site[data-concept='universe'] .hero h1 > span {
   font-family: Georgia, serif;
   font-style: italic;
-  font-size: 1.03em;
+  font-size: 1.12em;
   letter-spacing: -0.065em;
+  color: #efc5aa;
 }
 .site[data-concept='universe'] .heroGrid {
   background: radial-gradient(circle, #d3b5ff60 1px, transparent 1px);
@@ -1590,14 +1721,125 @@
   font-weight: 400;
 }
 .site[data-concept='universe'] .statement {
-  background: linear-gradient(90deg, #25172a, #1a1424);
+  color: #e9d8ed;
+  background: linear-gradient(90deg, #281e30, #1a1424);
+  padding-block: 30px;
+}
+.site[data-concept='universe'] .statement > span:nth-of-type(2) {
+  color: #efc5aa;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 1.18em;
+}
+.site[data-concept='universe'] .workAside h2 {
+  font-weight: 400;
+}
+.site[data-concept='universe'] .workAside h2 > span {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: #e4c2ac;
+}
+.site[data-concept='universe'] .asideNote {
+  border: 1px solid #d3b5ff38;
+  border-radius: 45% 45% 8px 8px / 18% 18% 8px 8px;
+  padding: 30px;
+  max-width: 290px;
+  background: radial-gradient(ellipse at top, #d3b5ff0e, transparent 80%);
+}
+.site[data-concept='universe'] .jobLead {
+  color: #c8bcd2;
+}
+.site[data-concept='universe'] .jobIndex {
+  color: #d3b5ff38;
+  font-family: Georgia, serif;
+  font-style: italic;
+}
+.site[data-concept='universe'] .systemsSection {
+  --bg: #f2e8de;
+  --surface: #fbf5ee;
+  --ink: #32243d;
+  --muted: #68576f;
+  --accent: #6d468b;
+  --accent-soft: #6d468b12;
+  --line: #39254625;
+  position: relative;
+  color-scheme: light;
+  color: var(--ink);
+  background: radial-gradient(circle at 85% 0, #e0cfe9, transparent 40%), var(--bg);
+  border-radius: 40px;
+}
+.site[data-concept='universe'] .systemsSection .sectionHeading h2 {
+  max-width: 570px;
+  font-family: Georgia, serif;
+  font-style: italic;
+  letter-spacing: -0.05em;
+}
+.site[data-concept='universe'] .capability {
+  border-radius: 90px 90px 12px 12px / 40px 40px 12px 12px;
+  padding-top: 32px;
+  box-shadow: 0 6px 0 #39254608;
+}
+.site[data-concept='universe'] .capability:nth-child(2) {
+  background: #e9ddf1;
+}
+.site[data-concept='universe'] .capability:nth-child(3) {
+  background: #f4dfd0;
+}
+.site[data-concept='universe'] .systemArt i {
+  border-color: #6d468b80;
+}
+.site[data-concept='universe'] .systemArt span {
+  border-color: #6d468b66;
+}
+.site[data-concept='universe'] .backendArt i {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 14px,
+    #6d468b40 15px,
+    transparent 16px
+  );
+}
+.site[data-concept='universe'] .projectCard {
+  border-radius: 2px 22px 2px 22px;
+  background: linear-gradient(145deg, #d3b5ff0b, transparent 60%);
+}
+.site[data-concept='universe'] .projectCardTop {
+  color: #edc0a3;
+}
+.site[data-concept='universe'] .vaultTeaser {
+  border-style: dashed;
+  background: linear-gradient(110deg, #efc5aa0b, #d3b5ff0b);
 }
 .site[data-concept='universe'] .aboutPortrait {
   transform: rotate(3deg);
-  background: #292038;
+  background: #eddfd1;
+  box-shadow: 15px 20px 0 #d3b5ff0c;
+}
+.site[data-concept='universe'] .aboutPortrait > img {
+  filter: saturate(0.9);
+}
+.site[data-concept='universe'] .aboutCopy .sectionHeading h2 {
+  font-family: Georgia, serif;
+  font-style: italic;
+  line-height: 1.1;
+}
+.site[data-concept='universe'] .contactTop > svg {
+  color: #efc5aa;
+}
+.site[data-concept='universe'] .contactSection h2 {
+  font-weight: 400;
+}
+.site[data-concept='universe'] .contactSection h2 > span {
+  color: #efc5aa;
 }
 .site[data-concept='universe'] .currentStatus {
   color: #d4bfdc;
+}
+.site[data-concept='universe'] :focus-visible {
+  outline-color: var(--accent);
 }
 
 .commandScene {
@@ -2120,12 +2362,12 @@
     font-size: 62px;
   }
   .planet > small {
-    font-size: 5px;
-    letter-spacing: 1px;
+    font-size: 7px;
+    letter-spacing: 0.6px;
   }
   .orbitNode {
-    font-size: 7px;
-    padding: 11px;
+    font-size: 9px;
+    padding: 12px;
   }
   .nodeOne {
     left: -5px;
@@ -2616,6 +2858,58 @@
   .site[data-concept='universe'] .hero {
     padding-top: 110px;
   }
+  .site[data-concept='universe'] .heroBody {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    gap: 24px;
+  }
+  .site[data-concept='universe'] .hero h1 {
+    font-size: clamp(50px, 14.4vw, 86px);
+    margin-bottom: 24px;
+  }
+  .personalGreeting {
+    font-size: 10px;
+    gap: 20px;
+  }
+  .personalGreeting > span {
+    font-size: 16px;
+  }
+  .heroSkills {
+    gap: 6px 12px;
+    font-size: 8px;
+  }
+  .orbitAnnotation {
+    top: 0;
+    left: 0;
+    font-size: 16px;
+  }
+  .orbitDoodle {
+    right: 12%;
+    top: -5px;
+    font-size: 65px;
+  }
+  .site[data-concept='universe'] .statement {
+    gap: 12px;
+    font-size: 14px;
+    padding: 24px 18px;
+  }
+  .site[data-concept='universe'] .systemsSection {
+    border-radius: 24px;
+  }
+  .site[data-concept='universe'] .capability {
+    border-radius: 55px 55px 10px 10px / 24px 24px 10px 10px;
+    padding-top: 26px;
+  }
+  .site[data-concept='universe'] .asideNote {
+    padding: 24px;
+    border-radius: 18px 18px 6px 6px;
+  }
+  .site[data-concept='universe'] .aboutPortrait {
+    width: 90%;
+  }
+  .site[data-concept='universe'] .contactSection h2 {
+    font-size: clamp(35px, 8.8vw, 61px);
+  }
   .commandScene {
     max-width: 440px;
     margin: auto;
@@ -2690,7 +2984,7 @@
     width: 68%;
   }
   .orbitNode {
-    font-size: 6px;
+    font-size: 8px;
   }
   .terminalHint > span {
     display: none;

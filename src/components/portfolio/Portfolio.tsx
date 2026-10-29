@@ -167,16 +167,35 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
               <a href="#work" className={styles.currentStatus}>
                 <span className={styles.statusDot} /> Currently at Microsoft <span>/</span> Azure
               </a>
+              {ACTIVE_CONCEPT === 'universe' && (
+                <div className={styles.personalGreeting}>
+                  Hello, I&apos;m <span>or CJ, for short.</span>
+                </div>
+              )}
               <h1 id="hero-heading">
-                {concept.headline}
-                <br />
+                {concept.headline} <br />
                 <span>{concept.accent}</span>
               </h1>
-              <p>
-                I&apos;m <strong>Chiranjeev Singh</strong> — a software engineer making distributed
-                systems more reliable and AI more useful. Currently building on{' '}
-                <strong>Azure Direct Drive</strong>. Previously Amazon &amp; Oyo.
-              </p>
+              {ACTIVE_CONCEPT === 'universe' ? (
+                <p>
+                  <strong>Software engineer. Curious human.</strong>
+                  <br />I build distributed systems, backend services, and useful AI. Currently
+                  working on <strong>Azure Direct Drive</strong>. Previously Amazon &amp; Oyo.
+                </p>
+              ) : (
+                <p>
+                  I&apos;m <strong>Chiranjeev Singh</strong> — a software engineer making
+                  distributed systems more reliable and AI more useful. Currently building on{' '}
+                  <strong>Azure Direct Drive</strong>. Previously Amazon &amp; Oyo.
+                </p>
+              )}
+              {ACTIVE_CONCEPT === 'universe' && (
+                <ul className={styles.heroSkills} aria-label="Engineering toolkit">
+                  <li>Distributed Computing</li>
+                  <li>Backend Engineering</li>
+                  <li>Agentic AI</li>
+                </ul>
+              )}
               <div className={styles.heroButtons}>
                 <a className={styles.primaryButton} href="#work">
                   Explore my work <Icon name="down" size={18} />
@@ -234,9 +253,11 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
               <span>01</span> / THE TRACK RECORD
             </div>
             <h2 id="work-heading" data-reveal>
-              Real problems.
+              {ACTIVE_CONCEPT === 'universe' ? 'A few chapters.' : 'Real problems.'}
               <br />
-              <span>Measurable impact.</span>
+              <span>
+                {ACTIVE_CONCEPT === 'universe' ? 'Still writing the story.' : 'Measurable impact.'}
+              </span>
             </h2>
             <p data-reveal>
               From AI-driven experiences to the distributed systems underneath them. A few chapters
@@ -316,7 +337,11 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
             <SectionHeading
               number="02"
               label="THE TOOLBOX"
-              title="Different layers. Same curiosity."
+              title={
+                ACTIVE_CONCEPT === 'universe'
+                  ? 'Many tools. One curious mind.'
+                  : 'Different layers. Same curiosity.'
+              }
               text="Not a wall of logos. A few connected ways I like to solve problems."
             />
             <span className={styles.sectionSideNote}>
@@ -539,9 +564,10 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
             <Icon name="spark" size={58} />
           </div>
           <h2 id="contact-heading" data-reveal>
-            Something interesting
+            {ACTIVE_CONCEPT === 'universe' ? 'Your orbit. My orbit.' : 'Something interesting'}
             <br />
-            on your mind<span>?</span>
+            {ACTIVE_CONCEPT === 'universe' ? 'Let’s cross paths' : 'on your mind'}
+            <span>{ACTIVE_CONCEPT === 'universe' ? '.' : '?'}</span>
           </h2>
           <div className={styles.contactBottom} data-reveal>
             <div>

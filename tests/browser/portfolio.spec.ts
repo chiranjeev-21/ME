@@ -34,6 +34,7 @@ test('resume content, expandable experience, skill filters, and responsive navig
   await amazon.locator('summary').click();
   await expect(amazon.getByText(/reducing SEV2 tickets/)).toBeVisible();
   await page.getByRole('button', { name: 'AI & ML', exact: true }).click();
+  await expect(page.locator('#systems').getByText('Agentic AI', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Less AI theatre/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: /The invisible stuff/ })).toHaveCount(0);
   await page.getByRole('button', { name: 'Distributed systems', exact: true }).click();
@@ -144,7 +145,7 @@ test('malformed or failed GitHub data becomes an honest usable fallback', async 
   await expect(page.getByRole('status').filter({ hasText: 'Local artifact' })).toBeVisible();
 });
 
-test('concept-specific visual controls are functional', async ({ page }) => {
+test('concept-specific visual controls are functional', async ({ page }, testInfo) => {
   await page.route('**/api/github-pinned', route => route.fulfill({ json: pinned }));
   await page.goto('/');
   const concept = await page.locator('[data-concept]').getAttribute('data-concept');
@@ -162,6 +163,22 @@ test('concept-specific visual controls are functional', async ({ page }) => {
     await page.getByRole('button', { name: 'Intelligence 03' }).click();
     await expect(page.getByRole('heading', { name: 'AI that leaves the notebook.' })).toBeVisible();
   } else {
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chiranjeev Singh.');
+    await expect(page.getByLabel('Engineering toolkit')).toContainText('Agentic AI');
+    const meetCJ = page.getByRole('button', { name: 'Meet CJ', exact: true });
+    await meetCJ.focus();
+    await page.keyboard.press('Enter');
+    const returnToMap = page.getByRole('button', { name: 'Return to the orbit map' });
+    await expect(returnToMap).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#universe-person')).toBeVisible();
+    await expect(returnToMap.getByRole('img', { name: 'Chiranjeev Singh' })).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('meet-cj.png'), animations: 'disabled' });
+    await page.locator('#universe-person').getByRole('link').click();
+    await expect(page.locator('#about')).toBeInViewport();
+    await page.locator('#hero').scrollIntoViewIfNeeded();
+    await returnToMap.click();
+    await expect(meetCJ).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('#universe-person')).toBeHidden();
     await page.getByRole('link', { name: '02 / Systems' }).click();
     await expect(page.locator('#systems')).toBeInViewport();
     await page.locator('#hero').scrollIntoViewIfNeeded();
@@ -253,6 +270,17 @@ test('scroll animation, desktop/mobile screenshots, and narrow layout', async ({
     const reveal = page.locator(`#${id} [data-reveal]`).first();
     await reveal.scrollIntoViewIfNeeded();
     await expect(reveal).toHaveCSS('opacity', '1');
+    if (id === 'systems') {
+      await page.screenshot({
+        path: testInfo.outputPath('systems-scrolled.png'),
+        animations: 'disabled',
+      });
+      await page.locator('#systems article').first().scrollIntoViewIfNeeded();
+      await page.screenshot({
+        path: testInfo.outputPath('systems-detail.png'),
+        animations: 'disabled',
+      });
+    }
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
     ).toBe(true);

@@ -152,17 +152,41 @@ function OSVisual({ onTerminal }: { onTerminal: () => void }) {
 }
 
 function UniverseVisual({ onVault }: { onVault: () => void }) {
+  const [showPerson, setShowPerson] = useState(false);
   return (
     <div className={styles.universeScene} aria-label="Explore the personal universe">
       <div className={styles.starField} aria-hidden="true" />
       <div className={styles.orbitOuter} aria-hidden="true" />
       <div className={styles.orbitInner} aria-hidden="true" />
-      <div className={styles.planet}>
-        <span>
+      <span className={styles.orbitDoodle} aria-hidden="true">
+        ✳
+      </span>
+      <span className={styles.orbitAnnotation} aria-hidden="true">
+        a small world,
+        <br />a real person.
+      </span>
+      <button
+        className={styles.planet}
+        aria-label={showPerson ? 'Return to the orbit map' : 'Meet CJ'}
+        aria-expanded={showPerson}
+        aria-controls="universe-person"
+        data-person={showPerson}
+        onClick={() => setShowPerson(!showPerson)}
+      >
+        {showPerson && (
+          <img
+            className={styles.planetPortrait}
+            src="/images/photo.jpeg"
+            width="280"
+            height="280"
+            alt="Chiranjeev Singh"
+          />
+        )}
+        <span aria-hidden="true">
           CJ<span>.</span>
         </span>
-        <small>A WORLD IN PROGRESS</small>
-      </div>
+        <small>{showPerson ? 'BACK TO MY UNIVERSE ↗' : 'MEET THE HUMAN ↗'}</small>
+      </button>
       <a href="#work" className={`${styles.orbitNode} ${styles.nodeOne}`}>
         <i />
         01 / Experience
@@ -178,7 +202,13 @@ function UniverseVisual({ onVault }: { onVault: () => void }) {
         ?? / Side quests
         <Icon name="spark" size={14} />
       </button>
-      <span className={styles.coordinate}>IDEAS IN ORBIT &nbsp; / &nbsp; ALWAYS EXPLORING</span>
+      <div id="universe-person" className={styles.personNote} hidden={!showPerson}>
+        <span>Not an avatar. Just me.</span>
+        <a href="#about">
+          The person behind the code <Icon name="arrow" size={14} />
+        </a>
+      </div>
+      {!showPerson && <span className={styles.coordinate}>MY LITTLE CORNER OF THE INTERNET</span>}
     </div>
   );
 }
