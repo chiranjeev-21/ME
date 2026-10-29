@@ -202,16 +202,45 @@ test('direct section links, email copying, and API timeouts remain usable', asyn
   await expect(page.getByRole('status').filter({ hasText: 'Local artifact' })).toBeVisible();
 });
 
-test('real GitHub integration, scroll animation, desktop/mobile screenshots, and narrow layout', async ({
+test('scroll animation, desktop/mobile screenshots, and narrow layout', async ({
   page,
-  request,
 }, testInfo) => {
-  const api = await request.get('/api/github-pinned');
-  expect(api.status()).toBe(200);
-  const data = await api.json();
-  expect(data.source).toBe('github');
-  expect(data.items.length).toBeGreaterThan(0);
-  expect(['recent', 'pinned']).toContain(data.selection);
+  await page.route('**/api/github-pinned', route =>
+    route.fulfill({
+      json: {
+        ...pinned,
+        selection: 'recent',
+        items: [
+          {
+            ...pinned.items[0],
+            id: 'profile',
+            name: 'chiranjeev-21',
+            description: 'Config files for my GitHub profile.',
+            homepageUrl: null,
+            topics: [],
+          },
+          {
+            ...pinned.items[0],
+            id: 'leetcode',
+            name: 'Leetcode',
+            description: 'A repo for my code submissions on Leetcode in C++.',
+            homepageUrl: null,
+            primaryLanguage: { name: 'C++', color: '#f34b7d' },
+            topics: [],
+          },
+          {
+            ...pinned.items[0],
+            id: 'whodis',
+            name: 'WhoDis',
+            description:
+              'A photo discovery project for finding your pictures among a group trip collection.',
+            primaryLanguage: { name: 'Python', color: '#3572a5' },
+            topics: ['computer-vision'],
+          },
+        ],
+      },
+    })
+  );
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -247,4 +276,17 @@ test('real GitHub integration, scroll animation, desktop/mobile screenshots, and
     });
   }
   expect(errors).toEqual([]);
+});
+
+test('live GitHub smoke', async ({ request }, testInfo) => {
+  test.skip(
+    process.env.LIVE_GITHUB !== '1' || testInfo.project.name !== 'desktop',
+    'Opt-in upstream availability check: set LIVE_GITHUB=1.'
+  );
+  const api = await request.get('/api/github-pinned');
+  expect(api.status()).toBe(200);
+  const data = await api.json();
+  expect(data.source).toBe('github');
+  expect(data.items.length).toBeGreaterThan(0);
+  expect(['recent', 'pinned']).toContain(data.selection);
 });

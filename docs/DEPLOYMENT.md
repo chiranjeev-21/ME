@@ -122,8 +122,20 @@ npm run test:e2e
 
 The browser suite covers desktop/mobile layouts, resume content, command history,
 focus restoration, vault entry/return, invalid/offline data, concept-specific
-controls, scroll reveals, narrow screens, and the real GitHub API. Screenshots
-and traces are written to ignored test output.
+controls, scroll reveals, and narrow screens. Routine browser tests use fixtures so
+an upstream outage cannot masquerade as a UI regression. Screenshots and traces are
+written to ignored test output.
+
+Run the separate real-network smoke check when GitHub is reachable:
+
+```powershell
+$env:LIVE_GITHUB = '1'
+npm run test:e2e -- --grep 'live GitHub smoke'
+Remove-Item Env:\LIVE_GITHUB
+```
+
+GitHub availability and the unauthenticated REST rate limit can make the opt-in
+check fail; the website itself should still show the labeled local fallback.
 
 ## References
 
