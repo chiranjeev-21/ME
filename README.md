@@ -1,5 +1,8 @@
 # Chiranjeev Singh — Portfolio
 
+**This branch: Engineering Command Center** — an interactive technical focus map,
+engineering principles, and a cyan/blueprint interface built around evidence and systems thinking.
+
 A personal portfolio for **Chiranjeev Singh**, focused on software engineering, AI systems, and product-quality frontend presentation.
 
 Built with **React 18**, **TypeScript 5**, and **Vite 5**.

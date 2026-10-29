@@ -1,6 +1,6 @@
 export type ConceptId = 'os' | 'universe' | 'command';
 
-export const ACTIVE_CONCEPT: ConceptId = 'os';
+export const ACTIVE_CONCEPT: ConceptId = 'command';
 
 export const CONCEPTS = {
   os: {

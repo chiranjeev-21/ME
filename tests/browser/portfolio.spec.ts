@@ -161,6 +161,9 @@ test('concept-specific visual controls are functional', async ({ page }) => {
     ).toBeVisible();
     await page.getByRole('button', { name: 'Intelligence 03' }).click();
     await expect(page.getByRole('heading', { name: 'AI that leaves the notebook.' })).toBeVisible();
+    const principle = page.locator('details').filter({ hasText: 'Design for the unhappy path.' });
+    await principle.locator('summary').click();
+    await expect(principle.getByText(/Timeouts, disk failures/)).toBeVisible();
   } else {
     await page.getByRole('link', { name: '02 / Systems' }).click();
     await expect(page.locator('#systems')).toBeInViewport();

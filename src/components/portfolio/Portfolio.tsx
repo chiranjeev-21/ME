@@ -370,6 +370,45 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           <div className={styles.systemsFooter}>
             <span className={styles.statusDot} /> Always learning. No framework is a personality.
           </div>
+          <div className={styles.principles}>
+            <div className={styles.principlesHeader}>
+              <span className={styles.eyebrow}>ENGINEERING NOTES / HOW I THINK</span>
+              <span>
+                Explore a principle <Icon name="down" size={13} />
+              </span>
+            </div>
+            <div className={styles.principleGrid}>
+              <details>
+                <summary>
+                  <span>01 / RELIABILITY</span>Design for the unhappy path.
+                  <b aria-hidden="true">+</b>
+                </summary>
+                <p>
+                  Timeouts, disk failures, and degraded dependencies are part of the system, not
+                  exceptions to it. Recovery behavior deserves the same care as the happy path.
+                </p>
+              </details>
+              <details>
+                <summary>
+                  <span>02 / OBSERVABILITY</span>Find the signal before the fix.
+                  <b aria-hidden="true">+</b>
+                </summary>
+                <p>
+                  Good telemetry makes better questions possible. Compare releases, understand
+                  workloads, and distinguish a useful anomaly from another noisy dashboard.
+                </p>
+              </details>
+              <details>
+                <summary>
+                  <span>03 / CAPACITY</span>Every resource has a limit.<b aria-hidden="true">+</b>
+                </summary>
+                <p>
+                  Bursty workloads test assumptions. Resource allocation, throttling, and
+                  backpressure should be deliberate decisions, not emergency measures.
+                </p>
+              </details>
+            </div>
+          </div>
         </section>
 
         <section
