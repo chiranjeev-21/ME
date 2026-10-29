@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EDUCATION, EMAIL, EXPERIENCE, NAV_LINKS, SOCIAL_LINKS } from '@/constants';
 import { ACTIVE_CONCEPT, CONCEPTS } from '@/constants/concept';
 import { usePortfolioMotion } from '@/hooks/usePortfolioMotion';
 import type { UsePinnedQuestsState } from '@/hooks/usePinnedQuests';
 import { Icon } from './Icon';
 import { Visual } from './Visual';
+import { EngineeringJourney } from './EngineeringJourney';
 import styles from './Portfolio.module.css';
 
 const CAPABILITIES = [
@@ -90,6 +91,18 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
         ? 'Live GitHub / recent repositories'
         : 'Live GitHub / pinned repositories';
 
+  useEffect(() => {
+    const revealEvidence = () => {
+      const id = window.location.hash.slice(1);
+      if (!EXPERIENCE.some(item => item.id === id)) return;
+      const details = document.getElementById(id)?.querySelector('details');
+      if (details) details.open = true;
+    };
+    revealEvidence();
+    window.addEventListener('hashchange', revealEvidence);
+    return () => window.removeEventListener('hashchange', revealEvidence);
+  }, []);
+
   const copyEmail = async () => {
     try {
       await navigator.clipboard.writeText(EMAIL);
@@ -105,6 +118,7 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
       className={styles.site}
       data-concept={ACTIVE_CONCEPT}
       data-motion={reducedMotion ? 'off' : 'on'}
+      data-active-section={activeSection}
     >
       <div className={styles.progress} aria-hidden="true" />
       <header className={styles.header}>
@@ -140,7 +154,7 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
         <div className={styles.headerActions}>
           <button className={styles.commandButton} onClick={onTerminal} aria-label="Open terminal">
             <Icon name="terminal" size={16} />
-            <span>Let&apos;s explore</span>
+            <span>Terminal</span>
             <kbd>Ctrl K</kbd>
           </button>
           <button
@@ -160,45 +174,54 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           <div className={styles.heroGrid} aria-hidden="true" />
           <div className={styles.heroTopline}>
             <span>{concept.eyebrow}</span>
-            <span className={styles.heroEdition}>ENGINEERING, WITH A HUMAN SIGNATURE</span>
+            {ACTIVE_CONCEPT !== 'command' && (
+              <span className={styles.heroEdition}>ENGINEERING, WITH A HUMAN SIGNATURE</span>
+            )}
           </div>
           <div className={styles.heroBody}>
             <div className={styles.heroCopy}>
-              <a href="#work" className={styles.currentStatus}>
-                <span className={styles.statusDot} /> Currently at Microsoft <span>/</span> Azure
-              </a>
+              {ACTIVE_CONCEPT !== 'command' && (
+                <a href="#work" className={styles.currentStatus}>
+                  <span className={styles.statusDot} /> Currently at Microsoft <span>/</span> Azure
+                </a>
+              )}
               <h1 id="hero-heading">
                 {concept.headline}
                 <br />
                 <span>{concept.accent}</span>
               </h1>
               {ACTIVE_CONCEPT === 'command' && (
-                <div className={styles.personalLine}>Hard systems. Human instincts.</div>
+                <div className={styles.personalLine}>Start with a better question.</div>
               )}
               <p>
-                I&apos;m <strong>CJ</strong> — a software engineer who likes untangling complicated
-                things. Distributed systems, backend engineering, and useful AI are my kind of
-                problems. Currently building on <strong>Azure Direct Drive</strong>. Previously
-                Amazon &amp; Oyo.
+                I&apos;m <strong>CJ</strong>. I work on{' '}
+                <strong>Azure Direct Drive at Microsoft</strong>, across distributed computing,
+                backend engineering, and useful AI.
               </p>
               <div className={styles.heroButtons}>
-                <a className={styles.primaryButton} href="#work">
-                  See what I&apos;ve built <Icon name="down" size={18} />
+                <a
+                  className={styles.primaryButton}
+                  href={ACTIVE_CONCEPT === 'command' ? '#inquiry' : '#work'}
+                >
+                  {ACTIVE_CONCEPT === 'command' ? 'Follow the question' : 'See what I’ve built'}{' '}
+                  <Icon name="down" size={18} />
                 </a>
-                <a className={styles.secondaryButton} href={`mailto:${EMAIL}`}>
-                  Let&apos;s talk <Icon name="arrow" size={18} />
+                <a className={styles.secondaryButton} href="#work">
+                  Experience, directly <Icon name="arrow" size={18} />
                 </a>
               </div>
-              <div className={styles.heroSignature}>
-                <span className={styles.signatureMark} aria-hidden="true">
-                  *
-                </span>
-                <span>
-                  {concept.note}
-                  <br />
-                  <small>Scroll a little. There&apos;s more beneath the surface.</small>
-                </span>
-              </div>
+              {ACTIVE_CONCEPT !== 'command' && (
+                <div className={styles.heroSignature}>
+                  <span className={styles.signatureMark} aria-hidden="true">
+                    *
+                  </span>
+                  <span>
+                    {concept.note}
+                    <br />
+                    <small>Scroll a little. There&apos;s more beneath the surface.</small>
+                  </span>
+                </div>
+              )}
             </div>
             <div className={styles.heroVisual}>
               <Visual onTerminal={onTerminal} onVault={onVault} />
@@ -213,19 +236,29 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
               <i />
               Oyo
             </div>
-            <a href="#work" className={styles.scrollCue}>
-              SCROLL TO DISCOVER <Icon name="down" size={15} />
+            <a
+              href={ACTIVE_CONCEPT === 'command' ? '#inquiry' : '#work'}
+              className={styles.scrollCue}
+            >
+              {ACTIVE_CONCEPT === 'command'
+                ? 'A QUESTION → A SYSTEM → THE EVIDENCE'
+                : 'SCROLL TO DISCOVER'}{' '}
+              <Icon name="down" size={15} />
             </a>
           </div>
         </section>
 
-        <div className={styles.statement} aria-label="Engineering focus">
-          <span>Distributed by design.</span>
-          <Icon name="spark" size={30} />
-          <span>Curious by default.</span>
-          <Icon name="spark" size={30} />
-          <span>Human at the core.</span>
-        </div>
+        {ACTIVE_CONCEPT === 'command' ? (
+          <EngineeringJourney />
+        ) : (
+          <div className={styles.statement} aria-label="Engineering focus">
+            <span>Distributed by design.</span>
+            <Icon name="spark" size={30} />
+            <span>Curious by default.</span>
+            <Icon name="spark" size={30} />
+            <span>Human at the core.</span>
+          </div>
+        )}
 
         <section
           id="work"
@@ -261,7 +294,7 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           </aside>
           <div className={styles.timeline}>
             {EXPERIENCE.map((item, index) => (
-              <article key={item.id} className={styles.job} data-reveal>
+              <article key={item.id} id={item.id} className={styles.job} data-reveal>
                 <span className={styles.timelineDot} aria-hidden="true" />
                 <div className={styles.jobTop}>
                   <span>{item.period}</span>
@@ -493,7 +526,7 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
             <span>
               <strong>A little off-script?</strong>
               <small>
-                There&apos;s a treasure chest wandering around here. It leads somewhere good.
+                There&apos;s a little treasure chest tucked at the edge. It leads somewhere good.
               </small>
             </span>
             <span className={styles.vaultTeaserEnd}>
@@ -536,6 +569,17 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
               doesn&apos;t cooperate. And sometimes it means building a tiny universe on the
               internet.
             </p>
+            {ACTIVE_CONCEPT === 'command' && (
+              <details className={styles.deskNote}>
+                <summary>
+                  A note from CJ <span aria-hidden="true">↗</span>
+                </summary>
+                <p>
+                  The systems are serious. This space doesn&apos;t have to be. Part track record,
+                  part notebook, with a few experiments tucked away. Make yourself at home.
+                </p>
+              </details>
+            )}
             <p data-reveal>
               My work moves between{' '}
               <strong>distributed computing, backend engineering, and applied AI</strong>. The

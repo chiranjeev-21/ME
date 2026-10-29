@@ -27,7 +27,7 @@ test('resume content, expandable experience, skill filters, and responsive navig
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Microsoft', exact: true })).toBeVisible();
   await expect(page.getByText('04/2026 — Present', { exact: true })).toBeVisible();
-  await expect(page.getByText(/~80% in failure testing/)).toBeVisible();
+  await expect(page.locator('#work').getByText(/~80% in failure testing/)).toBeVisible();
   const amazon = page
     .locator('article')
     .filter({ has: page.getByRole('heading', { name: 'Amazon', exact: true }) });
@@ -114,12 +114,14 @@ test('floating treasure and conventional vault entry preserve real pinned data a
     animations: 'disabled',
   });
   await page.getByRole('button', { name: 'Return to Portfolio' }).click();
+  await expect(page.getByRole('button', { name: 'Open side quests', exact: true })).toBeFocused();
   await page.getByRole('button', { name: /Unlock the vault/ }).scrollIntoViewIfNeeded();
   const before = await page.evaluate(() => window.scrollY);
   await page.getByRole('button', { name: /Unlock the vault/ }).click();
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Secret experiments');
   await page.getByRole('button', { name: 'Return to Portfolio' }).click();
   await expect(page.locator('#projects')).toBeInViewport();
+  await expect(page.getByRole('button', { name: /Unlock the vault/ })).toBeFocused();
   expect(Math.abs((await page.evaluate(() => window.scrollY)) - before)).toBeLessThan(30);
   expect(errors).toEqual([]);
 });
@@ -132,7 +134,7 @@ test('malformed or failed GitHub data becomes an honest usable fallback', async 
   );
   await page.goto('/');
   await expect(page.getByRole('status').filter({ hasText: 'Local artifact' })).toBeVisible();
-  await page.getByRole('button', { name: 'Open hidden vault', exact: true }).click();
+  await page.getByRole('button', { name: 'Open side quests', exact: true }).click();
   await expect(page.getByRole('status')).toContainText('Live sync unavailable');
   await expect(
     page.getByRole('heading', { name: 'Real-Time Face-Mask Detection', level: 2 })
@@ -167,22 +169,8 @@ test('concept-specific visual controls are functional', async ({ page }, testInf
     ).toBe(true);
     await noteControl.press('Enter');
     await expect(deskNote).not.toHaveAttribute('open');
-    await page.getByRole('button', { name: 'Signals 02' }).click();
-    await expect(
-      page.getByRole('heading', { name: 'Find the signal in the noise.' })
-    ).toBeVisible();
-    await page.getByRole('button', { name: 'Intelligence 03' }).click();
-    await expect(page.getByRole('heading', { name: 'AI that leaves the notebook.' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Intelligence 03' })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
-    const workLink = page.getByRole('link', { name: 'See the work behind it' });
-    await expect(workLink).toHaveAttribute('href', '#systems');
     await noteControl.scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath('workbench.png'), animations: 'disabled' });
-    await workLink.click();
-    await expect(page.locator('#systems')).toBeInViewport();
     const principle = page.locator('details').filter({ hasText: 'Design for the unhappy path.' });
     await principle.locator('summary').click();
     await expect(principle.getByText(/Timeouts, disk failures/)).toBeVisible();
@@ -193,6 +181,134 @@ test('concept-specific visual controls are functional', async ({ page }, testInf
     await page.getByRole('button', { name: '?? / Side quests' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Secret experiments');
   }
+});
+
+test('native scroll unfolds the recovery sketch, reverses it, and reaches real evidence', async ({
+  page,
+}, testInfo) => {
+  await page.route('**/api/github-pinned', route => route.fulfill({ json: pinned }));
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Follow the question', exact: true }).click();
+  await expect
+    .poll(() =>
+      page.locator('#inquiry').evaluate(element => Math.round(element.getBoundingClientRect().top))
+    )
+    .toBe(110);
+  const story = page.getByRole('region', { name: 'From a question to the evidence' });
+  const recovery = story.locator('[data-sketch-layer="recovery"]');
+  const validation = story.locator('[data-sketch-layer="validation"]');
+  await expect(story).toHaveAttribute('data-chapter-active', 'question');
+  await expect(recovery).toHaveCSS('opacity', '0');
+  await expect(story.locator('figcaption')).toContainText('What if the disk never replies?');
+  const drawing = story.locator('figure');
+  await expect(drawing).toBeInViewport();
+  await page.screenshot({
+    path: testInfo.outputPath('narrative-question.png'),
+    animations: 'disabled',
+  });
+
+  const scrollToChapter = async (id: string) => {
+    const distance = await page
+      .locator(`#${id}`)
+      .evaluate(
+        element =>
+          element.getBoundingClientRect().top -
+          window.innerHeight * (window.innerWidth <= 740 ? 0.56 : 0.25)
+      );
+    await page.mouse.wheel(0, distance);
+  };
+  await scrollToChapter('decisions');
+  await expect(story).toHaveAttribute('data-chapter-active', 'decisions');
+  await expect(recovery).toHaveCSS('opacity', '1');
+  await expect(recovery.locator('path').first()).toHaveCSS('stroke-dashoffset', '0px');
+  await expect(validation).toHaveCSS('opacity', '0');
+  await expect(story.locator('figcaption')).toContainText('Give recovery a path');
+  await expect(drawing).toBeInViewport();
+  await page.screenshot({
+    path: testInfo.outputPath('narrative-decisions.png'),
+    animations: 'disabled',
+  });
+
+  await scrollToChapter('evidence');
+  await expect(story).toHaveAttribute('data-chapter-active', 'evidence');
+  await expect(validation).toHaveCSS('opacity', '1');
+  await expect(story.locator('#evidence')).toContainText('~80% in failure testing');
+  await expect(drawing).toBeInViewport();
+  const sketchBounds = await drawing.boundingBox();
+  const treasureBounds = await page
+    .getByRole('button', { name: 'Open side quests', exact: true })
+    .boundingBox();
+  expect(sketchBounds).not.toBeNull();
+  expect(treasureBounds).not.toBeNull();
+  expect(
+    treasureBounds!.x >= sketchBounds!.x + sketchBounds!.width ||
+      treasureBounds!.y >= sketchBounds!.y + sketchBounds!.height
+  ).toBe(true);
+  await page.screenshot({
+    path: testInfo.outputPath('narrative-evidence.png'),
+    animations: 'disabled',
+  });
+  await scrollToChapter('decisions');
+  await expect(story).toHaveAttribute('data-chapter-active', 'decisions');
+  await expect(validation).toHaveCSS('opacity', '0');
+  await expect(recovery).toHaveCSS('opacity', '1');
+  await scrollToChapter('question');
+  await expect(story).toHaveAttribute('data-chapter-active', 'question');
+  await expect(recovery).toHaveCSS('opacity', '0');
+  await expect(recovery.locator('path').first()).toHaveCSS('stroke-dashoffset', '1px');
+
+  await scrollToChapter('evidence');
+  await expect(story).toHaveAttribute('data-chapter-active', 'evidence');
+  await story.getByRole('link', { name: 'Read the Microsoft evidence' }).click();
+  await expect(page.locator('#microsoft-azure')).toBeInViewport();
+  await expect(page.locator('#microsoft-azure details')).toHaveAttribute('open', '');
+  await expect(page.locator('#microsoft-azure')).toContainText('~80% in failure testing');
+  await page.goto('/#evidence');
+  await story.getByRole('link', { name: /Amazon.*Timeout-aware spillover/ }).click();
+  await expect(page.locator('#amazon-jwo')).toBeInViewport();
+  await expect(page.locator('#amazon-jwo details')).toHaveAttribute('open', '');
+  await expect(page.locator('#amazon-jwo')).toContainText('85% → ~92%');
+});
+
+test('reduced-motion story has keyboard chapter links and a direct recruiter path', async ({
+  page,
+}) => {
+  await page.route('**/api/github-pinned', route => route.fulfill({ json: pinned }));
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Experience, directly' }).click();
+  await expect(page.locator('#work')).toBeInViewport();
+  await expect(page.getByRole('heading', { name: 'Microsoft', exact: true })).toBeVisible();
+  await page.goto('/#inquiry');
+  const chapters = page.getByRole('navigation', { name: 'Engineering story chapters' });
+  const decisions = chapters.getByRole('link', { name: '02 The decisions' });
+  await decisions.focus();
+  await decisions.press('Enter');
+  const story = page.locator('#inquiry');
+  await expect(story).toHaveAttribute('data-chapter-active', 'decisions');
+  await expect(decisions).toHaveAttribute('aria-current', 'step');
+  await expect(story.locator('[data-sketch-layer="recovery"]')).toHaveCSS('opacity', '1');
+  expect(
+    await story
+      .locator('figure svg')
+      .evaluate(
+        element =>
+          element
+            .getAnimations({ subtree: true })
+            .filter(animation => animation.playState === 'running').length
+      )
+  ).toBe(0);
+  await chapters.getByRole('link', { name: '03 The evidence' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(story).toHaveAttribute('data-chapter-active', 'evidence');
+  await story.getByRole('link', { name: /Oyo.*voice pipelines/ }).click();
+  await expect(page.locator('#oyo-sde1')).toBeInViewport();
+  await expect(page.locator('#oyo-sde1 details')).toHaveAttribute('open', '');
+  await expect(page.locator('#oyo-sde1')).toContainText('projected 20% cost reduction');
+  await page.goto('/#amazon-jwo');
+  await expect(page.locator('#amazon-jwo details')).toHaveAttribute('open', '');
+  await expect(page.locator('#amazon-jwo')).toBeInViewport();
 });
 
 test('direct section links, email copying, and API timeouts remain usable', async ({ page }) => {

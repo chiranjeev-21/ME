@@ -4,6 +4,7 @@ import styles from './Treasure.module.css';
 
 interface HeroProps {
   onTreasureClick?: () => void;
+  quiet?: boolean;
 }
 
 const TREASURE_MARGIN = 16;
@@ -25,7 +26,7 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
-export function Treasure({ onTreasureClick }: HeroProps) {
+export function Treasure({ onTreasureClick, quiet = false }: HeroProps) {
   const reducedMotion = useReducedMotion();
   const interacting = useRef(false);
   const treasureRef = useRef<HTMLButtonElement>(null);
@@ -37,7 +38,7 @@ export function Treasure({ onTreasureClick }: HeroProps) {
   const [isTreasureVisible, setIsTreasureVisible] = useState(false);
 
   useEffect(() => {
-    if (reducedMotion) {
+    if (reducedMotion || quiet) {
       const positionTreasure = () => {
         const bounds = treasureRef.current?.getBoundingClientRect();
         setTreasurePosition({
@@ -95,10 +96,10 @@ export function Treasure({ onTreasureClick }: HeroProps) {
       window.clearTimeout(moveTimeoutId);
       window.removeEventListener('resize', handleResize);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, quiet]);
 
   useEffect(() => {
-    if (reducedMotion) {
+    if (reducedMotion || quiet) {
       setIsTreasureVisible(true);
       return;
     }
@@ -130,7 +131,7 @@ export function Treasure({ onTreasureClick }: HeroProps) {
       isDisposed = true;
       window.clearTimeout(visibilityTimeoutId);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, quiet]);
 
   const treasureStyle: CSSProperties & Record<'--treasure-move-ms', string> = {
     left: `${treasurePosition.x}px`,
@@ -142,7 +143,7 @@ export function Treasure({ onTreasureClick }: HeroProps) {
     <button
       ref={treasureRef}
       type="button"
-      className={`${styles.treasure} ${isTreasureVisible ? styles.treasureVisible : styles.treasureHidden}`}
+      className={`${styles.treasure} ${quiet ? styles.quiet : ''} ${isTreasureVisible ? styles.treasureVisible : styles.treasureHidden}`}
       style={treasureStyle}
       onClick={onTreasureClick}
       onPointerEnter={() => {

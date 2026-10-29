@@ -1,9 +1,18 @@
 # Chiranjeev Singh — Portfolio
 
-**This branch: Engineering Command Center / CJ's Workbench** — a name-led personal
-portfolio with a taped portrait, a keyboard-accessible desk note, and a tactile
-engineering focus map. Warm paper annotations meet cyan blueprints; the experience,
-Agentic AI and systems skills, engineering principles, terminal, and hidden vault remain.
+**This branch: CJ's Engineering Workbench** — an open, name-led portrait followed
+by an engineering question that unfolds as you scroll. A sticky working sketch
+adds a recovery path, then a failure-testing checkpoint, alongside the decisions
+and resume-based evidence. Reverse scroll unwinds it. Chapter links work with
+keyboard navigation and reduced motion; the full experience is also one click
+from the hero, without taking the narrative route.
+
+The diagram is explicitly a conceptual sketch, not a production topology or live
+telemetry. Evidence links open the relevant Microsoft, Amazon, or Oyo details.
+Agentic AI and Distributed Computing skills, GitHub-powered projects, engineering
+notes, terminal, and treasure/vault remain available. No wheel/touch interception.
+The treasure is a small, stationary corner entry here, so it never roams across
+the working sketch. Returning from the vault restores the invoking control's focus.
 
 A personal portfolio for **Chiranjeev Singh**, focused on software engineering, AI systems, and product-quality frontend presentation.
 
@@ -26,7 +35,7 @@ npm run dev
 Local development starts on `http://localhost:5173`.
 
 Browser tests use one worker and port `5173` by default. For an isolated run in
-PowerShell: `$env:PORTFOLIO_TEST_PORT='4173'; npm run test:e2e`. The test server
+PowerShell: `$env:PORTFOLIO_TEST_PORT='4273'; npm run test:e2e`. The test server
 uses strict port binding. Live GitHub availability checks remain opt-in with
 `LIVE_GITHUB=1`; routine tests use deterministic API fixtures.
 
@@ -47,7 +56,8 @@ npm run test:e2e    # desktop/mobile browser tests (install Chromium first)
 
 - Three creative directions with distinct interactive hero visuals.
 - Resume-driven Microsoft, Amazon, and Oyo experience; distributed computing and AI skills.
-- Scroll reveals, reading progress, sticky timeline context, skill filters, and a navigation dock.
+- A reversible native-scroll question → system → evidence sketch, reading progress,
+  skill filters, and a navigation dock that waits until after the opening story.
 - A keyboard-accessible command terminal (`Ctrl+K` / `Cmd+K`) with history and real navigation.
 - A floating treasure chest and hidden vault with live GitHub data and honest offline states.
 - Responsive layouts, reduced-motion support, contact links, and email copying.

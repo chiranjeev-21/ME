@@ -43,11 +43,13 @@ function App() {
       } else {
         window.scrollTo({ top: view === 'vault' ? 0 : savedScroll.current, behavior: 'instant' });
         if (view === 'main' && focusReturn.current) {
-          document
-            .querySelector<HTMLElement>(
-              savedScroll.current > 0 ? '[data-vault-trigger]' : '[aria-label="Open hidden vault"]'
-            )
-            ?.focus({ preventScroll: true });
+          const label = focusReturn.current.getAttribute('aria-label');
+          const selector = label
+            ? `[aria-label="${CSS.escape(label)}"]`
+            : focusReturn.current.hasAttribute('data-vault-trigger')
+              ? '[data-vault-trigger]'
+              : '[aria-label="Open side quests"]';
+          document.querySelector<HTMLElement>(selector)?.focus({ preventScroll: true });
         }
       }
     });
@@ -127,7 +129,10 @@ function App() {
             onVault={() => changeView('vault')}
             onTerminal={openTerminal}
           />
-          <Treasure onTreasureClick={() => changeView('vault')} />
+          <Treasure
+            quiet={ACTIVE_CONCEPT === 'command'}
+            onTreasureClick={() => changeView('vault')}
+          />
         </>
       ) : (
         <main id="main-content">

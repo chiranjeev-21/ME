@@ -64,6 +64,21 @@
     height: 48px;
   }
 }
+.treasure.quiet {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  animation: none;
+  transition: none;
+  box-shadow: none;
+}
+.quiet .treasureChest {
+  width: 36px;
+  height: 36px;
+}
+.quiet .treasureAura {
+  opacity: 0.3;
+}
 @media (prefers-reduced-motion: reduce) {
   .treasure {
     animation: none;

@@ -183,101 +183,19 @@ function UniverseVisual({ onVault }: { onVault: () => void }) {
   );
 }
 
-const SYSTEM_NODES = [
-  {
-    label: 'Storage',
-    icon: 'grid',
-    title: 'Reliability is a feature.',
-    text: 'Distributed storage, slice-based replication, and disk recovery. Currently exploring these problems on Azure Direct Drive.',
-    href: '#work',
-  },
-  {
-    label: 'Signals',
-    icon: 'globe',
-    title: 'Find the signal in the noise.',
-    text: 'Large-scale telemetry, IO latency anomaly detection, and release comparison. Turning operational data into useful decisions.',
-    href: '#work',
-  },
-  {
-    label: 'Intelligence',
-    icon: 'spark',
-    title: 'AI that leaves the notebook.',
-    text: 'RAG, voice pipelines, and agentic workflows. Useful intelligence is the kind that reaches people in production.',
-    href: '#systems',
-  },
-] as const;
-
 function CommandVisual() {
-  const [selected, setSelected] = useState(0);
   return (
-    <div className={styles.workbench}>
-      <div className={styles.workbenchTop}>
-        <span className={styles.workbenchMonogram} aria-hidden="true">
-          CJ
-        </span>
-        <figure className={styles.deskPortrait}>
-          <img
-            src="/images/photo.jpeg"
-            width="180"
-            height="198"
-            alt="Chiranjeev Singh smiling outdoors"
-          />
-          <figcaption>A face to the code. / CJ</figcaption>
-        </figure>
-        <div className={styles.deskNotes}>
-          <span className={styles.deskLabel}>BENGALURU, INDIA</span>
-          <p>
-            Always leave room
-            <br />
-            for a good <em>what if?</em>
-          </p>
-          <details className={styles.deskNote}>
-            <summary>
-              A note from CJ <span aria-hidden="true">↗</span>
-            </summary>
-            <p>
-              The systems are serious. This space doesn&apos;t have to be. Part track record, part
-              notebook, with a few experiments tucked away. Make yourself at home.
-            </p>
-          </details>
-        </div>
-      </div>
-      <div
-        className={styles.commandScene}
-        role="group"
-        aria-label="Interactive engineering focus map"
-      >
-        <div className={styles.commandBar}>
-          <span>ON MY WORKBENCH</span>
-          <span>Pick a thread ↓</span>
-        </div>
-        <div className={styles.commandGrid}>
-          <div className={styles.commandNodes}>
-            {SYSTEM_NODES.map((node, index) => (
-              <button
-                key={node.label}
-                aria-pressed={selected === index}
-                aria-controls="focus-detail"
-                className={selected === index ? styles.selectedNode : ''}
-                onClick={() => setSelected(index)}
-              >
-                <Icon name={node.icon} size={18} />
-                <span>{node.label}</span>
-                <small>0{index + 1}</small>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div id="focus-detail" className={styles.commandDetail} aria-live="polite">
-          <h2>{SYSTEM_NODES[selected].title}</h2>
-          <p>{SYSTEM_NODES[selected].text}</p>
-          <a href={SYSTEM_NODES[selected].href}>
-            See the work behind it <Icon name="arrow" size={14} />
-          </a>
-        </div>
-        <div className={styles.commandFoot}>A map of my interests. Not a production topology.</div>
-      </div>
-    </div>
+    <figure className={styles.deskPortrait}>
+      <img
+        src="/images/photo.jpeg"
+        width="340"
+        height="370"
+        alt="Chiranjeev Singh smiling outdoors"
+      />
+      <figcaption>
+        A face to the code. <span>Chiranjeev / CJ</span>
+      </figcaption>
+    </figure>
   );
 }
 
