@@ -178,7 +178,7 @@ function UniverseVisual({ onVault }: { onVault: () => void }) {
         ?? / Side quests
         <Icon name="spark" size={14} />
       </button>
-      <span className={styles.coordinate}>28.6&deg; N &nbsp; / &nbsp; ALWAYS EXPLORING</span>
+      <span className={styles.coordinate}>IDEAS IN ORBIT &nbsp; / &nbsp; ALWAYS EXPLORING</span>
     </div>
   );
 }

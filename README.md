@@ -1,5 +1,8 @@
 # Chiranjeev Singh — Portfolio
 
+**This branch: Personal Universe** — orbital navigation, a dimensional planet,
+and a lavender/peach visual world. Compare it with the CJ OS and Command Center previews.
+
 A personal portfolio for **Chiranjeev Singh**, focused on software engineering, AI systems, and product-quality frontend presentation.
 
 Built with **React 18**, **TypeScript 5**, and **Vite 5**.

@@ -1,6 +1,6 @@
 export type ConceptId = 'os' | 'universe' | 'command';
 
-export const ACTIVE_CONCEPT: ConceptId = 'os';
+export const ACTIVE_CONCEPT: ConceptId = 'universe';
 
 export const CONCEPTS = {
   os: {
@@ -16,8 +16,8 @@ export const CONCEPTS = {
     name: 'CJ Universe',
     version: 'a personal universe / 2026',
     eyebrow: 'A FEW IDEAS. INFINITE POSSIBILITIES.',
-    headline: 'Follow the curiosity.',
-    accent: 'Find a new orbit.',
+    headline: 'A curious mind.',
+    accent: 'An entire universe.',
     note: 'Every good system starts with a little exploration.',
     projectTitle: 'Dispatches from other orbits.',
   },

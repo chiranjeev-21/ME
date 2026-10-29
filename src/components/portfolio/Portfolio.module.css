@@ -1469,7 +1469,11 @@
 }
 .planet {
   position: absolute;
-  inset: 95px 100px;
+  top: 50%;
+  left: 50%;
+  width: min(60%, 280px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1567,8 +1571,22 @@
 }
 .site[data-concept='universe'] .hero {
   padding-top: 150px;
+  background: radial-gradient(ellipse at 78% 45%, #75469a16, transparent 55%);
 }
 .site[data-concept='universe'] .hero h1 {
+  font-weight: 400;
+}
+.site[data-concept='universe'] .hero h1 > span {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 1.03em;
+  letter-spacing: -0.065em;
+}
+.site[data-concept='universe'] .heroGrid {
+  background: radial-gradient(circle, #d3b5ff60 1px, transparent 1px);
+  background-size: 37px 43px;
+}
+.site[data-concept='universe'] .sectionHeading h2 {
   font-weight: 400;
 }
 .site[data-concept='universe'] .statement {
@@ -1898,7 +1916,7 @@
     gap: 60px;
   }
   .planet {
-    inset: 110px 70px;
+    width: 65%;
   }
   .nodeTwo {
     right: -8px;
@@ -2096,7 +2114,7 @@
     font-size: 12px;
   }
   .planet {
-    inset: 110px 50px;
+    width: 68%;
   }
   .planet > span {
     font-size: 62px;
@@ -2566,7 +2584,7 @@
     height: 380px;
   }
   .planet {
-    inset: 75px 80px;
+    width: 60%;
   }
   .planet > span {
     font-size: 68px;
@@ -2669,7 +2687,7 @@
     flex-wrap: wrap;
   }
   .planet {
-    inset: 85px 45px;
+    width: 68%;
   }
   .orbitNode {
     font-size: 6px;
