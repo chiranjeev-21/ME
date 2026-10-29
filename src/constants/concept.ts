@@ -22,12 +22,12 @@ export const CONCEPTS = {
     projectTitle: 'Dispatches from other orbits.',
   },
   command: {
-    name: 'CJ / Control',
-    version: 'engineering command center / 2026',
-    eyebrow: 'DISTRIBUTED SYSTEMS. CONNECTED THINKING.',
-    headline: 'Built for complexity.',
-    accent: 'Designed for impact.',
-    note: 'The human behind the systems.',
+    name: 'CJ / Workbench',
+    version: 'a personal engineering workbench / 2026',
+    eyebrow: 'CHIRANJEEV SINGH / A PERSONAL WORKBENCH',
+    headline: 'Chiranjeev',
+    accent: 'Singh.',
+    note: 'Serious about the work. Curious about everything else.',
     projectTitle: 'Experiments beyond production.',
   },
 } as const;

@@ -35,6 +35,7 @@ test('resume content, expandable experience, skill filters, and responsive navig
   await expect(amazon.getByText(/reducing SEV2 tickets/)).toBeVisible();
   await page.getByRole('button', { name: 'AI & ML', exact: true }).click();
   await expect(page.getByRole('heading', { name: /Less AI theatre/ })).toBeVisible();
+  await expect(page.locator('#systems').getByText('Agentic AI', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: /The invisible stuff/ })).toHaveCount(0);
   await page.getByRole('button', { name: 'Distributed systems', exact: true }).click();
   await expect(
@@ -144,7 +145,7 @@ test('malformed or failed GitHub data becomes an honest usable fallback', async 
   await expect(page.getByRole('status').filter({ hasText: 'Local artifact' })).toBeVisible();
 });
 
-test('concept-specific visual controls are functional', async ({ page }) => {
+test('concept-specific visual controls are functional', async ({ page }, testInfo) => {
   await page.route('**/api/github-pinned', route => route.fulfill({ json: pinned }));
   await page.goto('/');
   const concept = await page.locator('[data-concept]').getAttribute('data-concept');
@@ -155,12 +156,33 @@ test('concept-specific visual controls are functional', async ({ page }) => {
     await expect(page.getByRole('tab', { name: 'notes.tsx' })).toBeFocused();
     await expect(page.getByRole('tabpanel')).toContainText('Make it useful.');
   } else if (concept === 'command') {
+    const deskNote = page.locator('details').filter({ hasText: 'A note from CJ' });
+    const noteControl = deskNote.locator('summary');
+    await noteControl.focus();
+    await noteControl.press('Enter');
+    await expect(deskNote).toHaveAttribute('open', '');
+    await expect(deskNote.getByText(/Make yourself at home/)).toBeVisible();
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+    ).toBe(true);
+    await noteControl.press('Enter');
+    await expect(deskNote).not.toHaveAttribute('open');
     await page.getByRole('button', { name: 'Signals 02' }).click();
     await expect(
       page.getByRole('heading', { name: 'Find the signal in the noise.' })
     ).toBeVisible();
     await page.getByRole('button', { name: 'Intelligence 03' }).click();
     await expect(page.getByRole('heading', { name: 'AI that leaves the notebook.' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Intelligence 03' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    const workLink = page.getByRole('link', { name: 'See the work behind it' });
+    await expect(workLink).toHaveAttribute('href', '#systems');
+    await noteControl.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('workbench.png'), animations: 'disabled' });
+    await workLink.click();
+    await expect(page.locator('#systems')).toBeInViewport();
     const principle = page.locator('details').filter({ hasText: 'Design for the unhappy path.' });
     await principle.locator('summary').click();
     await expect(principle.getByText(/Timeouts, disk failures/)).toBeVisible();
@@ -256,6 +278,12 @@ test('scroll animation, desktop/mobile screenshots, and narrow layout', async ({
     const reveal = page.locator(`#${id} [data-reveal]`).first();
     await reveal.scrollIntoViewIfNeeded();
     await expect(reveal).toHaveCSS('opacity', '1');
+    if (id === 'systems') {
+      await page.screenshot({
+        path: testInfo.outputPath('systems-scrolled.png'),
+        animations: 'disabled',
+      });
+    }
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
     ).toBe(true);

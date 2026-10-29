@@ -160,7 +160,7 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
           <div className={styles.heroGrid} aria-hidden="true" />
           <div className={styles.heroTopline}>
             <span>{concept.eyebrow}</span>
-            <span className={styles.heroEdition}>INDEPENDENT THINKING / CONNECTED SYSTEMS</span>
+            <span className={styles.heroEdition}>ENGINEERING, WITH A HUMAN SIGNATURE</span>
           </div>
           <div className={styles.heroBody}>
             <div className={styles.heroCopy}>
@@ -172,14 +172,18 @@ export function Portfolio({ quests, onVault, onTerminal }: PortfolioProps) {
                 <br />
                 <span>{concept.accent}</span>
               </h1>
+              {ACTIVE_CONCEPT === 'command' && (
+                <div className={styles.personalLine}>Hard systems. Human instincts.</div>
+              )}
               <p>
-                I&apos;m <strong>Chiranjeev Singh</strong> — a software engineer making distributed
-                systems more reliable and AI more useful. Currently building on{' '}
-                <strong>Azure Direct Drive</strong>. Previously Amazon &amp; Oyo.
+                I&apos;m <strong>CJ</strong> — a software engineer who likes untangling complicated
+                things. Distributed systems, backend engineering, and useful AI are my kind of
+                problems. Currently building on <strong>Azure Direct Drive</strong>. Previously
+                Amazon &amp; Oyo.
               </p>
               <div className={styles.heroButtons}>
                 <a className={styles.primaryButton} href="#work">
-                  Explore my work <Icon name="down" size={18} />
+                  See what I&apos;ve built <Icon name="down" size={18} />
                 </a>
                 <a className={styles.secondaryButton} href={`mailto:${EMAIL}`}>
                   Let&apos;s talk <Icon name="arrow" size={18} />

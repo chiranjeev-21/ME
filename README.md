@@ -1,7 +1,9 @@
 # Chiranjeev Singh — Portfolio
 
-**This branch: Engineering Command Center** — an interactive technical focus map,
-engineering principles, and a cyan/blueprint interface built around evidence and systems thinking.
+**This branch: Engineering Command Center / CJ's Workbench** — a name-led personal
+portfolio with a taped portrait, a keyboard-accessible desk note, and a tactile
+engineering focus map. Warm paper annotations meet cyan blueprints; the experience,
+Agentic AI and systems skills, engineering principles, terminal, and hidden vault remain.
 
 A personal portfolio for **Chiranjeev Singh**, focused on software engineering, AI systems, and product-quality frontend presentation.
 
@@ -22,6 +24,11 @@ npm run dev
 ```
 
 Local development starts on `http://localhost:5173`.
+
+Browser tests use one worker and port `5173` by default. For an isolated run in
+PowerShell: `$env:PORTFOLIO_TEST_PORT='4173'; npm run test:e2e`. The test server
+uses strict port binding. Live GitHub availability checks remain opt-in with
+`LIVE_GITHUB=1`; routine tests use deterministic API fixtures.
 
 ## Available Scripts
 
