@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { CAREER, plainText } from '../content.ts';
 import type { WorldViewProps } from '../types';
 import { DestinationLink, Eyebrow } from './shared';
@@ -20,8 +21,33 @@ const principles = [
   },
 ];
 
+const requestStages = [
+  {
+    label: 'INPUT',
+    title: 'Workload',
+    subtitle: 'Demand & constraints',
+    detail:
+      'Start with the conditions: what is being asked of the system, and what capacity or latency constraints matter? A changed workload can change the result without a code change.',
+  },
+  {
+    label: 'DECISION',
+    title: 'Policy',
+    subtitle: 'Capacity & timeouts',
+    detail:
+      'Make the boundary explicit. Capacity limits and timeout-aware handling describe which work can proceed and when waiting must end. A policy is a trade-off, not unlimited capacity.',
+  },
+  {
+    label: 'EXECUTION',
+    title: 'Storage',
+    subtitle: 'Failure & recovery',
+    detail:
+      'Follow the failure path as well as the successful request. Recovery behavior and observations feed the next revision; this illustration does not simulate or measure a storage service.',
+  },
+];
+
 export function EngineeringWorld(props: WorldViewProps) {
   const current = CAREER[0];
+  const [stage, setStage] = useState(0);
   return (
     <section className="uw-world uw-engineering" aria-labelledby="uw-engineering-title">
       <header className="uw-blueprint-header">
@@ -38,36 +64,51 @@ export function EngineeringWorld(props: WorldViewProps) {
           Useful systems under real constraints.
         </p>
       </header>
-      <figure className="uw-system-diagram">
+      <figure className="uw-system-diagram" data-reveal="trace">
         <figcaption>
           <span>FIG. 01 — Reasoning about a request</span>
           <strong>Illustrative only · not an employer production topology</strong>
         </figcaption>
-        <div className="uw-flow">
-          <div>
-            <small>INPUT</small>
-            <strong>Workload</strong>
-            <span>Demand & constraints</span>
-          </div>
-          <i aria-hidden="true">→</i>
-          <div>
-            <small>DECISION</small>
-            <strong>Policy</strong>
-            <span>Capacity & timeouts</span>
-          </div>
-          <i aria-hidden="true">→</i>
-          <div>
-            <small>EXECUTION</small>
-            <strong>Storage</strong>
-            <span>Failure & recovery</span>
-          </div>
+        <p className="uw-diagram-instruction">Select a stage to inspect the reasoning.</p>
+        <div className="uw-flow" role="group" aria-label="Illustrative request stages">
+          {requestStages.map((item, index) => (
+            <button
+              key={item.title}
+              type="button"
+              aria-pressed={stage === index}
+              aria-controls="uw-request-detail"
+              onClick={() => setStage(index)}
+            >
+              <small>{item.label}</small>
+              <strong>{item.title}</strong>
+              <span>{item.subtitle}</span>
+              <span className="uw-flow-direction" aria-hidden="true">
+                {index < requestStages.length - 1 ? '→' : '↵'}
+              </span>
+            </button>
+          ))}
         </div>
+        <svg
+          key={stage}
+          className="uw-request-trace"
+          viewBox="0 0 1000 45"
+          preserveAspectRatio="none"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path className="uw-trace-out" pathLength="1" d="M2 5H998" />
+          <path className="uw-trace-return" pathLength="1" d="M998 5V40H2V18" />
+        </svg>
+        <p id="uw-request-detail" className="uw-flow-detail" role="status">
+          <strong>{requestStages[stage].title} / </strong>
+          {requestStages[stage].detail}
+        </p>
         <div className="uw-feedback">
           <span aria-hidden="true">↳</span> Observe → compare → revise{' '}
           <span aria-hidden="true">↵</span>
         </div>
       </figure>
-      <section className="uw-current-work">
+      <section className="uw-current-work" data-reveal="section">
         <div>
           <Eyebrow>Current context</Eyebrow>
           <h2>{current.company}</h2>
@@ -92,14 +133,14 @@ export function EngineeringWorld(props: WorldViewProps) {
       </section>
       <div className="uw-principles">
         {principles.map(principle => (
-          <article key={principle.index}>
+          <article key={principle.index} data-reveal="section">
             <span>{principle.index} /</span>
             <h3>{principle.title}</h3>
             <p>{principle.body}</p>
           </article>
         ))}
       </div>
-      <footer className="uw-engineering-footer">
+      <footer className="uw-engineering-footer" data-reveal="section">
         <div>
           <Eyebrow>Inspectable portfolio architecture</Eyebrow>
           <h2>

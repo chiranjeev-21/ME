@@ -10,8 +10,9 @@ interface Props {
   content: UniverseContent;
   navigation: UniverseNavigation;
   navigate: (patch: Partial<UniverseNavigation>) => void;
+  onRun?: (matches: number) => void;
 }
-export function ResearchLab({ content, navigation, navigate }: Props) {
+export function ResearchLab({ content, navigation, navigate, onRun }: Props) {
   const documents = useMemo<ResearchDocument[]>(
     () => [
       ...content.projects.map(project => ({
@@ -52,6 +53,7 @@ export function ResearchLab({ content, navigation, navigate }: Props) {
     const start = performance.now();
     const result = retrieveResearch(documents, query, topK);
     setRun({ result, duration: performance.now() - start, query });
+    onRun?.(result.matches.length);
     setStage(2);
   };
   const source = (event: MouseEvent<HTMLAnchorElement>, href: string) => {

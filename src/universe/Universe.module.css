@@ -179,6 +179,10 @@
   left: clamp(30px, 7vw, 125px);
   transform: translateY(-42%);
   width: min(430px, 37vw);
+  pointer-events: none;
+}
+.landing button,
+.landing a {
   pointer-events: auto;
 }
 .eyebrow {
@@ -286,6 +290,18 @@
   pointer-events: auto;
   outline: none;
 }
+.expeditionHost {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  overflow: visible;
+  pointer-events: none;
+}
 .emptyHost {
   display: none;
 }
@@ -383,6 +399,7 @@
   border-bottom-color: color-mix(in srgb, var(--world-color) 35%, transparent);
 }
 .sceneHUD {
+  pointer-events: none;
   position: fixed;
   z-index: 18;
   bottom: 14px;
@@ -407,6 +424,7 @@
   background: #cbb58f;
 }
 .sceneHUD label {
+  pointer-events: auto;
   margin-left: auto;
   display: flex;
   align-items: center;

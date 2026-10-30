@@ -22,8 +22,25 @@ export function LabWorld({ lab }: WorldViewProps) {
           limitations before interpreting a result as an answer.
         </p>
       </header>
+      <ol className="uw-lab-protocol" aria-label="How to read this experiment" data-reveal="trace">
+        <li>
+          <span>01 / Source</span>
+          <strong>Start with the material.</strong>
+          <p>Inspect what the supplied evidence actually says.</p>
+        </li>
+        <li>
+          <span>02 / Mechanism</span>
+          <strong>Try the working controls.</strong>
+          <p>Use the lab’s own labels to understand how a result is produced.</p>
+        </li>
+        <li>
+          <span>03 / Boundary</span>
+          <strong>Keep the limits in view.</strong>
+          <p>A match is a place to look, not a new verified claim.</p>
+        </li>
+      </ol>
       <div className="uw-lab-surface">{lab}</div>
-      <aside className="uw-lab-note">
+      <aside className="uw-lab-note" data-reveal="section">
         <span aria-hidden="true">↳</span>
         <p>
           <strong>A note on authority.</strong> Finding a passage is not the same as verifying a new

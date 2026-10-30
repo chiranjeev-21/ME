@@ -67,7 +67,7 @@ function CaseStudy({
       )}
       <div className="uw-case-body">
         {sections.map((section, index) => (
-          <section key={section.title}>
+          <section key={section.title} data-reveal="section">
             <div>
               <span className="uw-meta">{String(index + 1).padStart(2, '0')} /</span>
               <h2>{section.title}</h2>
@@ -244,12 +244,16 @@ export function ProjectsWorld(props: WorldViewProps) {
         {query ? ` matching “${query}”` : ''}
       </p>
       {filtered.length ? (
-        <div className="uw-project-grid">
+        <div className="uw-project-grid" aria-label="Project manifest">
           {filtered.map((project, index) => (
             <article
               className={`uw-project-card ${project.image ? 'uw-project-card-featured' : ''}`}
               key={project.id}
+              data-reveal="manifest"
             >
+              <span className="uw-project-bay" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </span>
               {project.image && (
                 <DestinationLink
                   {...props}
@@ -269,7 +273,6 @@ export function ProjectsWorld(props: WorldViewProps) {
               <div className="uw-project-card-body">
                 <div className="uw-project-card-top">
                   <span className="uw-meta">
-                    {String(index + 1).padStart(2, '0')} /{' '}
                     {project.source === 'curated'
                       ? 'AUTHORED'
                       : project.source === 'fallback'

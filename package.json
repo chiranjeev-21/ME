@@ -11,7 +11,7 @@
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "type-check": "tsc --noEmit",
-    "test": "node --test tests\\github-pinned.test.cjs tests\\universe-navigation.test.cjs tests\\universe-lab.test.cjs tests\\universe-content.test.cjs tests\\universe-scene.test.cjs",
+    "test": "node --test tests\\github-pinned.test.cjs tests\\universe-navigation.test.cjs tests\\universe-lab.test.cjs tests\\universe-content.test.cjs tests\\universe-scene.test.cjs tests\\universe-expedition.test.cjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {

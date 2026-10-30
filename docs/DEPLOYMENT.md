@@ -1,7 +1,8 @@
 # CJ Universe deployment
 
-The 3D release uses **`feature/cj-universe-3d`** and
-**`design/personal-universe`**. Both point to the verified Universe implementation.
+The scroll-first release uses **`feature/cj-universe-scroll-worlds`**.
+**`feature/cj-universe-3d`** and **`design/personal-universe`** also track the
+verified Universe implementation.
 `main`, CJ OS, and Engineering Workbench are not changed by this release.
 
 ## Vercel previews
@@ -10,7 +11,7 @@ The 3D release uses **`feature/cj-universe-3d`** and
 2. Open the existing portfolio project connected to `chiranjeev-21/ME`.
 3. Confirm **Settings > Git** still points to this repository.
 4. Keep Production branch tracking on **`main`**.
-5. In **Deployments**, filter by either Universe branch.
+5. In **Deployments**, filter by one of the Universe branches.
 6. Wait for **Ready**, open its details, and use **Visit** or **Copy URL**.
 7. Prefer the branch URL for ongoing review; a commit URL is an immutable snapshot.
 
@@ -57,6 +58,11 @@ entry point. **Do not replace these with a global rewrite that sends `/api/*` to
 The same project/article can be opened in either mode. A failed or interrupted
 WebGL context retains the destination and switches to Browse; it does not invent
 a second copy of the project.
+
+Explore uses native document scrolling through approach, atmosphere entry, and
+themed surface environments. Shared world documents stay mounted when switching
+to Browse, preserving filters, creative settings, and lab drafts. Direct links
+skip travel spacers and open at the readable destination.
 
 ## GitHub feed
 

@@ -4,14 +4,21 @@ import { usePinnedQuests } from '../hooks/usePinnedQuests';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { buildUniverseContent } from './content';
 import { WORLDS, getWorld } from './worlds';
-import { routeHref } from './navigation';
+import { routeHref, updateNavigation } from './navigation';
 import { useUniverseNavigation } from './useNavigation';
 import { WorldView } from './worlds/WorldView';
 import { ResearchLab } from './lab/ResearchLab';
 import { UniversePalette, UniverseTerminal } from './ui/Overlays';
 import { UniverseIcon } from './ui/Icon';
 import { SceneBoundary } from './SceneBoundary';
-import type { UniverseNavigation, WorldId } from './types';
+import { Expedition } from './journey/Expedition';
+import type {
+  ExpeditionFrame,
+  ExpeditionHandle,
+  UniverseNavigation,
+  WorldId,
+  WorldInteraction,
+} from './types';
 import styles from './Universe.module.css';
 
 const UniverseScene = lazy(() =>
@@ -56,9 +63,9 @@ function OrbitIllustration() {
 export function Universe() {
   const feed = usePinnedQuests();
   const reducedMotion = useReducedMotion();
-  const { navigation, navigate } = useUniverseNavigation();
+  const { navigation, navigate, current: navigationState, cause } = useUniverseNavigation();
   const content = useMemo(() => buildUniverseContent(feed.data), [feed.data]);
-  const [entered, setEntered] = useState(Boolean(navigation.world));
+  const [expeditionPhase, setExpeditionPhase] = useState<ExpeditionFrame['phase']>('orbit');
   const [overlay, setOverlay] = useState<'palette' | 'terminal' | null>(null);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [support, setSupport] = useState<'checking' | 'supported' | 'unavailable'>('checking');
@@ -75,6 +82,18 @@ export function Universe() {
   const failed = useRef(false);
   const contentHost = useRef<HTMLDivElement>(null);
   const selector = useRef<HTMLElement>(null);
+  const expedition = useRef<ExpeditionHandle>(null);
+  const expeditionFrame = useRef<ExpeditionFrame>({
+    world: null,
+    phase: 'orbit',
+    approach: 0,
+    entry: 0,
+    readProgress: 0,
+    jumpRevision: 0,
+  });
+  const interaction = useRef<WorldInteraction | null>(null);
+  const pendingGoal = useRef<{ world: WorldId | null } | null>({ world: navigation.world });
+  const previousNavigation = useRef<UniverseNavigation | null>(null);
   const world = navigation.world ? getWorld(navigation.world) : null;
   const quality =
     qualitySetting === 'auto'
@@ -90,16 +109,47 @@ export function Universe() {
 
   const select = useCallback(
     (patch: Partial<UniverseNavigation>) => {
-      if (patch.world) setEntered(true);
+      const next = updateNavigation(navigationState.current, patch);
+      const unchanged = routeHref(next) === routeHref(navigationState.current);
+      pendingGoal.current = {
+        world: patch.world !== undefined ? patch.world : navigationState.current.world,
+      };
       setMobileMenu(false);
       navigate(patch);
+      if (unchanged) {
+        if (next.mode === 'explore') {
+          if (next.world) expedition.current?.scrollToWorld(next.world, 'read', 'instant');
+          else expedition.current?.scrollToOverview('instant');
+        } else window.scrollTo({ top: 0, behavior: 'instant' });
+        if (next.world) expedition.current?.focusWorld(next.world);
+        pendingGoal.current = null;
+      }
     },
-    [navigate]
+    [navigate, navigationState]
   );
   const selectWorld = useCallback(
     (id: WorldId) => select({ world: id, projectSlug: null, articleSlug: null, vault: false }),
     [select]
   );
+  const synchronizeScrollWorld = useCallback(
+    (id: WorldId | null) => {
+      if (navigationState.current.mode !== 'explore') return;
+      if (
+        cause.current !== 'scroll' &&
+        (!previousNavigation.current ||
+          routeHref(previousNavigation.current) !== routeHref(navigationState.current))
+      )
+        return;
+      if (pendingGoal.current && pendingGoal.current.world !== id) return;
+      if (pendingGoal.current?.world === id) pendingGoal.current = null;
+      if (navigationState.current.world === id) return;
+      navigate({ world: id, projectSlug: null, articleSlug: null, vault: false }, true, 'scroll');
+    },
+    [navigate, navigationState, cause]
+  );
+  const emitWorldInteraction = useCallback((event: Omit<WorldInteraction, 'at'>) => {
+    interaction.current = { ...event, at: performance.now() };
+  }, []);
   const sceneError = useCallback(
     (reason: string) => {
       if (failed.current) return;
@@ -107,7 +157,7 @@ export function Universe() {
       setFailure(reason);
       setSupport('unavailable');
       setReady(false);
-      navigate({ mode: 'browse' }, true);
+      navigate({ mode: 'browse' }, true, 'mode');
     },
     [navigate]
   );
@@ -117,7 +167,7 @@ export function Universe() {
   useEffect(() => {
     if (navigation.mode !== 'explore') return;
     if (support === 'unavailable') {
-      navigate({ mode: 'browse' }, true);
+      navigate({ mode: 'browse' }, true, 'mode');
       return;
     }
     if (support !== 'checking') return;
@@ -141,18 +191,35 @@ export function Universe() {
   useEffect(() => {
     const host = contentHost.current;
     if (!host) return;
-    host.scrollTop = 0;
-    if (navigation.world) {
-      const frame = requestAnimationFrame(() => {
-        const heading = host.querySelector<HTMLElement>('h1, h2');
-        heading?.setAttribute('tabindex', '-1');
-        heading?.focus({ preventScroll: true });
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      });
-      return () => cancelAnimationFrame(frame);
+    const previous = previousNavigation.current;
+    previousNavigation.current = navigation;
+    if (cause.current === 'scroll') return;
+    const modeChanged = previous?.mode !== navigation.mode;
+    const routeChanged =
+      !previous ||
+      previous.world !== navigation.world ||
+      previous.projectSlug !== navigation.projectSlug ||
+      previous.articleSlug !== navigation.articleSlug ||
+      previous.vault !== navigation.vault;
+    if (!modeChanged && !routeChanged) return;
+    pendingGoal.current = { world: navigation.world };
+    if (navigation.mode === 'explore') {
+      if (navigation.world) expedition.current?.scrollToWorld(navigation.world, 'read', 'instant');
+      else expedition.current?.scrollToOverview('instant');
+    } else {
+      host.scrollTop = 0;
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
-    // Mode switches deliberately keep the mounted destination, selection, and draft state.
-  }, [navigation.world, navigation.projectSlug, navigation.articleSlug]);
+    pendingGoal.current = null;
+    if (navigation.world && routeChanged) expedition.current?.focusWorld(navigation.world);
+  }, [navigation, cause]);
+  useEffect(() => {
+    const previous = window.history.scrollRestoration;
+    if (navigation.mode === 'explore') window.history.scrollRestoration = 'manual';
+    return () => {
+      window.history.scrollRestoration = previous;
+    };
+  }, [navigation.mode]);
   useEffect(() => {
     const keydown = (event: globalThis.KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
@@ -198,13 +265,11 @@ export function Universe() {
   };
   const home = () => {
     select({ world: null, projectSlug: null, articleSlug: null, vault: false });
-    setEntered(true);
   };
   const brandHome = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     home();
-    setEntered(false);
   };
   const worldKeys = (event: KeyboardEvent<HTMLButtonElement>) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
@@ -223,6 +288,82 @@ export function Universe() {
   };
 
   const overlayProps = { content, navigation, navigate: select, close: () => setOverlay(null) };
+  const renderWorld = (id: WorldId) => {
+    const destination: UniverseNavigation = {
+      ...navigation,
+      world: id,
+      projectSlug: id === 'projects' ? navigation.projectSlug : null,
+      articleSlug: id === 'writing' ? navigation.articleSlug : null,
+      vault: id === 'projects' && navigation.vault,
+    };
+    return (
+      <WorldView
+        navigation={destination}
+        navigate={select}
+        content={content}
+        feed={feed}
+        active={navigation.world === id}
+        onWorldInteraction={emitWorldInteraction}
+        lab={
+          <ResearchLab
+            content={content}
+            navigation={destination}
+            navigate={select}
+            onRun={matched =>
+              emitWorldInteraction({ world: 'ai-lab', kind: 'research', value: matched })
+            }
+          />
+        }
+        openTerminal={() => setOverlay('terminal')}
+      />
+    );
+  };
+  const intro = (
+    <section className={styles.landing} aria-labelledby="landing-heading">
+      <span className={styles.eyebrow}>A PERSONAL UNIVERSE / BY CHIRANJEEV SINGH</span>
+      <h1 id="landing-heading">
+        CJ
+        <br />
+        <span>UNIVERSE</span>
+      </h1>
+      <p className={styles.tagline}>
+        <span>Engineering ideas.</span> <span>Building experiences.</span>{' '}
+        <em>Exploring what&apos;s next.</em>
+      </p>
+      <p className={styles.introduction}>
+        I&apos;m Chiranjeev Singh — software engineer at Microsoft, AI enthusiast, and independent
+        builder.
+      </p>
+      <div className={styles.landingActions}>
+        <button
+          className={styles.primaryButton}
+          onClick={() =>
+            expedition.current?.scrollToWorld(
+              'about',
+              'approach',
+              reducedMotion ? 'instant' : 'smooth'
+            )
+          }
+        >
+          Begin the journey <UniverseIcon name="arrow" size={18} />
+        </button>
+        <a
+          href={routeHref({ ...navigation, world: 'projects' })}
+          onClick={event => link(event, { world: 'projects' })}
+        >
+          View Projects <UniverseIcon name="arrow" size={16} />
+        </a>
+      </div>
+      <button
+        className={styles.terminalShortcut}
+        aria-label="Launch Terminal from landing"
+        onClick={() => setOverlay('terminal')}
+      >
+        <UniverseIcon name="terminal" size={16} />
+        Launch Terminal<span>For the keyboard-curious.</span>
+      </button>
+    </section>
+  );
   return (
     <div
       className={styles.universe}
@@ -232,6 +373,7 @@ export function Universe() {
         navigation.mode === 'browse' ? (failure ? 'fallback' : 'browse') : ready ? 'ready' : support
       }
       data-camera-phase={cameraPhase}
+      data-expedition-phase={expeditionPhase}
       data-quality={quality}
       style={{ '--u-accent': world?.color || '#e5cda9' } as React.CSSProperties}
     >
@@ -242,8 +384,12 @@ export function Universe() {
           if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
             return;
           event.preventDefault();
-          navigate({ mode: 'browse' });
+          select({ mode: 'browse' });
           requestAnimationFrame(() => {
+            if (navigationState.current.world) {
+              expedition.current?.focusWorld(navigationState.current.world);
+              return;
+            }
             const heading = contentHost.current?.querySelector<HTMLElement>('h1, h2');
             heading?.setAttribute('tabindex', '-1');
             (heading || contentHost.current)?.focus({ preventScroll: true });
@@ -259,7 +405,9 @@ export function Universe() {
               <Suspense fallback={null}>
                 <UniverseScene
                   selected={navigation.world}
-                  entered={entered}
+                  entered={Boolean(navigation.world)}
+                  journey={expeditionFrame}
+                  interaction={interaction}
                   quality={quality}
                   reducedMotion={reducedMotion}
                   onSelect={selectWorld}
@@ -284,7 +432,7 @@ export function Universe() {
               <OrbitIllustration />
               <span>Preparing the observatory.</span>
               <small>Content and navigation are already available.</small>
-              <button onClick={() => navigate({ mode: 'browse' })}>
+              <button onClick={() => select({ mode: 'browse' })}>
                 Browse without 3D <UniverseIcon name="arrow" size={14} />
               </button>
             </div>
@@ -338,13 +486,13 @@ export function Universe() {
           <div className={styles.modeToggle} aria-label="Navigation mode">
             <button
               aria-pressed={navigation.mode === 'explore'}
-              onClick={() => navigate({ mode: 'explore' })}
+              onClick={() => select({ mode: 'explore' })}
             >
               Explore
             </button>
             <button
               aria-pressed={navigation.mode === 'browse'}
-              onClick={() => navigate({ mode: 'browse' })}
+              onClick={() => select({ mode: 'browse' })}
             >
               Browse
             </button>
@@ -397,141 +545,94 @@ export function Universe() {
         </div>
       )}
       <main>
-        {!navigation.world && navigation.mode === 'explore' && !entered && (
-          <section className={styles.landing} aria-labelledby="landing-heading">
-            <span className={styles.eyebrow}>A PERSONAL UNIVERSE / BY CHIRANJEEV SINGH</span>
-            <h1 id="landing-heading">
-              CJ
-              <br />
-              <span>UNIVERSE</span>
-            </h1>
-            <p className={styles.tagline}>
-              <span>Engineering ideas.</span> <span>Building experiences.</span>{' '}
-              <em>Exploring what&apos;s next.</em>
-            </p>
-            <p className={styles.introduction}>
-              I&apos;m Chiranjeev Singh — software engineer at Microsoft, AI enthusiast, and
-              independent builder.
-            </p>
-            <div className={styles.landingActions}>
-              <button className={styles.primaryButton} onClick={() => setEntered(true)}>
-                Explore Universe <UniverseIcon name="arrow" size={18} />
-              </button>
-              <a
-                href={routeHref({ ...navigation, world: 'projects' })}
-                onClick={event => link(event, { world: 'projects' })}
-              >
-                View Projects <UniverseIcon name="arrow" size={16} />
-              </a>
-            </div>
-            <button
-              className={styles.terminalShortcut}
-              aria-label="Launch Terminal from landing"
-              onClick={() => setOverlay('terminal')}
-            >
-              <UniverseIcon name="terminal" size={16} />
-              Launch Terminal<span>For the keyboard-curious.</span>
-            </button>
-          </section>
-        )}
-        {!navigation.world && navigation.mode === 'explore' && entered && (
-          <div className={styles.overviewCaption}>
-            <span className={styles.eyebrow}>SEVEN WORLDS. ONE BUILDER.</span>
-            <h1>Follow your curiosity.</h1>
-            <p>Select a planet, or choose a destination below.</p>
-          </div>
-        )}
         <div
           ref={contentHost}
           id="universe-content"
           tabIndex={-1}
-          className={`${styles.contentHost} ${navigation.world ? styles.destinationHost : navigation.mode === 'browse' ? styles.browseHost : styles.emptyHost}`}
+          className={`${styles.contentHost} ${navigation.mode === 'explore' ? styles.expeditionHost : navigation.world ? styles.destinationHost : styles.browseHost}`}
         >
-          {navigation.world ? (
-            <WorldView
-              navigation={navigation}
-              navigate={select}
-              content={content}
-              feed={feed}
-              lab={<ResearchLab content={content} navigation={navigation} navigate={select} />}
-              openTerminal={() => setOverlay('terminal')}
-            />
-          ) : (
-            navigation.mode === 'browse' && (
-              <div className={styles.browseOverview}>
-                <header>
-                  <span className={styles.eyebrow}>CJ UNIVERSE / BROWSE MODE</span>
-                  <h1>
-                    Seven worlds.
-                    <br />
-                    <em>One curious human.</em>
-                  </h1>
-                  <p>
-                    Software engineer at Microsoft / Azure Direct Drive. Distributed computing,
-                    Agentic AI, backend engineering, and the ideas that connect them.
-                  </p>
-                  <div className={styles.browseActions}>
-                    <button
-                      className={styles.primaryButton}
-                      onClick={() => navigate({ mode: 'explore' })}
-                    >
-                      Explore in 3D <UniverseIcon name="orbit" />
-                    </button>
-                    <button
-                      aria-label="Launch Terminal from Browse"
-                      onClick={() => setOverlay('terminal')}
-                    >
-                      <UniverseIcon name="terminal" size={16} />
-                      Launch Terminal
-                    </button>
-                  </div>
-                </header>
-                <div className={styles.browseWorlds}>
-                  {WORLDS.map(item => (
-                    <a
-                      key={item.id}
-                      href={routeHref({ ...navigation, world: item.id })}
-                      style={{ '--world-color': item.color } as React.CSSProperties}
-                      onClick={event => link(event, { world: item.id })}
-                    >
-                      <span>{item.number} / WORLD</span>
-                      <i />
-                      <h2>{item.name}</h2>
-                      <p>{item.description}</p>
-                      <small>
-                        Enter {item.name} <UniverseIcon name="arrow" size={14} />
-                      </small>
-                    </a>
-                  ))}
+          {navigation.mode === 'browse' && !navigation.world && (
+            <div className={styles.browseOverview}>
+              <header>
+                <span className={styles.eyebrow}>CJ UNIVERSE / BROWSE MODE</span>
+                <h1>
+                  Seven worlds.
+                  <br />
+                  <em>One curious human.</em>
+                </h1>
+                <p>
+                  Software engineer at Microsoft / Azure Direct Drive. Distributed computing,
+                  Agentic AI, backend engineering, and the ideas that connect them.
+                </p>
+                <div className={styles.browseActions}>
+                  <button
+                    className={styles.primaryButton}
+                    onClick={() => select({ mode: 'explore' })}
+                  >
+                    Explore in 3D <UniverseIcon name="orbit" />
+                  </button>
+                  <button
+                    aria-label="Launch Terminal from Browse"
+                    onClick={() => setOverlay('terminal')}
+                  >
+                    <UniverseIcon name="terminal" size={16} />
+                    Launch Terminal
+                  </button>
                 </div>
-                <section className={styles.browseProjects}>
-                  <div>
-                    <span className={styles.eyebrow}>RECENT INVESTIGATIONS</span>
-                    <h2>Built to be explored.</h2>
-                  </div>
-                  {content.projects.slice(0, 3).map(project => (
-                    <a
-                      key={project.id}
-                      href={routeHref({
-                        ...navigation,
-                        world: 'projects',
-                        projectSlug: project.slug,
-                      })}
-                      onClick={event =>
-                        link(event, { world: 'projects', projectSlug: project.slug })
-                      }
-                    >
-                      <span>
-                        <strong>{project.title}</strong>
-                        <small>{project.summary}</small>
-                      </span>
-                      <UniverseIcon name="arrow" />
-                    </a>
-                  ))}
-                </section>
+              </header>
+              <div className={styles.browseWorlds}>
+                {WORLDS.map(item => (
+                  <a
+                    key={item.id}
+                    href={routeHref({ ...navigation, world: item.id })}
+                    style={{ '--world-color': item.color } as React.CSSProperties}
+                    onClick={event => link(event, { world: item.id })}
+                  >
+                    <span>{item.number} / WORLD</span>
+                    <i />
+                    <h2>{item.name}</h2>
+                    <p>{item.description}</p>
+                    <small>
+                      Enter {item.name} <UniverseIcon name="arrow" size={14} />
+                    </small>
+                  </a>
+                ))}
               </div>
-            )
+              <section className={styles.browseProjects}>
+                <div>
+                  <span className={styles.eyebrow}>RECENT INVESTIGATIONS</span>
+                  <h2>Built to be explored.</h2>
+                </div>
+                {content.projects.slice(0, 3).map(project => (
+                  <a
+                    key={project.id}
+                    href={routeHref({
+                      ...navigation,
+                      world: 'projects',
+                      projectSlug: project.slug,
+                    })}
+                    onClick={event => link(event, { world: 'projects', projectSlug: project.slug })}
+                  >
+                    <span>
+                      <strong>{project.title}</strong>
+                      <small>{project.summary}</small>
+                    </span>
+                    <UniverseIcon name="arrow" />
+                  </a>
+                ))}
+              </section>
+            </div>
           )}
+          <Expedition
+            ref={expedition}
+            navigation={navigation}
+            reducedMotion={reducedMotion}
+            frame={expeditionFrame}
+            onWorldChange={synchronizeScrollWorld}
+            onPhaseChange={setExpeditionPhase}
+            intro={intro}
+            renderWorld={renderWorld}
+          />
         </div>
       </main>
       <nav ref={selector} className={styles.worldNav} aria-label="Planet selector">
@@ -554,7 +655,9 @@ export function Universe() {
           <span>
             <i />
             {ready
-              ? `${WORLDS.length} destinations / ${cameraPhase === 'moving' ? 'approaching' : 'observatory ready'}`
+              ? world
+                ? `${world.name} / ${expeditionPhase === 'inside' ? 'on the surface' : expeditionPhase}`
+                : `${WORLDS.length} worlds / scroll to begin`
               : 'Preparing the 3D view'}
           </span>
           <label>

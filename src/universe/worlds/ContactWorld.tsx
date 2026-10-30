@@ -22,11 +22,18 @@ export function ContactWorld() {
     }
   };
   return (
-    <section className="uw-world uw-contact" aria-labelledby="uw-contact-title">
-      <div className="uw-beacon" aria-hidden="true">
-        <div />
-        <div />
-        <div />
+    <section
+      className="uw-world uw-contact"
+      aria-labelledby="uw-contact-title"
+      data-copy-state={copyState}
+    >
+      <div className="uw-beacon" data-reveal="signal" aria-hidden="true">
+        <svg viewBox="0 0 160 160" fill="none">
+          <circle cx="80" cy="80" r="70" pathLength="1" />
+          <circle cx="80" cy="80" r="49" pathLength="1" />
+          <circle cx="80" cy="80" r="28" pathLength="1" />
+          <path d="M80 0V22M138 80H160M80 138V160M0 80H22" pathLength="1" />
+        </svg>
         <span>↗</span>
       </div>
       <header>
@@ -43,7 +50,7 @@ export function ContactWorld() {
         </p>
         <p>No contact form between us. These are my direct, verified channels.</p>
       </header>
-      <div className="uw-contact-email">
+      <div className="uw-contact-email" data-reveal="section">
         <span className="uw-meta">01 / EMAIL</span>
         <a href={`mailto:${PROFILE.email}`}>
           {PROFILE.email}
@@ -64,7 +71,7 @@ export function ContactWorld() {
       </div>
       <div className="uw-contact-socials">
         {PROFILE.socials.map((social, index) => (
-          <div key={social.label}>
+          <div key={social.label} data-reveal="section">
             <span className="uw-meta">
               0{index + 2} / {social.label.toUpperCase()}
             </span>

@@ -19,9 +19,25 @@ function ReadingRoom({
           By Chiranjeev Singh <span aria-hidden="true">·</span> {article.tags.join(' / ')}
         </p>
       </header>
+      <nav className="uw-reading-index" aria-label="In this note">
+        <p className="uw-meta">On these pages</p>
+        <ol>
+          {article.sections.map((section, index) => (
+            <li key={section.heading}>
+              <a href={`#uw-note-${article.slug}-${index + 1}`}>{section.heading}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
       <div className="uw-article-prose">
-        {article.sections.map(section => (
-          <section key={section.heading}>
+        {article.sections.map((section, index) => (
+          <section
+            key={section.heading}
+            id={`uw-note-${article.slug}-${index + 1}`}
+            tabIndex={-1}
+            data-reveal="paper"
+          >
+            <span className="uw-meta">{String(index + 1).padStart(2, '0')} /</span>
             <h2>{section.heading}</h2>
             {section.paragraphs.map(paragraph => (
               <p key={paragraph}>{paragraph}</p>
@@ -122,7 +138,7 @@ export function WritingWorld(props: WorldViewProps) {
       </p>
       <div className="uw-archive-list">
         {articles.map((article, index) => (
-          <article key={article.slug}>
+          <article key={article.slug} data-reveal="paper">
             <span className="uw-archive-number" aria-hidden="true">
               {String(index + 1).padStart(2, '0')}
             </span>

@@ -7,7 +7,7 @@ export function AboutWorld(props: WorldViewProps) {
     <section className="uw-world uw-about" aria-labelledby="uw-about-title">
       <header className="uw-about-hero">
         <div className="uw-about-intro">
-          <Eyebrow>01 / A human, not a job title</Eyebrow>
+          <Eyebrow>01 / Shore notes · A human, not a job title</Eyebrow>
           <h1 id="uw-about-title">
             Chiranjeev.
             <br />
@@ -28,15 +28,19 @@ export function AboutWorld(props: WorldViewProps) {
             <span className="uw-sr"> (PDF, opens in a new tab)</span>
           </a>
         </div>
-        <figure className="uw-portrait">
+        <figure className="uw-portrait" data-reveal="shore">
           <img src={PROFILE.portrait} alt="Chiranjeev Singh" width="600" height="750" />
           <figcaption>
             Chiranjeev Singh <span>Bengaluru, India</span>
           </figcaption>
         </figure>
       </header>
-      <div className="uw-about-statement">
-        <span aria-hidden="true">≈</span>
+      <div className="uw-about-statement" data-reveal="shore">
+        <svg className="uw-tide-lines" viewBox="0 0 160 110" fill="none" aria-hidden="true">
+          <path pathLength="1" d="M2 32C32 0 61 65 91 32S135 12 158 30" />
+          <path pathLength="1" d="M2 55C32 23 61 88 91 55S135 35 158 53" />
+          <path pathLength="1" d="M2 78C32 46 61 111 91 78S135 58 158 76" />
+        </svg>
         <p>
           Systems are built from decisions.
           <br />
@@ -54,7 +58,7 @@ export function AboutWorld(props: WorldViewProps) {
         </div>
         <div className="uw-career-list">
           {CAREER.map((job, index) => (
-            <article key={job.id} className="uw-career-item">
+            <article key={job.id} className="uw-career-item" data-reveal="shore">
               <div className="uw-career-index" aria-hidden="true">
                 {String(index + 1).padStart(2, '0')}
               </div>
@@ -75,7 +79,7 @@ export function AboutWorld(props: WorldViewProps) {
           ))}
         </div>
       </section>
-      <section className="uw-about-foot">
+      <section className="uw-about-foot" data-reveal="section">
         <div>
           <Eyebrow>Tools & disciplines</Eyebrow>
           <div className="uw-tags">

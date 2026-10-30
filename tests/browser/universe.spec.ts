@@ -25,7 +25,8 @@ const feed = {
   ],
 };
 const root = (page: Page) => page.locator('[data-universe-mode]');
-const host = (page: Page) => page.locator('#universe-content');
+const host = (page: Page) =>
+  page.locator('[data-expedition-world][data-current="true"] [data-world-content]');
 async function world(page: Page, name: string) {
   await page
     .getByRole('navigation', { name: 'Planet selector' })
@@ -37,9 +38,114 @@ async function sceneReady(page: Page) {
   await expect(root(page)).toHaveAttribute('data-render-state', 'ready', { timeout: 30000 });
   await expect(page.locator('canvas')).toBeVisible();
 }
+async function nativeScrollTo(page: Page, y: number) {
+  const delta = y - (await page.evaluate(() => scrollY));
+  await page.mouse.move(18, 240);
+  await page.mouse.wheel(0, delta);
+  await expect.poll(async () => Math.abs((await page.evaluate(() => scrollY)) - y)).toBeLessThan(5);
+}
+async function planetRadius(page: Page, id: string) {
+  const center = await page.locator(`[data-world-pick="${id}"]`).boundingBox();
+  const limb = await page.locator(`[data-world-limb="${id}"]`).boundingBox();
+  return center && limb ? Math.hypot(center.x - limb.x, center.y - limb.y) : 0;
+}
 
 test.beforeEach(async ({ page }) => {
   await page.route('**/api/github-pinned', route => route.fulfill({ json: feed }));
+});
+
+test('native scrolling visibly zooms into a planet, enters its environment, and reverses the flight', async ({
+  page,
+}, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/?mode=explore&quality=low');
+  await sceneReady(page);
+  const geometry = await page.locator('[data-expedition-world="about"]').evaluate(element => ({
+    top: element.getBoundingClientRect().top + scrollY,
+    read: element.querySelector('[data-world-content]')!.getBoundingClientRect().top + scrollY,
+    height: innerHeight,
+  }));
+  const far = geometry.top - geometry.height * 0.5;
+  const near = geometry.top + geometry.height * 0.12;
+  await nativeScrollTo(page, far);
+  await expect(root(page)).toHaveAttribute('data-world', 'about');
+  await expect(root(page)).toHaveAttribute('data-expedition-phase', 'approach');
+  await expect.poll(() => planetRadius(page, 'about')).toBeGreaterThan(1);
+  const farRadius = await planetRadius(page, 'about');
+  await nativeScrollTo(page, near);
+  await expect.poll(() => planetRadius(page, 'about')).toBeGreaterThan(farRadius * 1.8);
+  const nearRadius = await planetRadius(page, 'about');
+  await nativeScrollTo(page, geometry.read - 100);
+  await expect(root(page)).toHaveAttribute('data-expedition-phase', 'inside');
+  await expect(
+    page.locator('[data-world-environment="about"][data-environment-landmark]').first()
+  ).toBeAttached();
+  await expect(host(page).getByRole('heading', { level: 1 })).toBeInViewport();
+  await expect(page).toHaveURL(/\/world\/about\?mode=explore/);
+  await page.screenshot({
+    path: testInfo.outputPath('scroll-about-surface.png'),
+    animations: 'disabled',
+  });
+  const historyLength = await page.evaluate(() => history.length);
+  const engineering = await page
+    .locator('[data-expedition-world="engineering"]')
+    .evaluate(element => ({
+      top: element.getBoundingClientRect().top + scrollY,
+      read: element.querySelector('[data-world-content]')!.getBoundingClientRect().top + scrollY,
+      height: innerHeight,
+    }));
+  await nativeScrollTo(page, engineering.top - engineering.height * 0.5);
+  await expect(root(page)).toHaveAttribute('data-world', 'engineering');
+  await nativeScrollTo(page, engineering.read - 100);
+  await expect(
+    page.locator('[data-world-environment="engineering"][data-environment-landmark]').first()
+  ).toBeAttached();
+  await expect(host(page).getByRole('heading', { level: 1 })).toBeInViewport();
+  expect(await page.evaluate(() => history.length)).toBe(historyLength);
+  await nativeScrollTo(page, far);
+  await expect(root(page)).toHaveAttribute('data-expedition-phase', 'approach');
+  await expect.poll(() => planetRadius(page, 'about')).toBeLessThan(nearRadius * 0.7);
+  await world(page, 'About');
+  await expect(root(page)).toHaveAttribute('data-expedition-phase', 'inside');
+  await expect(host(page).getByRole('heading', { level: 1 })).toBeInViewport();
+  await nativeScrollTo(page, 0);
+  await expect(root(page)).toHaveAttribute('data-world', 'overview');
+  await expect(root(page)).toHaveAttribute('data-camera-phase', 'overview');
+});
+
+test('touch scrolling advances the native planetary journey without a drag-camera trap', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'mobile',
+    'Real touch gesture is covered on the mobile viewport.'
+  );
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/?mode=explore&quality=low');
+  await sceneReady(page);
+  const session = await page.context().newCDPSession(page);
+  const timestamp = Date.now() / 1000;
+  await session.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [{ x: 18, y: 470 }],
+    timestamp,
+  });
+  for (let step = 1; step <= 12; step++) {
+    await session.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [{ x: 18, y: 470 - (350 * step) / 12 }],
+      timestamp: timestamp + step / 30,
+    });
+  }
+  await session.send('Input.dispatchTouchEvent', {
+    type: 'touchEnd',
+    touchPoints: [],
+    timestamp: timestamp + 0.7,
+  });
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(250);
+  await expect(root(page)).toHaveAttribute('data-world', 'about');
+  await expect(root(page)).not.toHaveAttribute('data-expedition-phase', 'orbit');
+  await session.detach();
 });
 
 test('real WebGL sun and seven planets render, raycasting selects bodies, camera returns', async ({
@@ -53,23 +159,14 @@ test('real WebGL sun and seven planets render, raycasting selects bodies, camera
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/?mode=explore&quality=low');
   await sceneReady(page);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/CJ\s*UNIVERSE/);
-  await expect(page.getByRole('button', { name: 'Explore Universe', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /CJ\s*UNIVERSE/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Begin the journey', exact: true })).toBeVisible();
   await expect(page.locator('[data-world-pick]')).toHaveCount(7);
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({
     path: testInfo.outputPath('solar-system-landing.png'),
     animations: 'disabled',
   });
-  const before = (await page.locator('[data-sun-pick]').boundingBox())!;
-  await page.getByRole('button', { name: 'Explore Universe', exact: true }).click();
-  await expect
-    .poll(async () => {
-      const after = (await page.locator('[data-sun-pick]').boundingBox())!;
-      return Math.hypot(after.x - before.x, after.y - before.y);
-    })
-    .toBeGreaterThan(15);
-  await expect(root(page)).toHaveAttribute('data-camera-phase', 'overview', { timeout: 20000 });
   const sun = (await page.locator('[data-sun-pick]').boundingBox())!;
   if (testInfo.project.name === 'mobile')
     await page.touchscreen.tap(sun.x + sun.width / 2, sun.y + sun.height / 2);
@@ -81,16 +178,30 @@ test('real WebGL sun and seven planets render, raycasting selects bodies, camera
   await page.getByRole('button', { name: 'Full universe', exact: true }).click();
   await expect(root(page)).toHaveAttribute('data-world', 'overview');
   await expect(root(page)).toHaveAttribute('data-camera-phase', 'overview', { timeout: 20000 });
+  if (testInfo.project.name === 'mobile') {
+    const approach = await page
+      .locator('[data-expedition-world="projects"]')
+      .evaluate(element => element.getBoundingClientRect().top + scrollY + innerHeight * 0.12);
+    await nativeScrollTo(page, approach);
+    await expect(root(page)).toHaveAttribute('data-expedition-phase', 'approach');
+  }
   const target = (await page.locator('[data-world-pick="projects"]').boundingBox())!;
   if (testInfo.project.name === 'mobile') await page.touchscreen.tap(target.x + 1, target.y + 1);
   else await page.mouse.click(target.x + 1, target.y + 1);
   await expect(root(page)).toHaveAttribute('data-world', 'projects');
+  await expect(root(page)).toHaveAttribute('data-expedition-phase', 'inside');
   await expect(root(page)).toHaveAttribute('data-camera-phase', 'focused', { timeout: 20000 });
   await expect(host(page)).toContainText('Documented.');
   await page.screenshot({
     path: testInfo.outputPath('projects-planet.png'),
     animations: 'disabled',
   });
+  if (testInfo.project.name === 'mobile') {
+    const inspection = await host(page).evaluate(
+      element => element.getBoundingClientRect().top + scrollY - innerHeight * 0.44
+    );
+    await nativeScrollTo(page, inspection);
+  }
   const beacon = (await page.locator('[data-project-beacon="cj-os-desktop"]').boundingBox())!;
   if (testInfo.project.name === 'mobile') await page.touchscreen.tap(beacon.x + 1, beacon.y + 1);
   else await page.mouse.click(beacon.x + 1, beacon.y + 1);
@@ -102,6 +213,7 @@ test('real WebGL sun and seven planets render, raycasting selects bodies, camera
 test('guided planet controls reach all seven distinct worlds with keyboard and touch alternatives', async ({
   page,
 }, testInfo) => {
+  test.setTimeout(120000);
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/?mode=explore&quality=low');
   await sceneReady(page);
@@ -117,6 +229,13 @@ test('guided planet controls reach all seven distinct worlds with keyboard and t
     await expect(root(page)).toHaveAttribute('data-world', id);
     await expect(root(page)).toHaveAttribute('data-camera-phase', 'focused', { timeout: 20000 });
     await expect(host(page)).toContainText(evidence);
+    await expect(
+      page.locator(`[data-world-environment="${id}"][data-environment-landmark]`).first()
+    ).toBeAttached();
+    await page.screenshot({
+      path: testInfo.outputPath(`${id}-surface.png`),
+      animations: 'disabled',
+    });
   }
   const about = page
     .getByRole('navigation', { name: 'Planet selector' })
@@ -358,7 +477,6 @@ test('reduced motion is readable without a renderer and explicit Explore remains
   await expect(host(page).getByRole('searchbox', { name: 'Search the archive' })).toBeVisible();
   await page.goto('/?mode=explore&quality=low');
   await sceneReady(page);
-  await page.getByRole('button', { name: 'Explore Universe', exact: true }).click();
   await world(page, 'Engineering');
   await expect(root(page)).toHaveAttribute('data-camera-phase', 'focused');
   await expect(host(page).getByRole('heading', { level: 1 })).toBeVisible();
@@ -423,7 +541,7 @@ test('skip navigation provides an immediate keyboard Browse path and mobile menu
   await skip.focus();
   await skip.press('Enter');
   await expect(root(page)).toHaveAttribute('data-universe-mode', 'browse');
-  await expect(host(page).getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.locator('#universe-content').getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.locator('canvas')).toHaveCount(0);
   if (testInfo.project.name === 'mobile') {
     await page.getByRole('button', { name: 'Open navigation', exact: true }).click();

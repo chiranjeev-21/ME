@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { MutableRefObject, ReactNode } from 'react';
 import type { UsePinnedQuestsState } from '../hooks/usePinnedQuests';
 import type { HiddenQuestResponse } from '../types';
 
@@ -77,6 +77,36 @@ export interface WorldViewProps {
   feed: UsePinnedQuestsState;
   lab: ReactNode;
   openTerminal: () => void;
+  active?: boolean;
+  onWorldInteraction?: (event: Omit<WorldInteraction, 'at'>) => void;
+}
+export interface ExpeditionFrame {
+  world: WorldId | null;
+  phase: 'orbit' | 'approach' | 'entry' | 'inside';
+  approach: number;
+  entry: number;
+  readProgress: number;
+  jumpRevision: number;
+}
+export interface WorldInteraction {
+  world: WorldId;
+  kind: 'research' | 'creative' | 'article' | 'project';
+  value?: string | number;
+  at: number;
+}
+export interface ExpeditionHandle {
+  scrollToWorld: (world: WorldId, phase?: 'approach' | 'read', behavior?: ScrollBehavior) => void;
+  scrollToOverview: (behavior?: ScrollBehavior) => void;
+  focusWorld: (world: WorldId) => void;
+}
+export interface ExpeditionProps {
+  navigation: UniverseNavigation;
+  reducedMotion: boolean;
+  frame: MutableRefObject<ExpeditionFrame>;
+  onWorldChange: (world: WorldId | null) => void;
+  onPhaseChange?: (phase: ExpeditionFrame['phase']) => void;
+  intro: ReactNode;
+  renderWorld: (world: WorldId) => ReactNode;
 }
 export interface UniverseSceneProps {
   selected: WorldId | null;
@@ -89,5 +119,7 @@ export interface UniverseSceneProps {
   onCameraState: (phase: 'overview' | 'moving' | 'focused') => void;
   projectMarkers: readonly Pick<UniverseProject, 'slug' | 'title'>[];
   onProjectSelect: (slug: string) => void;
+  journey?: MutableRefObject<ExpeditionFrame>;
+  interaction?: MutableRefObject<WorldInteraction | null>;
 }
 export type ContentFeed = HiddenQuestResponse;

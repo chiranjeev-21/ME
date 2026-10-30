@@ -1,3 +1,7 @@
+.uw-document {
+  width: 100%;
+  min-width: 0;
+}
 .uw-world {
   --uw-ink: var(--u-text, #eeeae2);
   --uw-muted: var(--u-muted, #aaa9a1);
@@ -8,7 +12,7 @@
   padding: clamp(1.1rem, 4%, 3.25rem);
   color: var(--uw-ink);
   font-family: var(--u-body, sans-serif);
-  font-size: 0.94rem;
+  font-size: 1rem;
   line-height: 1.75;
   overflow-wrap: anywhere;
 }
@@ -162,7 +166,8 @@
   text-decoration: none;
   transition:
     background 160ms ease,
-    border-color 160ms ease;
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 .uw-button:hover {
   border-color: var(--u-accent, #c8b79b);
@@ -261,6 +266,7 @@
 
 /* About: ocean light, a portrait, and a conventional editorial timeline. */
 .uw-about {
+  --u-accent: #81bbc9;
   background: radial-gradient(ellipse at 90% 0, #81bbc90b, transparent 55%);
 }
 .uw-about-hero {
@@ -285,8 +291,9 @@
 .uw-portrait::before {
   position: absolute;
   z-index: 0;
-  inset: 1.5rem 1rem 0 0;
+  inset: 1.75rem 0.75rem -0.25rem -0.5rem;
   border: 1px solid #81bbc950;
+  border-radius: 48% 48% 42% 42%;
   content: '';
 }
 .uw-portrait img {
@@ -294,6 +301,7 @@
   aspect-ratio: 4 / 5;
   object-fit: cover;
   object-position: center 22%;
+  border-radius: 45% 45% 0 0 / 25% 25% 0 0;
   filter: saturate(0.7);
 }
 .uw-portrait figcaption {
@@ -315,11 +323,12 @@
   gap: 1.5rem;
   padding: 2rem 0 3.5rem;
 }
-.uw-about-statement > span {
+.uw-tide-lines {
+  flex: 0 0 auto;
+  width: clamp(3rem, 14cqi, 7rem);
   color: var(--u-accent);
-  font:
-    4.5rem Georgia,
-    serif;
+  stroke: currentColor;
+  stroke-width: 1.2px;
 }
 .uw-about-statement p {
   font-size: clamp(1.15rem, 3.5cqi, 1.8rem);
@@ -335,6 +344,7 @@
   padding-top: 3rem;
 }
 .uw-career-item {
+  position: relative;
   display: grid;
   grid-template-columns: 2rem minmax(0, 1fr);
   gap: 1rem;
@@ -342,10 +352,20 @@
   border-top: 1px solid var(--uw-line);
 }
 .uw-career-index {
+  position: relative;
   padding-top: 0.2rem;
   color: var(--u-accent);
   font-family: var(--u-mono, monospace);
   font-size: 0.65rem;
+}
+.uw-career-item:not(:last-child) .uw-career-index::after {
+  position: absolute;
+  top: 2rem;
+  bottom: -2.2rem;
+  left: 0.55rem;
+  width: 1px;
+  background: linear-gradient(var(--u-accent), var(--uw-line));
+  content: '';
 }
 .uw-career-item h3 {
   margin: 0.65rem 0 1.5rem;
@@ -384,6 +404,7 @@
 
 /* Engineering: measured rules, notation, and a deliberately illustrative plan. */
 .uw-engineering {
+  --u-accent: #c7b398;
   background-image:
     linear-gradient(#c7b39805 1px, transparent 1px),
     linear-gradient(90deg, #c7b39805 1px, transparent 1px);
@@ -401,7 +422,15 @@
   letter-spacing: 0.1em;
 }
 .uw-engineering h1 {
+  font-family: var(--u-body, sans-serif);
   font-size: clamp(2.8rem, 10cqi, 5.4rem);
+  font-weight: 600;
+}
+.uw-engineering h1 em {
+  color: var(--u-accent);
+  font-family: inherit;
+  font-style: normal;
+  font-weight: inherit;
 }
 .uw-system-diagram {
   position: relative;
@@ -443,10 +472,24 @@
   display: grid;
   gap: 0.7rem;
 }
-.uw-flow > div {
+.uw-flow > button {
+  position: relative;
   min-width: 0;
   padding: 1rem;
   border: 1px dashed var(--uw-line);
+  background: transparent;
+  text-align: left;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
+}
+.uw-flow > button[aria-pressed='true'] {
+  border-style: solid;
+  border-color: var(--u-accent);
+  background: #c7b3980e;
+}
+.uw-flow > button:hover {
+  border-color: var(--u-accent);
 }
 .uw-flow small {
   display: block;
@@ -461,16 +504,46 @@
   font-size: 1.15rem;
   font-weight: 500;
 }
-.uw-flow div > span {
+.uw-flow button > span {
   color: var(--uw-muted);
   font-size: 0.67rem;
 }
-.uw-flow i {
-  align-self: center;
+.uw-flow .uw-flow-direction {
+  position: absolute;
+  top: 1rem;
+  right: 0.75rem;
   color: var(--u-accent);
-  font-style: normal;
-  text-align: center;
-  transform: rotate(90deg);
+  font-size: 1rem;
+}
+.uw-diagram-instruction {
+  margin-bottom: 1rem !important;
+  color: var(--uw-muted);
+  font-size: 0.75rem;
+}
+.uw-request-trace {
+  display: block;
+  width: 100%;
+  height: 2.25rem;
+  margin-top: 0.8rem;
+  overflow: visible;
+  stroke: var(--u-accent);
+  stroke-width: 1;
+}
+.uw-request-trace path {
+  vector-effect: non-scaling-stroke;
+}
+.uw-trace-return {
+  opacity: 0.4;
+}
+.uw-flow-detail {
+  min-height: 7rem;
+  margin-top: 0.75rem !important;
+  color: var(--uw-muted);
+  font-size: 0.82rem;
+}
+.uw-flow-detail strong {
+  color: var(--uw-ink);
+  font-weight: 500;
 }
 .uw-feedback {
   display: flex;
@@ -514,6 +587,8 @@
 }
 .uw-principles h3 {
   margin-block: 1rem 0.8rem;
+  font-family: var(--u-mono, monospace);
+  font-size: 0.95rem;
 }
 .uw-principles p {
   color: var(--uw-muted);
@@ -539,6 +614,7 @@
 
 /* Lab: a quiet research bench around the application's one working lab. */
 .uw-lab {
+  --u-accent: #b3a5d7;
   background: radial-gradient(ellipse at 100% 0, #b3a5d712, transparent 50%);
 }
 .uw-lab > header {
@@ -560,6 +636,46 @@
   max-width: 38rem;
   margin-top: 1rem;
   color: var(--uw-muted);
+}
+.uw-world .uw-lab-protocol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 1.5rem;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.uw-lab-protocol li {
+  position: relative;
+  margin: 0 !important;
+  padding-top: 1rem;
+  border-top: 1px solid var(--uw-line);
+}
+.uw-lab-protocol li::before {
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 1px;
+  background: var(--u-accent);
+  transform-origin: left;
+  content: '';
+}
+.uw-lab-protocol span {
+  display: block;
+  margin-bottom: 0.7rem;
+  color: var(--u-accent);
+  font-family: var(--u-mono, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.uw-lab-protocol strong {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.uw-lab-protocol p {
+  margin-top: 0.6rem;
+  color: var(--uw-muted);
+  font-size: 0.78rem;
 }
 .uw-lab-surface {
   min-width: 0;
@@ -590,6 +706,7 @@
 
 /* Projects: a terracotta spaceport catalog, not a deployment dashboard. */
 .uw-projects {
+  --u-accent: #d3a17f;
   background: linear-gradient(140deg, #d3a17f0a, transparent 40%);
 }
 .uw-projects-header {
@@ -684,7 +801,7 @@
   text-transform: uppercase;
 }
 .uw-category-filter button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0.35rem 0.7rem;
   border: 1px solid var(--uw-line);
   background: transparent;
@@ -697,30 +814,37 @@
   color: var(--uw-ink);
 }
 .uw-project-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  gap: 1rem;
+  display: block;
 }
 .uw-project-card {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
   min-width: 0;
-  flex-direction: column;
-  border: 1px solid var(--uw-line);
-  background: color-mix(in srgb, var(--u-panel, #181b1e) 65%, transparent);
+  gap: 1rem;
+  padding-block: 1.8rem;
+  border-top: 1px solid var(--uw-line);
+}
+.uw-project-bay {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  color: var(--u-accent);
+  font-family: var(--u-mono, monospace);
+  font-size: 1.15rem;
+  line-height: 1.3;
 }
 .uw-project-card-body {
   display: flex;
-  flex: 1;
+  grid-column: 2;
+  min-width: 0;
   flex-direction: column;
   align-items: start;
-  padding: 1.4rem;
 }
 .uw-project-card-top {
   display: flex;
   width: 100%;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.8rem;
+  margin-bottom: 1rem;
 }
 .uw-project-card-top > span:last-child {
   color: var(--u-accent);
@@ -753,7 +877,9 @@
 .uw-project-thumb {
   position: relative;
   display: block;
-  border-bottom: 1px solid var(--uw-line);
+  grid-column: 2;
+  min-width: 0;
+  align-self: start;
 }
 .uw-project-thumb img {
   aspect-ratio: 16 / 10;
@@ -772,7 +898,7 @@
 }
 .uw-provenance {
   color: var(--uw-muted);
-  font-size: 0.66rem;
+  font-size: 0.72rem;
   line-height: 1.7;
 }
 .uw-case-study > header h1 {
@@ -826,6 +952,7 @@
 
 /* Creative: an organic, original drawing surface and a small set of real tools. */
 .uw-creative {
+  --u-accent: #9ab68d;
   --uw-ink: #e0e5d8;
   --uw-muted: #a4af9d;
   background: radial-gradient(ellipse at 20% 5%, #9ab68d0f, transparent 60%);
@@ -834,7 +961,9 @@
   padding-top: 1rem;
 }
 .uw-creative h1 {
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2.6rem, 9cqi, 5.3rem);
+  font-weight: 400;
 }
 .uw-sketch {
   margin-top: 3rem;
@@ -887,6 +1016,15 @@
   gap: 1rem;
   font-family: var(--u-mono, monospace);
   font-size: 0.62rem;
+}
+.uw-sketch-controls label > .uw-palette-swatches {
+  justify-content: start;
+  gap: 0.35rem;
+  margin-top: 0.85rem;
+}
+.uw-palette-swatches i {
+  flex: 1;
+  height: 0.4rem;
 }
 .uw-sketch-controls input[type='range'] {
   height: 3rem;
@@ -1077,8 +1215,41 @@
   margin-inline: auto;
 }
 .uw-reading-room header {
+  position: relative;
   padding-bottom: 2rem;
   border-bottom: 1px solid #c9c4b8;
+}
+.uw-reading-room header::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: #8a8070;
+  transform: scaleX(clamp(0, var(--reading-progress, 0), 1));
+  transform-origin: left;
+  content: '';
+}
+.uw-reading-index {
+  margin-top: 2rem;
+  padding: 0.25rem 0 0.25rem 1.2rem;
+  border-left: 1px solid #c9c4b8;
+}
+.uw-reading-index ol {
+  margin: 0.7rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.8rem;
+}
+.uw-reading-index li + li {
+  margin-top: 0.5rem;
+}
+.uw-reading-index li::marker {
+  font-family: Georgia, serif;
+  font-style: italic;
+}
+.uw-reading-index a {
+  display: inline-block;
+  padding-block: 0.4rem;
 }
 .uw-reading-room h1 {
   font-size: clamp(2.7rem, 8.5cqi, 4.7rem);
@@ -1095,7 +1266,7 @@
   margin-top: 1.5rem !important;
   color: #6d685f;
   font-family: var(--u-mono, monospace);
-  font-size: 0.6rem;
+  font-size: 0.68rem;
   line-height: 1.9;
 }
 .uw-article-byline > span {
@@ -1110,6 +1281,15 @@
 }
 .uw-article-prose section {
   margin-top: 2.5rem;
+  scroll-margin-top: 7rem;
+}
+.uw-article-prose section:focus-visible {
+  outline: 2px solid var(--u-accent);
+  outline-offset: 0.75rem;
+}
+.uw-article-prose section > .uw-meta {
+  display: block;
+  margin-bottom: 0.65rem;
 }
 .uw-article-prose h2 {
   margin-bottom: 1.2rem;
@@ -1149,6 +1329,7 @@
 
 /* Contact: a signal, generous type, and direct channels. No dead-end form. */
 .uw-contact {
+  --u-accent: #d6bd87;
   position: relative;
   background: radial-gradient(ellipse at 100% 0, #d6bd870b, transparent 55%);
 }
@@ -1173,24 +1354,29 @@
   place-items: center;
   margin: 0 0 2rem auto;
 }
-.uw-beacon > div {
-  position: absolute;
+.uw-beacon > svg {
+  grid-area: 1 / 1;
   width: 100%;
-  height: 100%;
-  border: 1px solid #d6bd8720;
+  height: auto;
+  stroke: #d6bd8750;
+}
+.uw-beacon circle:nth-child(2) {
+  stroke: #d6bd8770;
+}
+.uw-beacon circle:nth-child(3) {
+  stroke: #d6bd87a0;
+}
+.uw-beacon::after {
+  position: absolute;
+  inset: 10%;
+  border: 1px solid var(--u-accent);
   border-radius: 50%;
-}
-.uw-beacon > div:nth-child(2) {
-  width: 70%;
-  height: 70%;
-  border-color: #d6bd8735;
-}
-.uw-beacon > div:nth-child(3) {
-  width: 40%;
-  height: 40%;
-  border-color: #d6bd8760;
+  opacity: 0;
+  pointer-events: none;
+  content: '';
 }
 .uw-beacon > span {
+  grid-area: 1 / 1;
   color: var(--u-accent);
   font-size: 2rem;
   line-height: 1;
@@ -1289,10 +1475,7 @@
 
 @container (min-width: 500px) {
   .uw-flow {
-    grid-template-columns: minmax(0, 1fr) 1rem minmax(0, 1fr) 1rem minmax(0, 1fr);
-  }
-  .uw-flow i {
-    transform: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .uw-writing-controls {
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.6fr);
@@ -1340,6 +1523,45 @@
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr);
     align-items: end;
   }
+  .uw-project-card {
+    grid-template-columns: 3rem minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 1.5rem;
+    padding-block: 2.2rem;
+  }
+  .uw-project-card-body {
+    grid-column: 2 / -1;
+  }
+  .uw-project-card-featured .uw-project-card-body {
+    grid-column: 3;
+  }
+  .uw-project-card:not(.uw-project-card-featured) .uw-project-card-body {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    column-gap: 1.5rem;
+  }
+  .uw-project-card:not(.uw-project-card-featured) .uw-project-card-top {
+    grid-column: 1 / -1;
+  }
+  .uw-project-card:not(.uw-project-card-featured) h2 {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .uw-project-card:not(.uw-project-card-featured) h2 + p {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0;
+  }
+  .uw-project-card:not(.uw-project-card-featured) .uw-tags {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .uw-project-card:not(.uw-project-card-featured) .uw-provenance {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .uw-project-card:not(.uw-project-card-featured) .uw-text-link {
+    grid-column: 2;
+  }
   .uw-creative-context {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
@@ -1369,5 +1591,6 @@
   .uw-world *::before,
   .uw-world *::after {
     transition: none !important;
+    animation: none !important;
   }
 }

@@ -6,9 +6,19 @@ import { ProjectsWorld } from './ProjectsWorld';
 import { CreativeWorld } from './CreativeWorld';
 import { WritingWorld } from './WritingWorld';
 import { ContactWorld } from './ContactWorld';
+import { WorldDocument } from './WorldDocument';
 import './worlds.css';
+import './world-motion.css';
 
 export function WorldView(props: WorldViewProps) {
+  return (
+    <WorldDocument active={props.active !== false}>
+      <WorldContent {...props} />
+    </WorldDocument>
+  );
+}
+
+function WorldContent(props: WorldViewProps) {
   switch (props.navigation.world) {
     case 'about':
       return <AboutWorld {...props} />;
@@ -19,7 +29,7 @@ export function WorldView(props: WorldViewProps) {
     case 'projects':
       return <ProjectsWorld {...props} />;
     case 'creative':
-      return <CreativeWorld />;
+      return <CreativeWorld {...props} />;
     case 'writing':
       return <WritingWorld {...props} />;
     case 'contact':

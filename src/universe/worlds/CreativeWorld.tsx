@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import type { WorldViewProps } from '../types';
 import { Eyebrow } from './shared';
 
 const PALETTES = [
@@ -69,14 +70,31 @@ function generateGarden(seed: number, density: number) {
   };
 }
 
-export function CreativeWorld() {
+export function CreativeWorld({ onWorldInteraction }: Pick<WorldViewProps, 'onWorldInteraction'>) {
   const [seed, setSeed] = useState(2106);
   const [density, setDensity] = useState(42);
   const [paletteIndex, setPaletteIndex] = useState(0);
   const [exportMessage, setExportMessage] = useState('');
   const svgRef = useRef<SVGSVGElement>(null);
+  const committedDensity = useRef(density);
   const palette = PALETTES[paletteIndex];
   const garden = useMemo(() => generateGarden(seed, density), [seed, density]);
+  const changeSeed = (next: number) => {
+    if (next === seed) return;
+    setSeed(next);
+    setExportMessage('');
+    onWorldInteraction?.({ world: 'creative', kind: 'creative', value: next });
+  };
+  // Range previews stay local; scene coupling happens once per committed adjustment.
+  const commitDensity = () => {
+    if (density === committedDensity.current) return;
+    committedDensity.current = density;
+    onWorldInteraction?.({
+      world: 'creative',
+      kind: 'creative',
+      value: seed,
+    });
+  };
   const exportSvg = () => {
     try {
       if (!svgRef.current) throw new Error('No artwork');
@@ -110,7 +128,7 @@ export function CreativeWorld() {
           <br />a few contours, and room to play.
         </p>
       </header>
-      <section className="uw-sketch" aria-labelledby="uw-sketch-title">
+      <section className="uw-sketch" aria-labelledby="uw-sketch-title" data-reveal="garden">
         <div className="uw-sketch-heading">
           <div>
             <Eyebrow>Generative study / 001</Eyebrow>
@@ -127,7 +145,7 @@ export function CreativeWorld() {
             aria-labelledby="uw-artwork-title"
             aria-describedby="uw-artwork-desc"
           >
-            <title id="uw-artwork-title">Contour garden, seed {seed}</title>
+            <title id="uw-artwork-title">{`Contour garden, seed ${seed}`}</title>
             <desc id="uw-artwork-desc">
               An original generated botanical drawing: curved terrain contours, five leafy stems,
               and a warm circular sun. Palette: {palette.name}.
@@ -140,9 +158,16 @@ export function CreativeWorld() {
               fill={palette.sun}
               opacity=".7"
             />
-            <g fill="none" stroke={palette.secondary} strokeWidth="1.15" opacity=".8">
+            <g
+              key={seed}
+              className="uw-garden-contours"
+              fill="none"
+              stroke={palette.secondary}
+              strokeWidth="1.15"
+              opacity=".8"
+            >
               {garden.contours.map((path, index) => (
-                <path d={path} key={index} />
+                <path d={path} key={index} pathLength="1" />
               ))}
             </g>
             <g stroke={palette.ink} fill={palette.ink}>
@@ -191,7 +216,7 @@ export function CreativeWorld() {
             </text>
           </svg>
           <figcaption>
-            An original procedural study, generated locally from the seed and controls above.
+            An original procedural study, generated locally from the seed and controls.
           </figcaption>
         </figure>
         <div className="uw-sketch-controls">
@@ -205,7 +230,7 @@ export function CreativeWorld() {
               value={seed}
               onChange={event => {
                 if (event.target.value)
-                  setSeed(
+                  changeSeed(
                     Math.max(1, Math.min(999999, Math.floor(Number(event.target.value) || 1)))
                   );
               }}
@@ -221,13 +246,25 @@ export function CreativeWorld() {
               max="70"
               value={density}
               onChange={event => setDensity(Number(event.target.value))}
+              onPointerUp={commitDensity}
+              onKeyUp={commitDensity}
+              onBlur={commitDensity}
             />
           </label>
           <label>
             <span>Color study</span>
             <select
               value={paletteIndex}
-              onChange={event => setPaletteIndex(Number(event.target.value))}
+              onChange={event => {
+                const next = Number(event.target.value);
+                if (next === paletteIndex) return;
+                setPaletteIndex(next);
+                onWorldInteraction?.({
+                  world: 'creative',
+                  kind: 'creative',
+                  value: seed,
+                });
+              }}
             >
               {PALETTES.map((item, index) => (
                 <option key={item.name} value={index}>
@@ -235,14 +272,18 @@ export function CreativeWorld() {
                 </option>
               ))}
             </select>
+            <span className="uw-palette-swatches" aria-hidden="true">
+              {[palette.paper, palette.secondary, palette.ink, palette.sun].map((color, index) => (
+                <i key={index} style={{ backgroundColor: color }} />
+              ))}
+            </span>
           </label>
           <div className="uw-sketch-buttons">
             <button
               type="button"
               className="uw-button"
               onClick={() => {
-                setSeed(value => (((Math.imul(value, 1664525) + 1013904223) >>> 0) % 999999) + 1);
-                setExportMessage('');
+                changeSeed((((Math.imul(seed, 1664525) + 1013904223) >>> 0) % 999999) + 1);
               }}
             >
               New composition ↻
@@ -258,7 +299,7 @@ export function CreativeWorld() {
         </p>
       </section>
       <div className="uw-creative-context">
-        <section>
+        <section data-reveal="section">
           <Eyebrow>Behind the sketch</Eyebrow>
           <h2>
             Rules that leave
@@ -275,7 +316,7 @@ export function CreativeWorld() {
             collection.
           </p>
         </section>
-        <aside className="uw-hush">
+        <aside className="uw-hush" data-reveal="section">
           <span aria-hidden="true">H</span>
           <div>
             <Eyebrow>Game development</Eyebrow>
@@ -290,7 +331,7 @@ export function CreativeWorld() {
             </p>
           </div>
         </aside>
-        <section>
+        <section data-reveal="section">
           <Eyebrow>Music &amp; guitar</Eyebrow>
           <h2>Original recordings, when they are ready.</h2>
           <p>

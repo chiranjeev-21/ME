@@ -13,9 +13,12 @@ there is no framework migration or database requirement.
 
 **Explore Mode** renders an animated central sun, procedural planets, atmospheres,
 rings, moons, landmarks, thin orbital guides, stars, and restrained environmental
-effects. Select a body or use the planet selector for a guided camera approach.
-The Projects planet has selectable beacons that open the same case studies as
-the catalog.
+effects. **Native scrolling drives the journey:** approach a planet, cross its
+atmosphere, then read inside its themed 3D environment. Scroll backwards to
+reverse the flight. Real chapter geometry, including changing document heights,
+controls the camera rather than an artificial timer or wheel trap.
+Planet controls, mesh selection, and direct links skip straight to a destination.
+Project beacons open the same case studies as the catalog.
 
 **Browse Mode** uses the same content, destination components, project selections,
 filters, and routes, without creating a WebGL renderer. Switching modes does not
@@ -37,7 +40,9 @@ there are no fake recordings, simulated game previews, or autoplay audio.
 
 ## Controls
 
-- **Explore Universe** opens the full-system composition.
+- **Begin the journey** scrolls into the first planetary approach.
+- Keep scrolling to enter, explore the content, and travel to the next world.
+- Reverse scrolling retraces the approach and returns to the solar system.
 - Select a planet by pointer/touch, a planet-selector button, or the command palette.
 - Use left/right arrows and Home/End within the planet selector; Enter selects.
 - **Full universe / All worlds** returns to the overview.
@@ -79,7 +84,7 @@ npm run test:e2e
 
 Use `PORTFOLIO_TEST_PORT` to choose another browser-test port. Browser automation
 uses Chromium software WebGL so the real scene can be verified without requiring
-a particular host GPU. It checks mesh raycasting, guided cameras, planet and project
+a particular host GPU. It checks native-scroll zoom and reversal, mesh raycasting, planet and project
 selection, both modes, direct routes, local research, creative export, reduced
 motion, narrow layouts, unavailable WebGL, and actual context loss.
 
@@ -101,6 +106,7 @@ src\universe\
   Universe.tsx          Application shell, modes, HUD, renderer recovery
   navigation.ts        Typed URL parsing and shared destination state
   useNavigation.ts     Browser history and local presentation preference
+  journey\             Measured native-scroll chapters and reversible expedition state
   worlds.ts            Seven typed world definitions
   content.ts           Verified profile, project adapter, authored studio notes
   scene\               Camera rig, models, shaders, procedural textures, environment
@@ -112,13 +118,19 @@ src\universe\
 The scene emits navigation requests. It does not own a parallel content router.
 Projects, articles, planet selection, terminal commands, and both presentation
 modes converge on the same destination model.
+Scrolling replaces the current world URL without adding a history entry for every
+chapter. Explicit navigation and browser history use measured destination anchors.
+Both modes retain the same mounted documents, including local drafts and filters.
 
 ## Performance, accessibility, and honest limits
 
 - The Three.js renderer is lazy-loaded; important text and navigation arrive first.
 - Geometry detail, particles, and DPR are device-aware. Low quality uses DPR 1;
   High is capped at 1.5. Repeated environmental details are instanced.
-- Camera choreography is wall-clock bounded, not tied to a minimum frame rate.
+- Camera choreography reads scroll progress from refs, without per-frame React
+  state updates. Only world and phase boundaries update application state.
+- Only the current planetary interior is mounted. Document motion pauses off-world;
+  section reveals and interactive diagrams respect reduced motion.
 - Rendering pauses when the document is hidden. No heavy real-time shadows or
   full-screen postprocessing stack are required.
 - Sun glow/corona, surface textures, atmospheres, stars, and structures are original
@@ -137,7 +149,8 @@ modes converge on the same destination model.
 
 ## Deployment
 
-The 3D release uses `feature/cj-universe-3d` and `design/personal-universe`.
+The scroll-first release uses `feature/cj-universe-scroll-worlds`, with
+`feature/cj-universe-3d` and `design/personal-universe` tracking the verified release.
 Vercel generates Preview deployments from pushes. The approved CJ OS branches,
 Engineering Workbench, `main`, and production are not changed by this release.
 

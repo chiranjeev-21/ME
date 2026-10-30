@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { AdditiveBlending, BackSide } from 'three';
 import type { ShaderMaterial } from 'three';
 import { glowTexture } from './textures';
 import { coronaFragment, sunFragment, surfaceVertex } from './shaders';
+import { SceneMarker } from './SceneMarker';
 
 interface Props {
   reducedMotion: boolean;
@@ -17,7 +17,7 @@ export function Sun({ reducedMotion, high, labelVisible, onSelect }: Props) {
   const texture = useMemo(glowTexture, []);
   const material = useRef<ShaderMaterial>(null);
   const corona = useRef<ShaderMaterial>(null);
-  const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
+  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uOpacity: { value: 1 } }), []);
   const [hovered, setHovered] = useState(false);
   useEffect(() => () => texture.dispose(), [texture]);
   useFrame((_, delta) => {
@@ -79,30 +79,25 @@ export function Sun({ reducedMotion, high, labelVisible, onSelect }: Props) {
           toneMapped={false}
         />
       </mesh>
-      <Html center zIndexRange={[3, 0]} style={{ pointerEvents: 'none' }}>
-        <span
-          data-sun-pick
-          style={{ display: 'block', width: 2, height: 2, pointerEvents: 'none' }}
-        >
-          {labelVisible && (
-            <span
-              style={{
-                position: 'absolute',
-                top: high ? 62 : 48,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                color: '#e9c99c',
-                fontSize: 10,
-                letterSpacing: '.28em',
-                whiteSpace: 'nowrap',
-                textShadow: '0 2px 9px #000',
-              }}
-            >
-              CJ · THE CORE
-            </span>
-          )}
-        </span>
-      </Html>
+      <SceneMarker attributes={{ 'data-sun-pick': '' }}>
+        {labelVisible && (
+          <span
+            style={{
+              position: 'absolute',
+              top: high ? 62 : 48,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              color: '#e9c99c',
+              fontSize: 10,
+              letterSpacing: '.28em',
+              whiteSpace: 'nowrap',
+              textShadow: '0 2px 9px #000',
+            }}
+          >
+            CJ · THE CORE
+          </span>
+        )}
+      </SceneMarker>
     </group>
   );
 }

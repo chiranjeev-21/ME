@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { AdditiveBlending, BackSide, Color, SphereGeometry } from 'three';
 import type { Group } from 'three';
@@ -9,6 +8,7 @@ import { surfaceTexture } from './textures';
 import { atmosphereFragment, surfaceVertex } from './shaders';
 import { Landmarks } from './Landmarks';
 import { ProjectBeacons } from './ProjectBeacons';
+import { SceneMarker } from './SceneMarker';
 
 interface Props {
   world: WorldDefinition;
@@ -20,6 +20,7 @@ interface Props {
   onSelect: UniverseSceneProps['onSelect'];
   projectMarkers: UniverseSceneProps['projectMarkers'];
   onProjectSelect: UniverseSceneProps['onProjectSelect'];
+  scrollJourney?: boolean;
 }
 
 export function Planet({
@@ -32,6 +33,7 @@ export function Planet({
   onSelect,
   projectMarkers,
   onProjectSelect,
+  scrollJourney = false,
 }: Props) {
   const root = useRef<Group>(null);
   const body = useRef<Group>(null);
@@ -55,7 +57,10 @@ export function Planet({
     }
     return sphere;
   }, [high, world.kind, world.radius]);
-  const atmosphere = useMemo(() => ({ uColor: { value: new Color(world.color) } }), [world.color]);
+  const atmosphere = useMemo(
+    () => ({ uColor: { value: new Color(world.color) }, uOpacity: { value: 1 } }),
+    [world.color]
+  );
   useEffect(
     () => () => {
       texture.dispose();
@@ -110,40 +115,31 @@ export function Planet({
           toneMapped={false}
         />
       </mesh>
-      {selected && world.kind === 'terracotta' && (
+      {selected && world.kind === 'terracotta' && !scrollJourney && (
         <ProjectBeacons radius={world.radius} markers={projectMarkers} onSelect={onProjectSelect} />
       )}
-      <Html center zIndexRange={[3, 0]} style={{ pointerEvents: 'none' }}>
-        <span
-          data-world-pick={world.id}
-          style={{
-            display: 'block',
-            width: 2,
-            height: 2,
-            pointerEvents: 'none',
-          }}
-        >
-          {labelVisible && (
-            <span
-              style={{
-                position: 'absolute',
-                top: world.radius > 0.8 ? 35 : 29,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                color: hovered ? '#f5ead9' : '#bfc3cc',
-                fontSize: 10,
-                fontWeight: 450,
-                letterSpacing: '.08em',
-                whiteSpace: 'nowrap',
-                textShadow: '0 2px 6px #020308, 0 2px 12px #020308',
-              }}
-            >
-              <span style={{ opacity: 0.45, marginRight: 5, fontSize: 8 }}>{world.number}</span>
-              {world.name}
-            </span>
-          )}
-        </span>
-      </Html>
+      <SceneMarker attributes={{ 'data-world-pick': world.id }}>
+        {labelVisible && (
+          <span
+            style={{
+              position: 'absolute',
+              top: world.radius > 0.8 ? 35 : 29,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              color: hovered ? '#f5ead9' : '#bfc3cc',
+              fontSize: 10,
+              fontWeight: 450,
+              letterSpacing: '.08em',
+              whiteSpace: 'nowrap',
+              textShadow: '0 2px 6px #020308, 0 2px 12px #020308',
+            }}
+          >
+            <span style={{ opacity: 0.45, marginRight: 5, fontSize: 8 }}>{world.number}</span>
+            {world.name}
+          </span>
+        )}
+      </SceneMarker>
+      <SceneMarker position={[world.radius, 0, 0]} attributes={{ 'data-world-limb': world.id }} />
     </group>
   );
 }

@@ -2,13 +2,20 @@ import type { MouseEvent, ReactNode } from 'react';
 import { routeHref } from '../navigation.ts';
 import type { UniverseNavigation, WorldViewProps } from '../types';
 
-type LinkProps = Pick<WorldViewProps, 'navigation' | 'navigate'> & {
+type LinkProps = Pick<WorldViewProps, 'navigation' | 'navigate' | 'onWorldInteraction'> & {
   target: Partial<UniverseNavigation>;
   children: ReactNode;
   className?: string;
 };
 
-export function DestinationLink({ navigation, navigate, target, children, className }: LinkProps) {
+export function DestinationLink({
+  navigation,
+  navigate,
+  target,
+  children,
+  className,
+  onWorldInteraction,
+}: LinkProps) {
   const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (
       event.defaultPrevented ||
@@ -20,6 +27,11 @@ export function DestinationLink({ navigation, navigate, target, children, classN
     )
       return;
     event.preventDefault();
+    if (target.projectSlug) {
+      onWorldInteraction?.({ world: 'projects', kind: 'project', value: target.projectSlug });
+    } else if (target.articleSlug) {
+      onWorldInteraction?.({ world: 'writing', kind: 'article', value: target.articleSlug });
+    }
     navigate(target);
   };
   return (
