@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { WorldViewProps } from '../types';
 import { Eyebrow } from './shared';
 
@@ -70,13 +70,49 @@ function generateGarden(seed: number, density: number) {
   };
 }
 
-export function CreativeWorld({ onWorldInteraction }: Pick<WorldViewProps, 'onWorldInteraction'>) {
+export function CreativeWorld({
+  onWorldInteraction,
+  active = true,
+}: Pick<WorldViewProps, 'onWorldInteraction' | 'active'>) {
   const [seed, setSeed] = useState(2106);
   const [density, setDensity] = useState(42);
   const [paletteIndex, setPaletteIndex] = useState(0);
   const [exportMessage, setExportMessage] = useState('');
   const svgRef = useRef<SVGSVGElement>(null);
   const committedDensity = useRef(density);
+  const hush = useRef<HTMLElement>(null);
+  const insideHush = useRef(false);
+  const [haunting, setHaunting] = useState(false);
+  const [lantern, setLantern] = useState(false);
+  const changeEnvironment = useCallback(
+    (next: boolean) => {
+      if (insideHush.current === next) return;
+      insideHush.current = next;
+      setHaunting(next);
+      onWorldInteraction?.({
+        world: 'creative',
+        kind: 'environment',
+        value: next ? 'hush' : 'studio',
+      });
+    },
+    [onWorldInteraction]
+  );
+  useEffect(() => {
+    if (!active) {
+      changeEnvironment(false);
+      return;
+    }
+    if (!hush.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => changeEnvironment(entry.isIntersecting),
+      {
+        rootMargin: '-120px 0px -18% 0px',
+        threshold: 0.12,
+      }
+    );
+    observer.observe(hush.current);
+    return () => observer.disconnect();
+  }, [active, changeEnvironment]);
   const palette = PALETTES[paletteIndex];
   const garden = useMemo(() => generateGarden(seed, density), [seed, density]);
   const changeSeed = (next: number) => {
@@ -316,18 +352,106 @@ export function CreativeWorld({ onWorldInteraction }: Pick<WorldViewProps, 'onWo
             collection.
           </p>
         </section>
-        <aside className="uw-hush" data-reveal="section">
-          <span aria-hidden="true">H</span>
-          <div>
-            <Eyebrow>Game development</Eyebrow>
-            <h2>Hush</h2>
+        <aside
+          ref={hush}
+          className="uw-hush uw-hush-stage"
+          data-reveal="section"
+          data-hush-active={haunting}
+          data-lantern={lantern}
+        >
+          <div className="uw-hush-scenery" aria-hidden="true">
+            <svg viewBox="0 0 720 320" fill="none">
+              <circle cx="550" cy="76" r="44" fill="#c2d3b9" opacity=".8" />
+              {[30, 95, 162, 570, 645, 700].map((x, i) => (
+                <path
+                  key={x}
+                  d={`M${x} 320V${60 + (i % 3) * 35}m0 65l-24-30m24 65l30-45`}
+                  stroke="#182b31"
+                  strokeWidth="13"
+                />
+              ))}
+              <path
+                d="M225 310V145L360 80l135 65v165"
+                fill="#16292c"
+                stroke="#688077"
+                strokeWidth="2"
+              />
+              <path
+                d="M318 310v-92a42 42 0 0184 0v92"
+                fill="#080f17"
+                stroke="#8f9c82"
+                strokeWidth="2"
+              />
+              <path
+                d="M250 160h45v60h-45zM425 160h45v60h-45z"
+                fill="#71958a"
+                opacity={lantern ? 0.9 : 0.25}
+              />
+              {[190, 515].map((x, i) => (
+                <g key={x} transform={`translate(${x} ${150 + i * 55})`} className="uw-hush-spirit">
+                  <path
+                    d="M-25 50V0a25 25 0 0150 0v50L13 42 0 53-13 42z"
+                    fill="#bedbd0"
+                    opacity=".8"
+                  />
+                  <ellipse cx="-9" cy="5" rx="4" ry="7" fill="#15222d" />
+                  <ellipse cx="9" cy="5" rx="4" ry="7" fill="#15222d" />
+                </g>
+              ))}
+              <path d="M0 300q180-40 360 0t360-8" stroke="#8fa9a0" opacity=".35" strokeWidth="18" />
+            </svg>
+          </div>
+          <div className="uw-hush-copy">
+            <Eyebrow>After hours / Game development</Eyebrow>
+            <h2>
+              HUSH<span>A little curiosity. A little unease.</span>
+            </h2>
             <p>
-              Hush is my horror-game project. Screenshots, gameplay clips, and implementation notes
-              have not been added to this portfolio yet.
+              Leave the garden for a moonlit arcade. Ghosts drift between the trees, abandoned
+              cabinets glow, and a lantern changes the atmosphere.
             </p>
-            <p>
-              No build or public project link is supplied here. This space is reserved for actual
-              footage and development notes.
+            <div className="uw-hush-controls">
+              <button
+                type="button"
+                className="uw-button"
+                aria-pressed={lantern}
+                onClick={() => {
+                  const next = !lantern;
+                  setLantern(next);
+                  insideHush.current = true;
+                  setHaunting(true);
+                  onWorldInteraction?.({
+                    world: 'creative',
+                    kind: 'hush',
+                    value: next ? 'light-on' : 'light-off',
+                  });
+                }}
+              >
+                {lantern ? 'Lower the lantern' : 'Raise the lantern'}{' '}
+                <span aria-hidden="true">↗</span>
+              </button>
+              <button
+                type="button"
+                className="uw-text-link"
+                onClick={() => {
+                  changeEnvironment(false);
+                  svgRef.current
+                    ?.closest('.uw-sketch')
+                    ?.scrollIntoView({ block: 'start', behavior: 'instant' });
+                }}
+              >
+                Return to the garden ↑
+              </button>
+            </div>
+            <p className="uw-hush-status" role="status">
+              {lantern
+                ? 'Lantern raised. The spectral set is illuminated.'
+                : 'Moonlight only. Scroll into the set, or raise the lantern.'}
+            </p>
+            <p className="uw-hush-disclaimer">
+              An original interactive portfolio set inspired by my horror-game project, Hush — not
+              gameplay footage. Actual Hush screenshots, clips, and a public build have not been
+              supplied. No audio autoplays.
             </p>
           </div>
         </aside>

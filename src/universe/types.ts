@@ -90,7 +90,7 @@ export interface ExpeditionFrame {
 }
 export interface WorldInteraction {
   world: WorldId;
-  kind: 'research' | 'creative' | 'article' | 'project';
+  kind: 'research' | 'creative' | 'article' | 'project' | 'environment' | 'hush';
   value?: string | number;
   at: number;
 }
@@ -121,5 +121,6 @@ export interface UniverseSceneProps {
   onProjectSelect: (slug: string) => void;
   journey?: MutableRefObject<ExpeditionFrame>;
   interaction?: MutableRefObject<WorldInteraction | null>;
+  interactionRevision?: number;
 }
 export type ContentFeed = HiddenQuestResponse;

@@ -18,7 +18,11 @@ function RendererLifecycle({
   reducedMotion,
   journey,
   selected,
-}: Pick<UniverseSceneProps, 'onError' | 'reducedMotion' | 'journey' | 'selected'>) {
+  interactionRevision,
+}: Pick<
+  UniverseSceneProps,
+  'onError' | 'reducedMotion' | 'journey' | 'selected' | 'interactionRevision'
+>) {
   const { gl, invalidate } = useThree();
   const errorCallback = useRef(onError);
   errorCallback.current = onError;
@@ -44,7 +48,7 @@ function RendererLifecycle({
   useEffect(() => {
     // Demand mode still needs a frame after responsive HTML labels and camera changes.
     invalidate();
-  }, [invalidate, reducedMotion, selected]);
+  }, [invalidate, reducedMotion, selected, interactionRevision]);
   useEffect(() => {
     if (!journey || !reducedMotion) return;
     const update = () => {
@@ -72,7 +76,12 @@ function System(props: UniverseSceneProps) {
     [mobile]
   );
   const activeIndex = WORLDS.findIndex(world => world.id === activeWorld);
-  useExpeditionLayer(solar, props.journey, props.reducedMotion, 'exterior');
+  const refreshSolarAssets = useExpeditionLayer(
+    solar,
+    props.journey,
+    props.reducedMotion,
+    'exterior'
+  );
   const ready = useRef(false);
   const mounted = useRef(true);
   const readyCallback = useRef(props.onReady);
@@ -117,6 +126,7 @@ function System(props: UniverseSceneProps) {
         reducedMotion={props.reducedMotion}
         journey={props.journey}
         selected={props.selected}
+        interactionRevision={props.interactionRevision}
       />
       {props.journey ? (
         <ScrollCameraRig
@@ -163,6 +173,7 @@ function System(props: UniverseSceneProps) {
             projectMarkers={props.projectMarkers}
             onProjectSelect={props.onProjectSelect}
             scrollJourney={Boolean(props.journey)}
+            onAssetReady={refreshSolarAssets}
           />
         ))}
       </group>

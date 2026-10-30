@@ -430,6 +430,15 @@
   align-items: center;
   gap: 10px;
 }
+.assetCredits {
+  pointer-events: auto;
+  color: #a4b2b7;
+  font: 8px var(--u-mono);
+  text-underline-offset: 4px;
+}
+.assetCredits:hover {
+  text-decoration: underline;
+}
 .sceneHUD select {
   padding: 0 14px 0 0;
   border: 0;

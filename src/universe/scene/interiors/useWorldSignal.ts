@@ -18,7 +18,7 @@ export function useWorldSignal(
   const last = useRef<number | null>(null);
   useFrame(() => {
     const event = interaction?.current;
-    if (!event || event.world !== world) {
+    if (!event || event.world !== world || event.kind === 'environment' || event.kind === 'hush') {
       signal.current.pulse = 0;
       return;
     }

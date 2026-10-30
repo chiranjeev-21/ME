@@ -9,6 +9,8 @@ import { atmosphereFragment, surfaceVertex } from './shaders';
 import { Landmarks } from './Landmarks';
 import { ProjectBeacons } from './ProjectBeacons';
 import { SceneMarker } from './SceneMarker';
+import { AssetBoundary } from './assets/AssetBoundary';
+import { EarthClouds, EarthSurface } from './assets/Earth';
 
 interface Props {
   world: WorldDefinition;
@@ -21,6 +23,7 @@ interface Props {
   projectMarkers: UniverseSceneProps['projectMarkers'];
   onProjectSelect: UniverseSceneProps['onProjectSelect'];
   scrollJourney?: boolean;
+  onAssetReady?: () => void;
 }
 
 export function Planet({
@@ -34,6 +37,7 @@ export function Planet({
   projectMarkers,
   onProjectSelect,
   scrollJourney = false,
+  onAssetReady = () => {},
 }: Props) {
   const root = useRef<Group>(null);
   const body = useRef<Group>(null);
@@ -88,18 +92,42 @@ export function Planet({
         }}
         onPointerOut={() => setHovered(false)}
       >
-        <mesh>
-          <primitive object={geometry} attach="geometry" />
-          <meshStandardMaterial
-            map={texture}
-            bumpMap={texture}
-            bumpScale={world.kind === 'ocean' ? 0.009 : 0.035}
-            metalness={world.kind === 'research' ? 0.24 : world.kind === 'ocean' ? 0.16 : 0.05}
-            roughness={world.kind === 'ocean' ? 0.4 : 0.88}
-            emissive={world.color}
-            emissiveIntensity={hovered ? 0.09 : 0.012}
-          />
-        </mesh>
+        <AssetBoundary
+          fallback={
+            <mesh>
+              <primitive object={geometry} attach="geometry" />
+              <meshStandardMaterial
+                map={texture}
+                bumpMap={texture}
+                bumpScale={world.kind === 'ocean' ? 0.009 : 0.035}
+                metalness={world.kind === 'research' ? 0.24 : world.kind === 'ocean' ? 0.16 : 0.05}
+                roughness={world.kind === 'ocean' ? 0.4 : 0.88}
+                emissive={world.color}
+                emissiveIntensity={hovered ? 0.09 : 0.012}
+              />
+            </mesh>
+          }
+        >
+          {world.kind === 'ocean' ? (
+            <EarthSurface geometry={geometry} onReady={onAssetReady} />
+          ) : (
+            <mesh>
+              <primitive object={geometry} attach="geometry" />
+              <meshStandardMaterial
+                map={texture}
+                bumpMap={texture}
+                bumpScale={0.035}
+                metalness={world.kind === 'research' ? 0.24 : 0.05}
+                roughness={0.88}
+                emissive={world.color}
+                emissiveIntensity={hovered ? 0.09 : 0.012}
+              />
+            </mesh>
+          )}
+        </AssetBoundary>
+        {world.kind === 'ocean' && (
+          <EarthClouds radius={world.radius} high={high} reducedMotion={reducedMotion} />
+        )}
         <Landmarks world={world} high={high} />
       </group>
       <mesh scale={hovered ? 1.1 : 1.065}>

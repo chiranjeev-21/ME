@@ -1,8 +1,9 @@
-import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Object3D, Vector3 } from 'three';
 import type { InstancedMesh } from 'three';
 import type { WorldDefinition } from '../types';
 import { seededRandom } from './math.ts';
+import { surfaceTexture } from './textures';
 
 interface Props {
   world: WorldDefinition;
@@ -104,6 +105,25 @@ function Observatory({ radius, archive }: { radius: number; archive: boolean }) 
   );
 }
 
+function Moon({ radius, high }: { radius: number; high: boolean }) {
+  const texture = useMemo(() => surfaceTexture('archive', 81, high), [high]);
+  useEffect(() => () => texture.dispose(), [texture]);
+  return (
+    <group rotation={[0.35, 0.2, -0.25]}>
+      <mesh position={[radius * 1.8, radius * 0.45, -radius * 0.3]}>
+        <sphereGeometry args={[radius * 0.23, high ? 48 : 32, 24]} />
+        <meshStandardMaterial
+          map={texture}
+          bumpMap={texture}
+          bumpScale={radius * 0.008}
+          color="#b4b8b2"
+          roughness={1}
+        />
+      </mesh>
+    </group>
+  );
+}
+
 export function Landmarks({ world, high }: Props) {
   const r = world.radius;
   const kind = world.kind;
@@ -113,14 +133,7 @@ export function Landmarks({ world, high }: Props) {
         kind === 'terracotta' ||
         kind === 'garden' ||
         kind === 'archive') && <Structures world={world} high={high} />}
-      {kind === 'ocean' && (
-        <group rotation={[0.35, 0.2, -0.25]}>
-          <mesh position={[r * 1.8, r * 0.45, -r * 0.3]}>
-            <icosahedronGeometry args={[r * 0.23, high ? 3 : 1]} />
-            <meshStandardMaterial color="#a6a69e" roughness={1} />
-          </mesh>
-        </group>
-      )}
+      {kind === 'ocean' && <Moon radius={r} high={high} />}
       {(kind === 'industrial' || kind === 'archive') && (
         <mesh rotation={[Math.PI / 2.8, 0.2, 0.35]}>
           <torusGeometry args={[r * 1.025, r * 0.009, 5, high ? 96 : 48]} />

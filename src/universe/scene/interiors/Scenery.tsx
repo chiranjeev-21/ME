@@ -130,24 +130,34 @@ const skyFragment = `
   uniform vec3 uTop;
   uniform vec3 uHorizon;
   uniform float uOpacity;
+  uniform float uSunGlow;
   varying vec3 vLocal;
   void main() {
     float height = smoothstep(-.08, .68, normalize(vLocal).y);
     vec3 color = mix(uHorizon, uTop, height);
     float glow = pow(max(0., dot(normalize(vLocal), normalize(vec3(-.6,.24,-1.)))), 24.);
-    color += vec3(.24,.18,.1) * glow;
+    color += vec3(.24,.18,.1) * glow * uSunGlow;
     gl_FragColor = vec4(color, uOpacity);
   }
 `;
 
-export function Sky({ top, horizon }: { top: string; horizon: string }) {
+export function Sky({
+  top,
+  horizon,
+  sunGlow = 1,
+}: {
+  top: string;
+  horizon: string;
+  sunGlow?: number;
+}) {
   const uniforms = useMemo(
     () => ({
       uTop: { value: new Color(top) },
       uHorizon: { value: new Color(horizon) },
       uOpacity: { value: 1 },
+      uSunGlow: { value: sunGlow },
     }),
-    [top, horizon]
+    [top, horizon, sunGlow]
   );
   return (
     <mesh renderOrder={-100}>

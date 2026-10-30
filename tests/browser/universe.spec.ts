@@ -75,6 +75,10 @@ test('native scrolling visibly zooms into a planet, enters its environment, and 
   await nativeScrollTo(page, near);
   await expect.poll(() => planetRadius(page, 'about')).toBeGreaterThan(farRadius * 1.8);
   const nearRadius = await planetRadius(page, 'about');
+  await page.screenshot({
+    path: testInfo.outputPath('earth-approach.png'),
+    animations: 'disabled',
+  });
   await nativeScrollTo(page, geometry.read - 100);
   await expect(root(page)).toHaveAttribute('data-expedition-phase', 'inside');
   await expect(
@@ -94,7 +98,7 @@ test('native scrolling visibly zooms into a planet, enters its environment, and 
       read: element.querySelector('[data-world-content]')!.getBoundingClientRect().top + scrollY,
       height: innerHeight,
     }));
-  await nativeScrollTo(page, engineering.top - engineering.height * 0.5);
+  await nativeScrollTo(page, engineering.top - Math.min(96, engineering.height * 0.1));
   await expect(root(page)).toHaveAttribute('data-world', 'engineering');
   await nativeScrollTo(page, engineering.read - 100);
   await expect(
@@ -555,4 +559,103 @@ test('skip navigation provides an immediate keyboard Browse path and mobile menu
       page.getByRole('button', { name: 'Open navigation', exact: true })
     ).toHaveAttribute('aria-expanded', 'false');
   }
+});
+
+test('inhabited planets load real animated people and articulated alien assets', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(120000);
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/world/about?mode=explore&quality=low');
+  await sceneReady(page);
+  await expect(page.locator('[data-model="walker"]')).toHaveCount(2);
+  const citizen = page.locator('[data-citizen="human-0"]');
+  const before = (await citizen.boundingBox())!;
+  await expect
+    .poll(async () => {
+      const after = await citizen.boundingBox();
+      return after ? Math.hypot(after.x - before.x, after.y - before.y) : 0;
+    })
+    .toBeGreaterThan(1);
+  await page.screenshot({ path: testInfo.outputPath('earth-people.png'), animations: 'disabled' });
+  await world(page, 'AI Lab');
+  await expect(page.locator('[data-model="alien"]')).toHaveCount(2);
+  await page.screenshot({
+    path: testInfo.outputPath('alien-observatory.png'),
+    animations: 'disabled',
+  });
+  await world(page, 'Engineering');
+  await expect(page.locator('[data-model="robot"]')).toHaveCount(2);
+  await expect(host(page)).toContainText('failure testing');
+  if (testInfo.project.name === 'desktop') {
+    const lighting = page.waitForResponse(
+      response => response.url().endsWith('/dawn-1k.hdr') && response.status() === 200
+    );
+    await page.getByRole('combobox', { name: 'Render quality' }).selectOption('high');
+    await lighting;
+    await expect(page.locator('[data-model="robot"]')).toHaveCount(3);
+    await page.screenshot({
+      path: testInfo.outputPath('asset-lighting-high.png'),
+      animations: 'disabled',
+    });
+  }
+  expect(errors).toEqual([]);
+});
+
+test('the Hush section enters a haunted game set and its lantern changes the actual environment', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(90000);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/world/creative?mode=explore&quality=low');
+  await sceneReady(page);
+  const lantern = host(page).getByRole('button', { name: /Raise the lantern/ });
+  await lantern.scrollIntoViewIfNeeded();
+  await expect(
+    page.locator('[data-world-environment="creative"][data-environment-theme="hush"]')
+  ).toBeAttached();
+  await expect(page.locator('[data-model="ghost"]')).toHaveCount(2);
+  await lantern.click();
+  await expect(page.locator('[data-haunt-state="illuminated"]')).toBeAttached();
+  await expect(host(page).getByRole('status').filter({ hasText: 'Lantern raised' })).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath('hush-haunted-set.png'),
+    animations: 'disabled',
+  });
+  await expect(host(page)).toContainText('not gameplay footage');
+  await host(page)
+    .getByRole('button', { name: /Return to the garden/ })
+    .click();
+  await expect(
+    page.locator('[data-world-environment="creative"][data-environment-theme="creative"]')
+  ).toBeAttached();
+  await expect(page.locator('[data-model="ghost"]')).toHaveCount(0);
+});
+
+test('reduced motion freezes character travel and asset failures preserve the portfolio', async ({
+  page,
+}) => {
+  await page.goto('/world/about?mode=explore&quality=low');
+  await sceneReady(page);
+  await expect(page.locator('[data-model="walker"]')).toHaveCount(2);
+  const first = await page.locator('[data-citizen="human-0"]').boundingBox();
+  await page.getByRole('button', { name: 'Open command palette' }).click();
+  await page.keyboard.press('Escape');
+  const after = await page.locator('[data-citizen="human-0"]').boundingBox();
+  expect(after?.x).toBeCloseTo(first!.x, 1);
+  expect(after?.y).toBeCloseTo(first!.y, 1);
+  await world(page, 'Creative');
+  await host(page)
+    .getByRole('button', { name: /Raise the lantern/ })
+    .scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-environment-theme="hush"]')).toBeAttached();
+  await expect(page.locator('[data-model="ghost"]')).toHaveCount(2);
+  await page.route('**/assets/worlds/**', route => route.abort());
+  await page.goto('/world/about?mode=explore&quality=low');
+  await sceneReady(page);
+  await expect(host(page)).toContainText('Azure Direct Drive');
+  await world(page, 'Contact');
+  await expect(host(page)).toContainText('chiranj33v.singh@gmail.com');
 });

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import type { Group } from 'three';
 import type { RefObject } from 'react';
@@ -26,4 +26,5 @@ export function useExpeditionLayer(
     if (!journey) return;
     controller.current?.setOpacity(expeditionVisibility(journey.current, reducedMotion)[layer]);
   }, -20);
+  return useCallback(() => controller.current?.refresh(), []);
 }

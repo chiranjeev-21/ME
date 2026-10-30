@@ -1,6 +1,6 @@
 # CJ Universe deployment
 
-The scroll-first release uses **`feature/cj-universe-scroll-worlds`**.
+The inhabited graphics release uses **`feature/cj-universe-inhabited-worlds`**.
 **`feature/cj-universe-3d`** and **`design/personal-universe`** also track the
 verified Universe implementation.
 `main`, CJ OS, and Engineering Workbench are not changed by this release.
@@ -58,6 +58,11 @@ entry point. **Do not replace these with a global rewrite that sends `/api/*` to
 The same project/article can be opened in either mode. A failed or interrupted
 WebGL context retains the destination and switches to Browse; it does not invent
 a second copy of the project.
+
+Licensed scene files live under `public\assets\worlds`; keep these static paths
+outside client-route rewrites. `/assets/CREDITS.txt` lists sources and permissions.
+No new environment variables, model API, or asset CDN is needed. The Hush set is
+an original portfolio interpretation, not a game build or captured gameplay.
 
 Explore uses native document scrolling through approach, atmosphere entry, and
 themed surface environments. Shared world documents stay mounted when switching

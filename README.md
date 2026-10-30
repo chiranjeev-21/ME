@@ -20,6 +20,13 @@ controls the camera rather than an artificial timer or wheel trap.
 Planet controls, mesh selection, and direct links skip straight to a destination.
 Project beacons open the same case studies as the catalog.
 
+The inhabited-world graphics layer adds a 2K NASA Earth map and rotating clouds,
+real skinned walking people, animated robot guides, original articulated aliens,
+modeled trees, and CC0 photogrammetry materials. High quality adds a local 1K HDRI.
+Scrolling into **Hush** changes the Creative environment to a moonlit haunted
+arcade with floating ghosts and an interactive lantern. This is original portfolio
+scenery, explicitly **not Hush gameplay footage**.
+
 **Browse Mode** uses the same content, destination components, project selections,
 filters, and routes, without creating a WebGL renderer. Switching modes does not
 replace a project or article with a different version of its content.
@@ -35,8 +42,8 @@ replace a project or article with a different version of its content.
 | Contact     | Verified direct email/social destinations and clipboard feedback                                                    |
 
 Original Hush gameplay/screenshots/build links and music/guitar recordings were
-not supplied in this portfolio repository. The Creative world says so explicitly:
-there are no fake recordings, simulated game previews, or autoplay audio.
+not supplied in this portfolio repository. The Creative world says so explicitly;
+the illustrated haunted set does not substitute for actual footage or game claims.
 
 ## Controls
 
@@ -110,6 +117,7 @@ src\universe\
   worlds.ts            Seven typed world definitions
   content.ts           Verified profile, project adapter, authored studio notes
   scene\               Camera rig, models, shaders, procedural textures, environment
+    assets\            Local model loading, skinned animation, population routes
   worlds\              Distinct destination interfaces and readable detail views
   lab\                 Bounded TF-IDF retrieval and inspectable research interface
   ui\                  Shared icons, command palette, read-only terminal
@@ -134,7 +142,15 @@ Both modes retain the same mounted documents, including local drafts and filters
 - Rendering pauses when the document is hidden. No heavy real-time shadows or
   full-screen postprocessing stack are required.
 - Sun glow/corona, surface textures, atmospheres, stars, and structures are original
-  procedural assets. No external model or texture download is required.
+  procedural assets, complemented by locally hosted licensed models and textures.
+  The complete additional graphics asset set is below 5 MB; only active interiors
+  request their inhabitants. Low quality uses fewer citizens and omits the HDRI.
+- Asset credits, source URLs, licenses, and modifications are linked from the HUD
+  at `/assets/CREDITS.txt`. No runtime asset CDN, decoder CDN, or asset API is needed.
+- `npm run assets:worlds` regenerates the original alien, ghost, and tree GLBs from
+  `scripts\build-world-models.mjs`. It does not replace third-party licensed models.
+- Local asset boundaries preserve the base scenery and navigation if a model or
+  texture fails. Late-loading surfaces join the current scroll fade.
 - Reduced motion defaults to Browse; explicit Explore remains usable with static
   environments and immediate camera changes.
 - WebGL 2 failure or context loss preserves the current destination in Browse.
@@ -149,7 +165,7 @@ Both modes retain the same mounted documents, including local drafts and filters
 
 ## Deployment
 
-The scroll-first release uses `feature/cj-universe-scroll-worlds`, with
+The inhabited graphics release uses `feature/cj-universe-inhabited-worlds`, with
 `feature/cj-universe-3d` and `design/personal-universe` tracking the verified release.
 Vercel generates Preview deployments from pushes. The approved CJ OS branches,
 Engineering Workbench, `main`, and production are not changed by this release.

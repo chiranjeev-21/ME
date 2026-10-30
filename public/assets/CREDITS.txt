@@ -1,0 +1,42 @@
+CJ UNIVERSE - SCENE ASSET CREDITS
+
+These are illustrative portfolio environments, not footage, models, or assets
+from Hush or from any employer. No endorsement by the asset creators is implied.
+All files are served locally. No asset-service account or API key is required.
+
+EARTH DAY MAP
+NASA / Visible Earth, The Blue Marble: land surface, ocean color and sea ice.
+Source: https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/land_ocean_ice_2048.png
+Usage: https://www.nasa.gov/nasa-brand-center/images-and-media/
+NASA imagery used under its media usage guidelines for personal Internet pages.
+Converted from the original 2048px PNG to WebP. No NASA logos are included.
+
+WALKING HUMAN - CESIUM MAN
+Copyright 2017 Cesium. Creative Commons Attribution 4.0 International.
+https://creativecommons.org/licenses/by/4.0/
+https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CesiumMan
+Model unchanged; normalized, instanced and animated in the portfolio scene.
+The Cesium mark on the original model remains its owner's trademark; its use
+in this model conveys no permission to reuse it elsewhere or claim endorsement.
+https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/LICENSES/LicenseRef-LegalMark-Cesium.txt
+
+ROBOT EXPRESSIVE
+Tomás Laulhé (Quaternius), CC0 1.0.
+https://creativecommons.org/publicdomain/zero/1.0/
+https://quaternius.com/
+Modifications by Don McCurdy: facial morph targets, FBX2GLTF conversion,
+deduplicated materials and reduced metalness.
+https://threejs.org/examples/models/gltf/RobotExpressive/README.md
+Model unchanged; normalized and animated in the portfolio scene.
+
+FOREST GROUND 04 AND KIARA 1 DAWN HDRI
+Poly Haven, CC0 1.0.
+https://polyhaven.com/a/forest_ground_04
+https://polyhaven.com/a/kiara_1_dawn
+https://polyhaven.com/license
+1K diffuse and OpenGL normal maps converted to WebP. 1K HDRI unchanged.
+
+ALIEN, GHOST, TREE, CLOUDS, PARTICLES AND HAUNTED SET
+Original CJ Universe artwork generated for this portfolio.
+Model sources: scripts/build-world-models.mjs
+These are not original Hush game assets and are not represented as gameplay.

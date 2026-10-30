@@ -122,3 +122,29 @@ export function glowTexture() {
   texture.colorSpace = SRGBColorSpace;
   return texture;
 }
+
+export function cloudTexture(high: boolean) {
+  const canvas = document.createElement('canvas');
+  canvas.width = high ? 1024 : 512;
+  canvas.height = canvas.width / 2;
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('Cloud surface canvas is unavailable.');
+  const image = context.createImageData(canvas.width, canvas.height);
+  for (let row = 0; row < canvas.height; row++) {
+    const latitude = (row / (canvas.height - 1)) * Math.PI;
+    for (let column = 0; column < canvas.width; column++) {
+      const longitude = (column / canvas.width) * Math.PI * 2;
+      const x = Math.sin(latitude) * Math.cos(longitude),
+        y = Math.cos(latitude),
+        z = Math.sin(latitude) * Math.sin(longitude);
+      const field = terrain(x * 1.7, y * 1.7, z * 1.7, 42);
+      const alpha = Math.min(1, Math.max(0, (field - 0.54) * 5)) * 255;
+      const offset = (row * canvas.width + column) * 4;
+      image.data.set([alpha, alpha, alpha, 255], offset);
+    }
+  }
+  context.putImageData(image, 0, 0);
+  const texture = new CanvasTexture(canvas);
+  texture.wrapS = RepeatWrapping;
+  return texture;
+}

@@ -92,6 +92,7 @@ export function Universe() {
     jumpRevision: 0,
   });
   const interaction = useRef<WorldInteraction | null>(null);
+  const [interactionRevision, setInteractionRevision] = useState(0);
   const pendingGoal = useRef<{ world: WorldId | null } | null>({ world: navigation.world });
   const previousNavigation = useRef<UniverseNavigation | null>(null);
   const world = navigation.world ? getWorld(navigation.world) : null;
@@ -149,6 +150,7 @@ export function Universe() {
   );
   const emitWorldInteraction = useCallback((event: Omit<WorldInteraction, 'at'>) => {
     interaction.current = { ...event, at: performance.now() };
+    setInteractionRevision(previous => previous + 1);
   }, []);
   const sceneError = useCallback(
     (reason: string) => {
@@ -408,6 +410,7 @@ export function Universe() {
                   entered={Boolean(navigation.world)}
                   journey={expeditionFrame}
                   interaction={interaction}
+                  interactionRevision={interactionRevision}
                   quality={quality}
                   reducedMotion={reducedMotion}
                   onSelect={selectWorld}
@@ -660,6 +663,14 @@ export function Universe() {
                 : `${WORLDS.length} worlds / scroll to begin`
               : 'Preparing the 3D view'}
           </span>
+          <a
+            className={styles.assetCredits}
+            href="/assets/CREDITS.txt"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Scene credits ↗
+          </a>
           <label>
             Quality
             <select

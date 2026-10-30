@@ -41,14 +41,24 @@ export function measureExpedition(
   const offset = Math.max(0, finite(headerOffset));
   const chapters = measurements
     .filter(chapter => [chapter.top, chapter.readTop, chapter.readBottom].every(Number.isFinite))
-    .map(chapter => {
+    .slice()
+    .sort((a, b) => a.top - b.top)
+    .map((chapter, index, ordered) => {
       const readTop = Math.max(chapter.top, chapter.readTop);
       const readBottom = Math.max(readTop, chapter.readBottom);
-      const approachStart = Math.max(0, chapter.top - height * 0.65);
       const readStart = Math.max(0, readTop - offset);
+      const previous = ordered[index - 1];
+      // Do not change worlds while the outgoing chapter's controls are still being read.
+      const previousEnd = previous
+        ? Math.max(previous.readTop, previous.readBottom) - offset + 1
+        : 0;
+      const approachStart = Math.min(
+        Math.max(0, readStart - 2),
+        Math.max(0, chapter.top - height * 0.65, previousEnd)
+      );
       const entryStart = Math.min(
         readStart,
-        Math.max(approachStart + 1, chapter.top + height * 0.18)
+        Math.max(approachStart + (previous ? height * 0.6 : 1), chapter.top + height * 0.18)
       );
       const entryEnd = Math.min(readStart, Math.max(entryStart + 1, readTop - height * 0.28));
       return {
@@ -59,10 +69,9 @@ export function measureExpedition(
         entryStart,
         entryEnd,
         readStart,
-        readEnd: Math.max(readStart + 1, readBottom - height + Math.min(96, height * 0.16)),
+        readEnd: Math.max(readStart + 1, readBottom - offset),
       };
-    })
-    .sort((a, b) => a.top - b.top);
+    });
   return {
     chapters,
     viewportHeight: height,

@@ -55,10 +55,10 @@ test('reverse scrolling exactly retraces forward frames, including world boundar
     [...positions].reverse().map(y => frameAtScroll(layout, y)),
     [...forward].reverse()
   );
-  assert.equal(frameAtScroll(layout, 5599).world, 'about');
-  assert.equal(frameAtScroll(layout, 5600).world, 'engineering');
-  assert.equal(frameAtScroll(layout, 5600).approach, 0);
-  assert.equal(frameAtScroll(layout, 5600).entry, 0);
+  assert.equal(frameAtScroll(layout, 6122).world, 'about');
+  assert.equal(frameAtScroll(layout, 6123).world, 'engineering');
+  assert.equal(frameAtScroll(layout, 6123).approach, 0);
+  assert.equal(frameAtScroll(layout, 6123).entry, 0);
   assert.equal(frameAtScroll(layout, 0).world, null);
 });
 
@@ -74,7 +74,7 @@ test('long and dynamically resized documents move subsequent chapter anchors and
   );
   assert.ok(frameAtScroll(expanded, 4000).readProgress < at4000.readProgress);
   assert.equal(frameAtScroll(expanded, 10000).world, 'about');
-  assert.equal(frameAtScroll(expanded, 13600).world, 'engineering');
+  assert.equal(frameAtScroll(expanded, 14123).world, 'engineering');
   const contracted = measureExpedition(
     [
       { ...measurements[0], readBottom: 3250 },
@@ -90,7 +90,7 @@ test('viewport and header changes are measured rather than assuming fixed docume
   const resized = measureExpedition(measurements, 600, 112);
   assert.equal(resized.chapters[0].approachStart, 610);
   assert.equal(resized.chapters[0].readStart, 2138);
-  assert.equal(resized.chapters[0].readEnd, 5746);
+  assert.equal(resized.chapters[0].readEnd, 6138);
   assert.equal(frameAtScroll(resized, 600).phase, 'orbit');
   assert.equal(frameAtScroll(layout, 600).phase, 'approach');
 });
@@ -131,6 +131,7 @@ test('direct read and approach jumps increment revisions and compute the destina
     readProgress: 0,
     jumpRevision: 9,
   });
+
   const approach = expeditionJump(layout, 'about', 'approach', read.frame.jumpRevision);
   assert.equal(approach.top, 350);
   assert.equal(approach.frame.phase, 'approach');
@@ -142,6 +143,15 @@ test('direct read and approach jumps increment revisions and compute the destina
   assert.equal(overview.frame.phase, 'orbit');
   assert.equal(overview.frame.jumpRevision, 11);
   assert.equal(expeditionJump(layout, 'contact', 'read', 0), null);
+});
+
+test('interactive chapter tails keep their own scenery until the document clears the header', () => {
+  const tail = measurements[0].readBottom - 650;
+  assert.equal(frameAtScroll(layout, tail).world, 'about');
+  assert.ok(frameAtScroll(layout, tail).readProgress < 0.92);
+  assert.equal(frameAtScroll(layout, measurements[0].readBottom - 128).world, 'about');
+  assert.equal(frameAtScroll(layout, measurements[0].readBottom - 127).world, 'engineering');
+  assert.ok(layout.chapters[1].entryStart - layout.chapters[1].approachStart >= 600);
 });
 
 test('clamped direct jumps describe the actual reachable position, not a stale requested world', () => {

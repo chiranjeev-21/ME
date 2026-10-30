@@ -11,28 +11,48 @@ function opacityUniform(material: Material) {
 export function createExpeditionLayer(root: Group) {
   const materials = new Set<Material>();
   const meshes: { mesh: Mesh; raycast: Mesh['raycast'] }[] = [];
+  const knownMeshes = new Set<Mesh>();
   const visible = root.visible;
   const markerOpacity = root.userData.expeditionOpacity;
-  root.traverse(object => {
-    const mesh = object as Mesh;
-    if (!mesh.material) return;
-    const values = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-    values.forEach(material => materials.add(material));
-    if (mesh.raycast) meshes.push({ mesh, raycast: mesh.raycast });
-  });
-  const surfaces = Array.from(materials, material => ({
+  const collect = () =>
+    root.traverse(object => {
+      const mesh = object as Mesh;
+      if (!mesh.material) return;
+      const values = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      values.forEach(material => materials.add(material));
+      if (mesh.raycast && !knownMeshes.has(mesh)) {
+        knownMeshes.add(mesh);
+        meshes.push({ mesh, raycast: mesh.raycast });
+      }
+    });
+  const capture = (material: Material) => ({
     material,
     opacity: material.opacity,
     depthWrite: material.depthWrite,
     transparent: material.transparent,
     shaderOpacity: opacityUniform(material)?.value,
-  }));
+  });
+  collect();
+  const surfaces = Array.from(materials, capture);
   surfaces.forEach(({ material }) => {
     material.transparent = true;
     material.needsUpdate = true;
   });
   let previous = -1;
-  return {
+  const controller = {
+    refresh() {
+      const known = new Set(surfaces.map(surface => surface.material));
+      collect();
+      materials.forEach(material => {
+        if (known.has(material)) return;
+        surfaces.push(capture(material));
+        material.transparent = true;
+        material.needsUpdate = true;
+      });
+      const opacity = previous;
+      previous = -1;
+      if (opacity >= 0) controller.setOpacity(opacity);
+    },
     setOpacity(value: number) {
       const opacity = unit(value);
       if (opacity === previous) return;
@@ -66,4 +86,5 @@ export function createExpeditionLayer(root: Group) {
       });
     },
   };
+  return controller;
 }

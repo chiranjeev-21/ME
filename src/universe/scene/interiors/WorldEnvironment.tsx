@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Color, Fog } from 'three';
 import type { Group } from 'three';
@@ -18,6 +18,9 @@ import { ContourGarden, OceanIsland } from './QuietWorlds';
 import { CommunicationsCoast, ProjectSpaceport } from './SignalWorlds';
 import { Ground, Sky } from './Scenery';
 import { useWorldSignal } from './useWorldSignal';
+import { Inhabitants } from '../assets/Inhabitants';
+import { LivingTrees, ForestFloor, SurfaceLighting } from '../assets/SurfaceAssets';
+import { HauntedArcade } from './HauntedArcade';
 
 const ATMOSPHERES: Record<
   WorldId,
@@ -83,11 +86,15 @@ function ScrollAtmosphere({
   world,
   journey,
   reducedMotion,
-}: Pick<Props, 'world' | 'journey' | 'reducedMotion'>) {
+  haunted,
+}: Pick<Props, 'world' | 'journey' | 'reducedMotion'> & { haunted: boolean }) {
   const { scene } = useThree();
   const fog = useMemo(() => new Fog('#030509', 300, 350), []);
   const orbitColor = useMemo(() => new Color('#030509'), []);
-  const horizon = useMemo(() => new Color(ATMOSPHERES[world.id].horizon), [world.id]);
+  const horizon = useMemo(
+    () => new Color(haunted ? '#152b2d' : ATMOSPHERES[world.id].horizon),
+    [world.id, haunted]
+  );
   useEffect(() => {
     const previousFog = scene.fog;
     scene.fog = fog;
@@ -125,11 +132,27 @@ export function WorldEnvironment({
   onRendered,
 }: Props) {
   const root = useRef<Group>(null);
+  const [haunted, setHaunted] = useState(false);
+  const [illuminated, setIlluminated] = useState(false);
+  const lastInteraction = useRef<number | null>(null);
   const atmosphere = ATMOSPHERES[world.id];
   const transform = interiorTransform(position, world.radius);
   const signal = useWorldSignal(world.id, interaction, reducedMotion);
-  useExpeditionLayer(root, journey, reducedMotion, 'interior');
+  const refreshAssets = useExpeditionLayer(root, journey, reducedMotion, 'interior');
   useFrame(() => {
+    const event = interaction?.current;
+    if (
+      world.id === 'creative' &&
+      event?.world === 'creative' &&
+      event.at !== lastInteraction.current
+    ) {
+      lastInteraction.current = event.at;
+      if (event.kind === 'environment') setHaunted(event.value === 'hush');
+      if (event.kind === 'hush') {
+        setHaunted(true);
+        setIlluminated(event.value === 'light-on');
+      }
+    }
     root.current?.position.set(
       position[0],
       position[1] - world.radius * 0.18,
@@ -137,12 +160,31 @@ export function WorldEnvironment({
     );
   }, -25);
   const scenery = { high, reducedMotion, signal, onRendered };
+  const population = { high, reducedMotion, journey, world: world.id, onReady: refreshAssets };
+  const citizen =
+    world.id === 'about'
+      ? 'human'
+      : world.id === 'engineering' || world.id === 'writing'
+        ? 'robot'
+        : 'alien';
   return (
     <>
-      <ScrollAtmosphere world={world} journey={journey} reducedMotion={reducedMotion} />
+      <ScrollAtmosphere
+        world={world}
+        journey={journey}
+        reducedMotion={reducedMotion}
+        haunted={haunted}
+      />
       <group ref={root} position={transform.position} scale={transform.scale}>
-        <Sky top={atmosphere.top} horizon={atmosphere.horizon} />
-        {world.id !== 'about' && <Ground color={atmosphere.ground} onRendered={onRendered} />}
+        <Sky
+          top={haunted ? '#040a15' : atmosphere.top}
+          horizon={haunted ? '#152b2d' : atmosphere.horizon}
+          sunGlow={haunted ? 0.04 : 1}
+        />
+        {world.id !== 'about' && (
+          <Ground color={haunted ? '#101b1c' : atmosphere.ground} onRendered={onRendered} />
+        )}
+        {high && <SurfaceLighting />}
         {world.id === 'about' && <OceanIsland {...scenery} />}
         {world.id === 'engineering' && <RecoveryFoundry {...scenery} />}
         {world.id === 'ai-lab' && <ResearchObservatory {...scenery} />}
@@ -153,14 +195,27 @@ export function WorldEnvironment({
             onProjectSelect={onProjectSelect}
           />
         )}
-        {world.id === 'creative' && <ContourGarden {...scenery} />}
+        {world.id === 'creative' &&
+          (haunted ? (
+            <HauntedArcade {...population} illuminated={illuminated} />
+          ) : (
+            <>
+              <ContourGarden {...scenery} />
+              <ForestFloor onReady={refreshAssets} />
+              <LivingTrees {...population} />
+            </>
+          ))}
         {world.id === 'writing' && <ArchiveLibrary {...scenery} />}
         {world.id === 'contact' && <CommunicationsCoast {...scenery} />}
+        {world.id === 'about' && <LivingTrees {...population} />}
+        {!haunted && <Inhabitants {...population} kind={citizen} />}
         <SceneMarker
           position={interiorLandmark(world.id)}
           attributes={{
             'data-world-environment': world.id,
-            'data-environment-landmark': atmosphere.landmark,
+            'data-environment-landmark': haunted ? 'haunted-arcade' : atmosphere.landmark,
+            'data-environment-theme': haunted ? 'hush' : world.id,
+            'data-haunt-state': illuminated ? 'illuminated' : 'moonlight',
           }}
         />
       </group>
