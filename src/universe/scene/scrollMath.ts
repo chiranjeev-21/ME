@@ -41,6 +41,8 @@ export function interiorLandmark(world: WorldId): Point3 {
       return [-6, 3.2, -10];
     case 'creative':
       return [-6, 3.8, -7];
+    case 'hush':
+      return [-6, 3, -10.3];
     case 'writing':
       return [-6, 4, -8];
     case 'contact':

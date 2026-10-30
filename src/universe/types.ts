@@ -8,6 +8,7 @@ export type WorldId =
   | 'ai-lab'
   | 'projects'
   | 'creative'
+  | 'hush'
   | 'writing'
   | 'contact';
 export type UniverseMode = 'explore' | 'browse';
@@ -24,13 +25,22 @@ export interface WorldDefinition {
   number: string;
   subtitle: string;
   description: string;
+  form?: string;
   color: string;
   radius: number;
   orbitRadius: number;
   orbitalSpeed: number;
   phase: number;
   inclination: number;
-  kind: 'ocean' | 'industrial' | 'research' | 'terracotta' | 'garden' | 'archive' | 'beacon';
+  kind:
+    | 'ocean'
+    | 'industrial'
+    | 'research'
+    | 'terracotta'
+    | 'garden'
+    | 'archive'
+    | 'beacon'
+    | 'ghost';
 }
 export type ProjectCategory = 'AI/ML' | 'Web' | 'Systems' | 'Games' | 'Experiments';
 export interface UniverseProject {

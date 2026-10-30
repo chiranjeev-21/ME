@@ -14,7 +14,7 @@ const feed = {
       id: 'real-shaped-fixture',
       name: 'Public Research',
       description: 'Public repository metadata used by deterministic browser tests.',
-      url: 'https://github.com/chiranjeev-21/ME',
+      url: 'https://github.com/chiranjeev-21/public-research-fixture',
       homepageUrl: 'https://chiranjeev.vercel.app',
       primaryLanguage: { name: 'TypeScript', color: '#3178c6' },
       stargazerCount: 7,
@@ -28,9 +28,19 @@ const root = (page: Page) => page.locator('[data-universe-mode]');
 const host = (page: Page) =>
   page.locator('[data-expedition-world][data-current="true"] [data-world-content]');
 async function world(page: Page, name: string) {
+  const ids: Record<string, string> = {
+    About: 'about',
+    Engineering: 'engineering',
+    'AI Lab': 'ai-lab',
+    Projects: 'projects',
+    Creative: 'creative',
+    Hush: 'hush',
+    Writing: 'writing',
+    Contact: 'contact',
+  };
   await page
-    .getByRole('navigation', { name: 'Planet selector' })
-    .getByRole('button', { name, exact: true })
+    .getByRole('navigation', { name: /^(Planet selector|World directory)$/ })
+    .locator(`a[href^="/world/${ids[name]}?"]`)
     .click();
   await expect(host(page).getByRole('heading', { level: 1 }).first()).toBeVisible();
 }
@@ -152,7 +162,7 @@ test('touch scrolling advances the native planetary journey without a drag-camer
   await session.detach();
 });
 
-test('real WebGL sun and seven planets render, raycasting selects bodies, camera returns', async ({
+test('real WebGL sun and eight destination bodies render, raycasting selects bodies, camera returns', async ({
   page,
 }, testInfo) => {
   const errors: string[] = [];
@@ -165,7 +175,7 @@ test('real WebGL sun and seven planets render, raycasting selects bodies, camera
   await sceneReady(page);
   await expect(page.getByRole('heading', { name: /CJ\s*UNIVERSE/ })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Begin the journey', exact: true })).toBeVisible();
-  await expect(page.locator('[data-world-pick]')).toHaveCount(7);
+  await expect(page.locator('[data-world-pick]')).toHaveCount(8);
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({
     path: testInfo.outputPath('solar-system-landing.png'),
@@ -179,7 +189,7 @@ test('real WebGL sun and seven planets render, raycasting selects bodies, camera
   await expect(root(page)).toHaveAttribute('data-camera-phase', 'focused', { timeout: 20000 });
   await expect(host(page)).toContainText('Azure Direct Drive');
   await page.screenshot({ path: testInfo.outputPath('about-world.png'), animations: 'disabled' });
-  await page.getByRole('button', { name: 'Full universe', exact: true }).click();
+  await page.getByRole('link', { name: 'CJ Universe home', exact: true }).click();
   await expect(root(page)).toHaveAttribute('data-world', 'overview');
   await expect(root(page)).toHaveAttribute('data-camera-phase', 'overview', { timeout: 20000 });
   if (testInfo.project.name === 'mobile') {
@@ -214,7 +224,7 @@ test('real WebGL sun and seven planets render, raycasting selects bodies, camera
   expect(errors).toEqual([]);
 });
 
-test('guided planet controls reach all seven distinct worlds with keyboard and touch alternatives', async ({
+test('guided planet controls reach all eight distinct worlds with keyboard and touch alternatives', async ({
   page,
 }, testInfo) => {
   test.setTimeout(120000);
@@ -222,10 +232,11 @@ test('guided planet controls reach all seven distinct worlds with keyboard and t
   await page.goto('/?mode=explore&quality=low');
   await sceneReady(page);
   for (const [name, id, evidence] of [
-    ['Engineering', 'engineering', 'failure testing'],
+    ['Engineering', 'engineering', 'Workload'],
     ['AI Lab', 'ai-lab', 'Run retrieval'],
     ['Projects', 'projects', 'Search the catalog'],
     ['Creative', 'creative', 'Contour garden'],
+    ['Hush', 'hush', 'lantern'],
     ['Writing', 'writing', 'Search the archive'],
     ['Contact', 'contact', 'chiranj33v.singh@gmail.com'],
   ]) {
@@ -241,12 +252,14 @@ test('guided planet controls reach all seven distinct worlds with keyboard and t
       animations: 'disabled',
     });
   }
-  const about = page
-    .getByRole('navigation', { name: 'Planet selector' })
-    .getByRole('button', { name: 'About', exact: true });
+  const map = page.getByRole('navigation', { name: 'Planet selector' });
+  const about = map.locator('a[href^="/world/about?"]');
   await about.focus();
   await about.press('Home');
-  await expect(about).toBeFocused();
+  await expect(map.locator('a').first()).toBeFocused();
+  await page.keyboard.press('End');
+  await expect(map.locator('a[href^="/world/contact?"]')).toBeFocused();
+  await about.focus();
   await about.press('Enter');
   await expect(root(page)).toHaveAttribute('data-world', 'about');
   await expect(host(page)).toContainText('Microsoft');
@@ -350,10 +363,7 @@ test('creative world produces original interactive artwork, exports it, and does
     .getByRole('button', { name: /Export.*SVG/i })
     .click();
   expect((await download).suggestedFilename()).toBe('cj-contour-garden-49.svg');
-  await expect(host(page)).toContainText('Hush');
-  await expect(host(page)).toContainText(
-    /not supplied|not available|not included|not been supplied|not been added|No original audio/i
-  );
+  await expect(host(page).getByRole('button', { name: /Raise the lantern/ })).toHaveCount(0);
   expect(await page.locator('audio[autoplay]').count()).toBe(0);
   await page.screenshot({
     path: testInfo.outputPath('creative-world.png'),
@@ -497,6 +507,7 @@ test('mobile/narrow layouts keep all destinations and primary actions inside the
     ['AI Lab', 'ai-lab'],
     ['Projects', 'projects'],
     ['Creative', 'creative'],
+    ['Hush', 'hush'],
     ['Writing', 'writing'],
     ['Contact', 'contact'],
   ]) {
@@ -537,7 +548,7 @@ test('actual live GitHub feed remains functional', async ({ request }, testInfo)
   expect(['pinned', 'recent']).toContain(body.selection);
 });
 
-test('skip navigation provides an immediate keyboard Browse path and mobile menus dismiss cleanly', async ({
+test('skip navigation provides one immediate keyboard Browse directory without duplicate menus', async ({
   page,
 }, testInfo) => {
   await page.goto('/?mode=explore&quality=low');
@@ -547,18 +558,16 @@ test('skip navigation provides an immediate keyboard Browse path and mobile menu
   await expect(root(page)).toHaveAttribute('data-universe-mode', 'browse');
   await expect(page.locator('#universe-content').getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.locator('canvas')).toHaveCount(0);
-  if (testInfo.project.name === 'mobile') {
-    await page.getByRole('button', { name: 'Open navigation', exact: true }).click();
-    await expect(
-      page
-        .getByRole('navigation', { name: 'Main navigation' })
-        .getByRole('link', { name: 'About', exact: true })
-    ).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(
-      page.getByRole('button', { name: 'Open navigation', exact: true })
-    ).toHaveAttribute('aria-expanded', 'false');
-  }
+  await expect(
+    page.getByRole('navigation', { name: 'World directory', exact: true })
+  ).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Planet selector', exact: true })).toHaveCount(
+    0
+  );
+  await expect(page.getByRole('navigation', { name: 'Main navigation', exact: true })).toHaveCount(
+    0
+  );
+  await expect(page.getByRole('button', { name: 'Launch Terminal', exact: true })).toHaveCount(1);
 });
 
 test('inhabited planets load real animated people and articulated alien assets', async ({
@@ -588,7 +597,7 @@ test('inhabited planets load real animated people and articulated alien assets',
   });
   await world(page, 'Engineering');
   await expect(page.locator('[data-model="robot"]')).toHaveCount(2);
-  await expect(host(page)).toContainText('failure testing');
+  await expect(host(page)).toContainText('Workload');
   if (testInfo.project.name === 'desktop') {
     const lighting = page.waitForResponse(
       response => response.url().endsWith('/dawn-1k.hdr') && response.status() === 200
@@ -604,30 +613,31 @@ test('inhabited planets load real animated people and articulated alien assets',
   expect(errors).toEqual([]);
 });
 
-test('the Hush section enters a haunted game set and its lantern changes the actual environment', async ({
+test('Hush is a standalone ghost world whose lantern changes the actual environment', async ({
   page,
 }, testInfo) => {
   test.setTimeout(90000);
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/world/creative?mode=explore&quality=low');
+  await page.goto('/world/hush?mode=explore&quality=low');
   await sceneReady(page);
   const lantern = host(page).getByRole('button', { name: /Raise the lantern/ });
   await lantern.scrollIntoViewIfNeeded();
   await expect(
-    page.locator('[data-world-environment="creative"][data-environment-theme="hush"]')
+    page.locator('[data-world-environment="hush"][data-environment-theme="hush"]')
   ).toBeAttached();
   await expect(page.locator('[data-model="ghost"]')).toHaveCount(2);
   await lantern.click();
-  await expect(page.locator('[data-haunt-state="illuminated"]')).toBeAttached();
+  await expect(page.locator('[data-hush-lantern="lit"]')).toBeAttached();
   await expect(host(page).getByRole('status').filter({ hasText: 'Lantern raised' })).toBeVisible();
   await page.screenshot({
     path: testInfo.outputPath('hush-haunted-set.png'),
     animations: 'disabled',
   });
-  await expect(host(page)).toContainText('not gameplay footage');
-  await host(page)
-    .getByRole('button', { name: /Return to the garden/ })
-    .click();
+  await expect(host(page)).toContainText(/not.*gameplay|not.*game footage/i);
+  await page.reload();
+  await sceneReady(page);
+  await expect(root(page)).toHaveAttribute('data-world', 'hush');
+  await world(page, 'Creative');
   await expect(
     page.locator('[data-world-environment="creative"][data-environment-theme="creative"]')
   ).toBeAttached();
@@ -646,7 +656,7 @@ test('reduced motion freezes character travel and asset failures preserve the po
   const after = await page.locator('[data-citizen="human-0"]').boundingBox();
   expect(after?.x).toBeCloseTo(first!.x, 1);
   expect(after?.y).toBeCloseTo(first!.y, 1);
-  await world(page, 'Creative');
+  await world(page, 'Hush');
   await host(page)
     .getByRole('button', { name: /Raise the lantern/ })
     .scrollIntoViewIfNeeded();
@@ -658,4 +668,95 @@ test('reduced motion freezes character travel and asset failures preserve the po
   await expect(host(page)).toContainText('Azure Direct Drive');
   await world(page, 'Contact');
   await expect(host(page)).toContainText('chiranj33v.singh@gmail.com');
+});
+
+test('portfolio information has one clear home and repository details do not repeat fake case studies', async ({
+  page,
+}) => {
+  await page.goto('/world/about?mode=browse');
+  await expect(host(page)).toContainText('~80% in failure testing');
+  await expect(host(page).getByRole('link', { name: /Download the original résumé/ })).toHaveCount(
+    1
+  );
+  await world(page, 'Engineering');
+  await expect(
+    host(page).getByRole('group', { name: 'Illustrative request stages' })
+  ).toBeVisible();
+  await expect(host(page)).not.toContainText('~80% in failure testing');
+  await expect(host(page)).not.toContainText('04/2026 — Present');
+  await world(page, 'Projects');
+  await host(page).getByRole('searchbox', { name: 'Search the catalog' }).fill('Public Research');
+  const project = host(page).locator('.uw-project-card');
+  await expect(project).toHaveCount(1);
+  await expect(project.locator('a[href*="/projects/"]')).toHaveCount(1);
+  await project.locator('a[href*="/projects/"]').click();
+  await expect(host(page)).toContainText(feed.items[0].description);
+  await expect(host(page).getByRole('heading', { name: 'Architecture', exact: true })).toHaveCount(
+    0
+  );
+  await expect(host(page).getByRole('heading', { name: 'Constraints', exact: true })).toHaveCount(
+    0
+  );
+  await expect(host(page).locator(`a[href="${feed.items[0].url}"]`)).toHaveCount(1);
+  await world(page, 'Contact');
+  await expect(host(page).locator('a[href="mailto:chiranj33v.singh@gmail.com"]')).toHaveCount(1);
+  await expect(host(page).locator('a[href="https://github.com/chiranjeev-21"]')).toHaveCount(1);
+  await expect(
+    host(page).locator('a[href="https://www.linkedin.com/in/chiranjeev-singh-2a012b219/"]')
+  ).toHaveCount(1);
+});
+
+test('Hush has its own accessible route and is not duplicated in the creative studio', async ({
+  page,
+}) => {
+  await page.goto('/world/creative?mode=browse');
+  await expect(host(page).getByRole('img', { name: /Contour garden, seed/ })).toBeVisible();
+  await expect(host(page).getByRole('button', { name: /Raise the lantern/ })).toHaveCount(0);
+  await page.keyboard.press('Control+k');
+  const palette = page.getByRole('dialog', { name: 'Command palette', exact: true });
+  await palette.getByRole('combobox').fill('Hush');
+  await palette.getByRole('combobox').press('Enter');
+  await expect(page).toHaveURL(/\/world\/hush\?mode=browse/);
+  await expect(host(page).getByRole('heading', { level: 1 })).toHaveText(/Hush/i);
+  await expect(host(page).getByRole('button', { name: /Raise the lantern/ })).toHaveCount(1);
+  await page.reload();
+  await expect(root(page)).toHaveAttribute('data-world', 'hush');
+  await expect(page.locator('canvas')).toHaveCount(0);
+});
+
+test('destination bodies visibly embody their content and the ghost world is genuinely selectable', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(150000);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/?mode=explore&quality=low');
+  await sceneReady(page);
+  for (const id of [
+    'engineering',
+    'ai-lab',
+    'projects',
+    'creative',
+    'hush',
+    'writing',
+    'contact',
+  ]) {
+    const target = await page
+      .locator(`[data-expedition-world="${id}"]`)
+      .evaluate(element => element.getBoundingClientRect().top + scrollY + innerHeight * 0.4);
+    await nativeScrollTo(page, target);
+    await expect(root(page)).toHaveAttribute('data-world', id);
+    await expect(root(page)).toHaveAttribute('data-expedition-phase', 'approach');
+    await expect(page.locator(`[data-world-form="${id}"]`)).toHaveAttribute(
+      'data-form-landmark',
+      /.+/
+    );
+    await page.screenshot({ path: testInfo.outputPath(`${id}-body.png`), animations: 'disabled' });
+    if (id === 'hush') {
+      const ghost = (await page.locator('[data-world-pick="hush"]').boundingBox())!;
+      if (testInfo.project.name === 'mobile') await page.touchscreen.tap(ghost.x + 1, ghost.y + 1);
+      else await page.mouse.click(ghost.x + 1, ghost.y + 1);
+      await expect(root(page)).toHaveAttribute('data-expedition-phase', 'inside');
+      await expect(page.locator('[data-world-environment="hush"]')).toBeAttached();
+    }
+  }
 });

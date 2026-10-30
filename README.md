@@ -2,8 +2,10 @@
 
 **Engineering ideas. Building experiences. Exploring what's next.**
 
-Chiranjeev Singh's explorable personal solar system: a real Three.js scene,
-seven distinct destinations, and an equally capable text-first portfolio.
+Chiranjeev Singh's explorable constellation: eight content-shaped worlds in a real
+Three.js scene, with an equally capable text-first portfolio. Earth is the human
+home world; the other bodies are deliberately sculpted metaphors, not arbitrary
+astronomical planets with different colors.
 
 The existing React 18 / TypeScript / Vite application and Vercel API integration
 are retained. The renderer uses **React Three Fiber 8, Drei 9, and Three.js**;
@@ -23,8 +25,8 @@ Project beacons open the same case studies as the catalog.
 The inhabited-world graphics layer adds a 2K NASA Earth map and rotating clouds,
 real skinned walking people, animated robot guides, original articulated aliens,
 modeled trees, and CC0 photogrammetry materials. High quality adds a local 1K HDRI.
-Scrolling into **Hush** changes the Creative environment to a moonlit haunted
-arcade with floating ghosts and an interactive lantern. This is original portfolio
+**Hush** is a separate ghost-inspired world with a moonlit haunted
+arcade, floating ghosts, and an interactive lantern. This is original portfolio
 scenery, explicitly **not Hush gameplay footage**.
 
 **Browse Mode** uses the same content, destination components, project selections,
@@ -34,15 +36,22 @@ replace a project or article with a different version of its content.
 | World       | Experience                                                                                                          |
 | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | About       | Editorial portrait, verified career history, credentials, skills, original résumé PDF                               |
-| Engineering | Blueprint-inspired decisions, recovery sketches, and qualified résumé evidence                                      |
+| Engineering | Working request-reasoning diagram and design principles, rather than a second résumé                                |
 | AI Lab      | Working local lexical retrieval with source text, computed cosine scores, measured timings, and explicit abstention |
 | Projects    | Searchable/filterable case studies, real runtime screenshots, source links, GitHub metadata, builder vault          |
-| Creative    | Original seeded contour-garden studio, palette/density controls, SVG export, honest media availability              |
+| Creative    | Original seeded contour-garden studio, palette/density controls, SVG export, and creative process                   |
+| Hush        | Dedicated ghost world and original haunted arcade, with a working lantern and one clear footage disclaimer          |
 | Writing     | Paper reading room, searchable archive, three substantive implementation notes, direct article links                |
 | Contact     | Verified direct email/social destinations and clipboard feedback                                                    |
 
+Information has a primary home: career details live in About, projects in the
+catalog, long-form notes in Writing, and professional links in Contact. The shell
+offers one destination map rather than repeating header menus, hero promotions,
+and project shelves. Public repository entries are concise metadata dossiers,
+not repeated placeholder case studies.
+
 Original Hush gameplay/screenshots/build links and music/guitar recordings were
-not supplied in this portfolio repository. The Creative world says so explicitly;
+not supplied in this portfolio repository. Hush has one compact footage disclaimer;
 the illustrated haunted set does not substitute for actual footage or game claims.
 
 ## Controls
@@ -66,6 +75,7 @@ the illustrated haunted set does not substitute for actual footage or game claim
 /?mode=browse
 /world/engineering?mode=browse
 /world/ai-lab?mode=browse
+/world/hush?mode=explore
 /projects/cj-os-desktop?mode=browse
 /writing/one-universe-two-ways-in?mode=browse
 /world/projects?mode=browse&vault=1
@@ -114,7 +124,7 @@ src\universe\
   navigation.ts        Typed URL parsing and shared destination state
   useNavigation.ts     Browser history and local presentation preference
   journey\             Measured native-scroll chapters and reversible expedition state
-  worlds.ts            Seven typed world definitions
+  worlds.ts            Eight typed content-shaped world definitions
   content.ts           Verified profile, project adapter, authored studio notes
   scene\               Camera rig, models, shaders, procedural textures, environment
     assets\            Local model loading, skinned animation, population routes
@@ -165,7 +175,7 @@ Both modes retain the same mounted documents, including local drafts and filters
 
 ## Deployment
 
-The inhabited graphics release uses `feature/cj-universe-inhabited-worlds`, with
+The distinct-worlds release uses `feature/cj-universe-distinct-worlds`, with
 `feature/cj-universe-3d` and `design/personal-universe` tracking the verified release.
 Vercel generates Preview deployments from pushes. The approved CJ OS branches,
 Engineering Workbench, `main`, and production are not changed by this release.

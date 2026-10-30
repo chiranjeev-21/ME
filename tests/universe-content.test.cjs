@@ -45,6 +45,11 @@ test('repository entries have safe, unique slugs and deduplicate curated work an
     }),
     repository({ id: 'portfolio', name: 'ME', url: 'https://github.com/chiranjeev-21/ME' }),
     repository({
+      id: 'portfolio-alias',
+      name: 'Portfolio under another title',
+      url: 'https://github.com/chiranjeev-21/ME',
+    }),
+    repository({
       id: 'artifact',
       name: 'Real-Time Face-Mask Detection',
       url: 'https://example.com/research',
@@ -61,6 +66,7 @@ test('repository entries have safe, unique slugs and deduplicate curated work an
     1
   );
   assert.ok(!projects.some(project => project.title === 'ME'));
+  assert.ok(!projects.some(project => project.id === 'github-portfolio-alias'));
   assert.ok(projects.some(project => project.title === '绘画'));
   assert.ok(projects.some(project => project.title === '画'));
   assert.ok(projects.some(project => project.slug === 'repo-search-garden-2'));
@@ -84,9 +90,9 @@ test('dynamic project detail stays within public metadata and preserves pinned /
     );
     assert.deepEqual(project.categories, ['AI/ML', 'Web']);
     assert.deepEqual(project.technologies, ['TypeScript', 'rag', 'react']);
-    assert.match(project.architecture.join(' '), /not documented/);
-    assert.match(project.outcomes.join(' '), /No independently documented/);
-    assert.match(project.tradeoffs.join(' '), /does not verify/);
+    assert.equal(project.problem, '');
+    for (const section of ['constraints', 'architecture', 'decisions', 'tradeoffs', 'outcomes'])
+      assert.deepEqual(project[section], [], `${section} must not manufacture a case study`);
   }
 });
 

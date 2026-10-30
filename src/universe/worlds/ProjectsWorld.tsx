@@ -8,14 +8,19 @@ function CaseStudy({
   project,
   ...props
 }: Pick<WorldViewProps, 'navigation' | 'navigate'> & { project: UniverseProject }) {
-  const sections = [
-    { title: 'The problem', text: project.problem },
-    { title: 'Constraints', items: project.constraints },
-    { title: 'Architecture', items: project.architecture },
-    { title: 'Design decisions', items: project.decisions },
-    { title: 'Trade-offs & failure modes', items: project.tradeoffs },
-    { title: 'What is actually documented', items: project.outcomes },
-  ];
+  const artifact = project.slug === 'face-mask-detection';
+  const metadataOnly = project.source !== 'curated' && !artifact;
+  const authored = !metadataOnly && !artifact;
+  const sections = authored
+    ? [
+        { title: 'The problem', text: project.problem },
+        { title: 'Constraints', items: project.constraints },
+        { title: 'Architecture', items: project.architecture },
+        { title: 'Design decisions', items: project.decisions },
+        { title: 'Trade-offs & failure modes', items: project.tradeoffs },
+        { title: 'What is actually documented', items: project.outcomes },
+      ]
+    : [];
   return (
     <article className="uw-case-study">
       <DestinationLink
@@ -27,11 +32,11 @@ function CaseStudy({
       </DestinationLink>
       <header>
         <Eyebrow>
-          {project.source === 'curated'
-            ? 'Implementation / artifact notes'
-            : project.source === 'github'
-              ? 'Repository dossier / metadata only'
-              : 'Local fallback / not a live result'}
+          {artifact
+            ? 'Research artifact'
+            : authored
+              ? 'Implementation case study'
+              : 'Repository dossier / metadata only'}
         </Eyebrow>
         <h1>{project.title}</h1>
         <p className="uw-lead">{project.summary}</p>
@@ -39,12 +44,10 @@ function CaseStudy({
         <div className="uw-case-actions">
           {project.sourceUrl && (
             <ExternalLink href={project.sourceUrl} className="uw-button">
-              {project.slug === 'face-mask-detection'
-                ? 'Original research artifact'
-                : 'View source'}
+              {artifact ? 'Original research artifact' : 'View source'}
             </ExternalLink>
           )}
-          {project.demoUrl && (
+          {authored && project.demoUrl && project.demoUrl !== project.sourceUrl && (
             <ExternalLink href={project.demoUrl} className="uw-button">
               Open preview
             </ExternalLink>
@@ -59,54 +62,50 @@ function CaseStudy({
             width="1600"
             height="1000"
           />
-          <figcaption>
-            {project.imageAlt}
-            {project.demoUrl ? ' Preview access may be sign-in protected.' : ''}
-          </figcaption>
+          <figcaption>{project.imageAlt}</figcaption>
         </figure>
       )}
-      <div className="uw-case-body">
-        {sections.map((section, index) => (
-          <section key={section.title} data-reveal="section">
-            <div>
-              <span className="uw-meta">{String(index + 1).padStart(2, '0')} /</span>
-              <h2>{section.title}</h2>
-            </div>
-            <div>
-              {section.text ? (
-                <p>{section.text}</p>
-              ) : (
-                <ul>
-                  {section.items?.map(item => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </section>
-        ))}
-      </div>
-      <footer>
-        <Eyebrow>
-          {project.source === 'github'
-            ? 'Language & topics from the feed'
-            : 'Technologies / supplied context'}
-        </Eyebrow>
-        <div className="uw-tags">
-          {project.technologies.length ? (
-            project.technologies.map(tech => <span key={tech}>{tech}</span>)
-          ) : (
-            <span>Not supplied</span>
-          )}
+      {sections.length > 0 && (
+        <div className="uw-case-body">
+          {sections.map((section, index) => (
+            <section key={section.title} data-reveal="section">
+              <div>
+                <span className="uw-meta">{String(index + 1).padStart(2, '0')} /</span>
+                <h2>{section.title}</h2>
+              </div>
+              <div>
+                {section.text ? (
+                  <p>{section.text}</p>
+                ) : (
+                  <ul>
+                    {section.items?.map(item => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </section>
+          ))}
         </div>
-        <DestinationLink
-          {...props}
-          target={{ world: 'projects', projectSlug: null }}
-          className="uw-text-link"
-        >
-          ← Return to the collection
-        </DestinationLink>
-      </footer>
+      )}
+      {artifact && (
+        <p className="uw-dossier-note">
+          The linked folder is the original artifact. Training, evaluation, and deployment results
+          are not documented here.
+        </p>
+      )}
+      {project.technologies.length > 0 && (
+        <footer className={authored ? undefined : 'uw-dossier-technologies'}>
+          <Eyebrow>
+            {metadataOnly ? 'Language & topics from the feed' : 'Technologies / supplied context'}
+          </Eyebrow>
+          <div className="uw-tags">
+            {project.technologies.map(tech => (
+              <span key={tech}>{tech}</span>
+            ))}
+          </div>
+        </footer>
+      )}
     </article>
   );
 }
@@ -177,7 +176,7 @@ export function ProjectsWorld(props: WorldViewProps) {
           </h1>
           <p className="uw-lead">
             {navigation.vault
-              ? 'Public repository metadata and honest local fallbacks. No invented deployment telemetry.'
+              ? 'A shelf of public repositories, separate from the authored work.'
               : 'Implementation case studies, a research artifact, and a public repository shelf.'}
           </p>
         </div>
@@ -210,9 +209,9 @@ export function ProjectsWorld(props: WorldViewProps) {
             ? feed.isLoading
               ? 'Showing the local research artifact while the public repository feed loads. This is not a live GitHub result.'
               : 'The repository connection is unavailable. The local research artifact remains accessible; it is not presented as live GitHub data.'
-            : 'Repository entries below use only the public description, language, topics, and actual links. Full case-study detail has not been supplied.'}
+            : feed.notice ||
+              'Repository dossiers contain the public description, language, topics, and source link—not inferred case studies.'}
         </p>
-        {feed.notice && <p className="uw-muted">{feed.notice}</p>}
       </aside>
       <div className="uw-project-controls">
         <label className="uw-search">
@@ -255,11 +254,7 @@ export function ProjectsWorld(props: WorldViewProps) {
                 {String(index + 1).padStart(2, '0')}
               </span>
               {project.image && (
-                <DestinationLink
-                  {...props}
-                  target={{ projectSlug: project.slug }}
-                  className="uw-project-thumb"
-                >
+                <div className="uw-project-thumb">
                   <img
                     src={project.image}
                     alt={project.imageAlt || project.title}
@@ -267,17 +262,21 @@ export function ProjectsWorld(props: WorldViewProps) {
                     width="1600"
                     height="1000"
                   />
-                  <span>Actual CJ OS desktop</span>
-                </DestinationLink>
+                  <span aria-hidden="true">Runtime view</span>
+                </div>
               )}
               <div className="uw-project-card-body">
                 <div className="uw-project-card-top">
                   <span className="uw-meta">
-                    {project.source === 'curated'
-                      ? 'AUTHORED'
-                      : project.source === 'fallback'
-                        ? 'LOCAL FALLBACK'
-                        : 'REPOSITORY'}
+                    {project.slug === 'face-mask-detection'
+                      ? project.source === 'fallback'
+                        ? 'LOCAL ARTIFACT'
+                        : 'RESEARCH ARTIFACT'
+                      : project.source === 'curated'
+                        ? 'AUTHORED CASE STUDY'
+                        : project.source === 'fallback'
+                          ? 'LOCAL FALLBACK'
+                          : 'REPOSITORY / METADATA'}
                   </span>
                   <span aria-hidden="true">↗</span>
                 </div>
@@ -292,17 +291,6 @@ export function ProjectsWorld(props: WorldViewProps) {
                     <span key={item}>{item}</span>
                   ))}
                 </div>
-                <p className="uw-provenance">{project.provenance}</p>
-                <DestinationLink
-                  {...props}
-                  target={{ projectSlug: project.slug }}
-                  className="uw-text-link"
-                >
-                  {project.source === 'github'
-                    ? 'Inspect repository notes'
-                    : 'Read the documented work'}{' '}
-                  →
-                </DestinationLink>
               </div>
             </article>
           ))}
@@ -312,8 +300,9 @@ export function ProjectsWorld(props: WorldViewProps) {
           <span aria-hidden="true">∅</span>
           <h2>No documented work in this selection.</h2>
           <p>
-            {category === 'Games'
-              ? 'Hush is mentioned in the Creative studio, but no gameplay, build, public link, or implementation detail is supplied here. It is not padded into this catalog.'
+            {category === 'Games' &&
+            !collection.some(project => project.categories.includes('Games'))
+              ? 'No game repositories are in the current feed. Hush has its own atmosphere study.'
               : 'Try a different category or clear the search. An empty shelf is more useful than an invented project.'}
           </p>
           <button

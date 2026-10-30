@@ -10,6 +10,8 @@ before(
 test('worlds, projects and articles have direct routes independent of the renderer', () => {
   for (const url of [
     '/world/engineering?mode=browse',
+    '/world/hush?mode=browse',
+    '/world/hush?mode=explore',
     '/projects/cj-os-desktop?mode=browse',
     '/writing/one-universe-two-ways-in?mode=explore',
   ]) {
@@ -24,6 +26,9 @@ test('switching presentation preserves the exact destination and collection', ()
   assert.equal(browse.vault, true);
   assert.equal(browse.world, 'projects');
   assert.equal(routeHref(browse), '/projects/cj-os-desktop?mode=browse&vault=1');
+  const hush = updateNavigation(parseUniverseUrl('/world/hush?mode=explore'), { mode: 'browse' });
+  assert.equal(hush.world, 'hush');
+  assert.equal(routeHref(hush), '/world/hush?mode=browse');
 });
 test('world changes remove stale project and article selections', () => {
   let state = parseUniverseUrl('/projects/cj-os-desktop?mode=browse&vault=1');

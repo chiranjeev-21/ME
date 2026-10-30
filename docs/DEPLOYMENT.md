@@ -1,6 +1,6 @@
 # CJ Universe deployment
 
-The inhabited graphics release uses **`feature/cj-universe-inhabited-worlds`**.
+The distinct-worlds release uses **`feature/cj-universe-distinct-worlds`**.
 **`feature/cj-universe-3d`** and **`design/personal-universe`** also track the
 verified Universe implementation.
 `main`, CJ OS, and Engineering Workbench are not changed by this release.
@@ -47,6 +47,7 @@ The application shares one URL/content model across Explore and Browse:
 /?mode=browse
 /world/engineering?mode=browse
 /world/creative?mode=explore
+/world/hush?mode=explore
 /projects/cj-os-desktop?mode=browse
 /writing/one-universe-two-ways-in?mode=browse
 ```
@@ -58,6 +59,10 @@ entry point. **Do not replace these with a global rewrite that sends `/api/*` to
 The same project/article can be opened in either mode. A failed or interrupted
 WebGL context retains the destination and switches to Browse; it does not invent
 a second copy of the project.
+
+Hush is an independent eighth destination, not a second version of the Creative
+studio. Both `/world/hush?mode=explore` and `/world/hush?mode=browse` survive refresh
+through the existing world-route rewrite; no additional backend route is required.
 
 Licensed scene files live under `public\assets\worlds`; keep these static paths
 outside client-route rewrites. `/assets/CREDITS.txt` lists sources and permissions.

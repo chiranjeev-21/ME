@@ -1,8 +1,7 @@
 import { CAREER, PROFILE, QUALIFICATIONS, SKILLS, plainText } from '../content.ts';
-import type { WorldViewProps } from '../types';
-import { DestinationLink, Eyebrow } from './shared';
+import { Eyebrow } from './shared';
 
-export function AboutWorld(props: WorldViewProps) {
+export function AboutWorld() {
   return (
     <section className="uw-world uw-about" aria-labelledby="uw-about-title">
       <header className="uw-about-hero">
@@ -19,13 +18,11 @@ export function AboutWorld(props: WorldViewProps) {
             Curious about how things hold together.
           </p>
           <p>
-            I work on Azure Direct Drive at Microsoft, with a focus on distributed computing,
-            storage reliability, and performance. This is a place for the work, the decisions behind
-            it, and room to experiment.
+            Based in Bengaluru. My work connects distributed computing, storage reliability, and AI.
           </p>
-          <a className="uw-button" href={PROFILE.resume} target="_blank" rel="noopener noreferrer">
-            Read the original résumé <span aria-hidden="true">↗</span>
-            <span className="uw-sr"> (PDF, opens in a new tab)</span>
+          <a className="uw-button" href={PROFILE.resume} download>
+            Download the original résumé <span aria-hidden="true">↓</span>
+            <span className="uw-sr"> (PDF)</span>
           </a>
         </div>
         <figure className="uw-portrait" data-reveal="shore">
@@ -87,13 +84,6 @@ export function AboutWorld(props: WorldViewProps) {
               <span key={skill.label}>{skill.label}</span>
             ))}
           </div>
-          <DestinationLink
-            {...props}
-            target={{ world: 'engineering', projectSlug: null, articleSlug: null, vault: false }}
-            className="uw-text-link"
-          >
-            Look at the engineering perspective →
-          </DestinationLink>
         </div>
         <div>
           <Eyebrow>Education & credentials</Eyebrow>

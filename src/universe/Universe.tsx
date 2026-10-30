@@ -9,7 +9,7 @@ import { useUniverseNavigation } from './useNavigation';
 import { WorldView } from './worlds/WorldView';
 import { ResearchLab } from './lab/ResearchLab';
 import { UniversePalette, UniverseTerminal } from './ui/Overlays';
-import { UniverseIcon } from './ui/Icon';
+import { UniverseIcon, WorldSymbol } from './ui/Icon';
 import { SceneBoundary } from './SceneBoundary';
 import { Expedition } from './journey/Expedition';
 import type {
@@ -67,7 +67,6 @@ export function Universe() {
   const content = useMemo(() => buildUniverseContent(feed.data), [feed.data]);
   const [expeditionPhase, setExpeditionPhase] = useState<ExpeditionFrame['phase']>('orbit');
   const [overlay, setOverlay] = useState<'palette' | 'terminal' | null>(null);
-  const [mobileMenu, setMobileMenu] = useState(false);
   const [support, setSupport] = useState<'checking' | 'supported' | 'unavailable'>('checking');
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState('');
@@ -115,7 +114,6 @@ export function Universe() {
       pendingGoal.current = {
         world: patch.world !== undefined ? patch.world : navigationState.current.world,
       };
-      setMobileMenu(false);
       navigate(patch);
       if (unchanged) {
         if (next.mode === 'explore') {
@@ -230,10 +228,6 @@ export function Universe() {
         return;
       }
       if (overlay) return;
-      if (event.key === 'Escape' && mobileMenu) {
-        setMobileMenu(false);
-        return;
-      }
       const target = event.target as HTMLElement;
       if (target.matches('input,textarea,select') || target.isContentEditable) return;
       if (event.key === '`') {
@@ -241,7 +235,6 @@ export function Universe() {
         setOverlay('terminal');
       }
       if (event.key === 'Escape' && navigation.world) {
-        setMobileMenu(false);
         select(
           navigation.projectSlug || navigation.articleSlug
             ? { projectSlug: null, articleSlug: null }
@@ -251,14 +244,7 @@ export function Universe() {
     };
     window.addEventListener('keydown', keydown);
     return () => window.removeEventListener('keydown', keydown);
-  }, [
-    navigation.world,
-    navigation.projectSlug,
-    navigation.articleSlug,
-    overlay,
-    mobileMenu,
-    select,
-  ]);
+  }, [navigation.world, navigation.projectSlug, navigation.articleSlug, overlay, select]);
 
   const link = (event: MouseEvent<HTMLAnchorElement>, patch: Partial<UniverseNavigation>) => {
     if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -273,20 +259,21 @@ export function Universe() {
     event.preventDefault();
     home();
   };
-  const worldKeys = (event: KeyboardEvent<HTMLButtonElement>) => {
+  const worldKeys = (event: KeyboardEvent<HTMLAnchorElement>) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
-    const buttons = Array.from(
-      selector.current?.querySelectorAll<HTMLButtonElement>('button[data-world-choice]') || []
+    const destinations = Array.from(
+      selector.current?.querySelectorAll<HTMLAnchorElement>('a[data-world-choice]') || []
     );
-    const index = buttons.indexOf(event.currentTarget);
+    const index = destinations.indexOf(event.currentTarget);
     const next =
       event.key === 'Home'
         ? 0
         : event.key === 'End'
-          ? buttons.length - 1
-          : (index + (event.key === 'ArrowRight' ? 1 : buttons.length - 1)) % buttons.length;
-    buttons[next]?.focus();
+          ? destinations.length - 1
+          : (index + (event.key === 'ArrowRight' ? 1 : destinations.length - 1)) %
+            destinations.length;
+    destinations[next]?.focus();
   };
 
   const overlayProps = { content, navigation, navigate: select, close: () => setOverlay(null) };
@@ -322,19 +309,14 @@ export function Universe() {
   };
   const intro = (
     <section className={styles.landing} aria-labelledby="landing-heading">
-      <span className={styles.eyebrow}>A PERSONAL UNIVERSE / BY CHIRANJEEV SINGH</span>
+      <span className={styles.eyebrow}>A PERSONAL UNIVERSE</span>
       <h1 id="landing-heading">
         CJ
         <br />
         <span>UNIVERSE</span>
       </h1>
-      <p className={styles.tagline}>
-        <span>Engineering ideas.</span> <span>Building experiences.</span>{' '}
-        <em>Exploring what&apos;s next.</em>
-      </p>
       <p className={styles.introduction}>
-        I&apos;m Chiranjeev Singh — software engineer at Microsoft, AI enthusiast, and independent
-        builder.
+        Chiranjeev Singh — software engineer at Microsoft, AI enthusiast, and independent builder.
       </p>
       <div className={styles.landingActions}>
         <button
@@ -349,21 +331,7 @@ export function Universe() {
         >
           Begin the journey <UniverseIcon name="arrow" size={18} />
         </button>
-        <a
-          href={routeHref({ ...navigation, world: 'projects' })}
-          onClick={event => link(event, { world: 'projects' })}
-        >
-          View Projects <UniverseIcon name="arrow" size={16} />
-        </a>
       </div>
-      <button
-        className={styles.terminalShortcut}
-        aria-label="Launch Terminal from landing"
-        onClick={() => setOverlay('terminal')}
-      >
-        <UniverseIcon name="terminal" size={16} />
-        Launch Terminal<span>For the keyboard-curious.</span>
-      </button>
     </section>
   );
   return (
@@ -458,35 +426,10 @@ export function Universe() {
           <span>
             cj<span>.</span>
           </span>
-          <b>
-            UNIVERSE<small>CHIRANJEEV SINGH</small>
-          </b>
+          <b>UNIVERSE</b>
         </a>
-        <nav
-          className={`${styles.mainNav} ${mobileMenu ? styles.menuOpen : ''}`}
-          aria-label="Main navigation"
-        >
-          {(['about', 'projects', 'creative', 'writing', 'contact'] as WorldId[]).map(id => (
-            <a
-              key={id}
-              href={routeHref({
-                ...navigation,
-                world: id,
-                projectSlug: null,
-                articleSlug: null,
-                vault: false,
-              })}
-              aria-current={navigation.world === id ? 'page' : undefined}
-              onClick={event =>
-                link(event, { world: id, projectSlug: null, articleSlug: null, vault: false })
-              }
-            >
-              {getWorld(id).name}
-            </a>
-          ))}
-        </nav>
         <div className={styles.headerActions}>
-          <div className={styles.modeToggle} aria-label="Navigation mode">
+          <div className={styles.modeToggle} role="group" aria-label="Navigation mode">
             <button
               aria-pressed={navigation.mode === 'explore'}
               onClick={() => select({ mode: 'explore' })}
@@ -517,14 +460,6 @@ export function Universe() {
           >
             <UniverseIcon name="terminal" />
           </button>
-          <button
-            className={`${styles.iconButton} ${styles.mobileMenuButton}`}
-            aria-label={mobileMenu ? 'Close navigation' : 'Open navigation'}
-            aria-expanded={mobileMenu}
-            onClick={() => setMobileMenu(previous => !previous)}
-          >
-            <UniverseIcon name={mobileMenu ? 'close' : 'menu'} />
-          </button>
         </div>
       </header>
       {failure && (
@@ -537,15 +472,13 @@ export function Universe() {
           </button>
         </div>
       )}
-      {navigation.world && (
-        <div className={styles.breadcrumb}>
-          <button onClick={home}>
-            <UniverseIcon name="back" size={15} />
-            {navigation.mode === 'explore' ? 'Full universe' : 'All worlds'}
-          </button>
-          <span>/</span>
-          <strong>{world?.name}</strong>
-        </div>
+      {world && (
+        <aside className={styles.worldCaption} aria-label="Current world">
+          <span>
+            {world.number} / {world.name}
+          </span>
+          <p>{world.form || world.subtitle}</p>
+        </aside>
       )}
       <main>
         <div
@@ -558,72 +491,42 @@ export function Universe() {
             <div className={styles.browseOverview}>
               <header>
                 <span className={styles.eyebrow}>CJ UNIVERSE / BROWSE MODE</span>
-                <h1>
-                  Seven worlds.
-                  <br />
-                  <em>One curious human.</em>
-                </h1>
-                <p>
-                  Software engineer at Microsoft / Azure Direct Drive. Distributed computing,
-                  Agentic AI, backend engineering, and the ideas that connect them.
-                </p>
-                <div className={styles.browseActions}>
-                  <button
-                    className={styles.primaryButton}
-                    onClick={() => select({ mode: 'explore' })}
-                  >
-                    Explore in 3D <UniverseIcon name="orbit" />
-                  </button>
-                  <button
-                    aria-label="Launch Terminal from Browse"
-                    onClick={() => setOverlay('terminal')}
-                  >
-                    <UniverseIcon name="terminal" size={16} />
-                    Launch Terminal
-                  </button>
-                </div>
+                <h1>World directory.</h1>
+                <p>{WORLDS.length} destinations. Choose a world to read at your own pace.</p>
               </header>
-              <div className={styles.browseWorlds}>
+              <nav ref={selector} className={styles.browseWorlds} aria-label="World directory">
                 {WORLDS.map(item => (
                   <a
                     key={item.id}
-                    href={routeHref({ ...navigation, world: item.id })}
+                    data-world-choice={item.id}
+                    href={routeHref({
+                      ...navigation,
+                      world: item.id,
+                      projectSlug: null,
+                      articleSlug: null,
+                      vault: false,
+                    })}
                     style={{ '--world-color': item.color } as React.CSSProperties}
-                    onClick={event => link(event, { world: item.id })}
+                    onKeyDown={worldKeys}
+                    onClick={event =>
+                      link(event, {
+                        world: item.id,
+                        projectSlug: null,
+                        articleSlug: null,
+                        vault: false,
+                      })
+                    }
                   >
                     <span>{item.number} / WORLD</span>
-                    <i />
+                    <WorldSymbol world={item.id} />
                     <h2>{item.name}</h2>
-                    <p>{item.description}</p>
+                    <p>{item.subtitle}</p>
                     <small>
-                      Enter {item.name} <UniverseIcon name="arrow" size={14} />
+                      {item.form || item.description} <UniverseIcon name="arrow" size={14} />
                     </small>
                   </a>
                 ))}
-              </div>
-              <section className={styles.browseProjects}>
-                <div>
-                  <span className={styles.eyebrow}>RECENT INVESTIGATIONS</span>
-                  <h2>Built to be explored.</h2>
-                </div>
-                {content.projects.slice(0, 3).map(project => (
-                  <a
-                    key={project.id}
-                    href={routeHref({
-                      ...navigation,
-                      world: 'projects',
-                      projectSlug: project.slug,
-                    })}
-                    onClick={event => link(event, { world: 'projects', projectSlug: project.slug })}
-                  >
-                    <span>
-                      <strong>{project.title}</strong>
-                      <small>{project.summary}</small>
-                    </span>
-                    <UniverseIcon name="arrow" />
-                  </a>
-                ))}
-              </section>
+              </nav>
             </div>
           )}
           <Expedition
@@ -638,31 +541,56 @@ export function Universe() {
           />
         </div>
       </main>
-      <nav ref={selector} className={styles.worldNav} aria-label="Planet selector">
-        {WORLDS.map(item => (
-          <button
-            key={item.id}
-            data-world-choice={item.id}
-            aria-current={navigation.world === item.id ? 'page' : undefined}
+      {(navigation.mode === 'explore' || navigation.world) && (
+        <nav ref={selector} className={styles.worldNav} aria-label="Planet selector">
+          <a
+            data-world-choice="overview"
+            href={routeHref({
+              ...navigation,
+              world: null,
+              projectSlug: null,
+              articleSlug: null,
+              vault: false,
+            })}
+            aria-current={!navigation.world ? 'page' : undefined}
             onKeyDown={worldKeys}
-            onClick={() => selectWorld(item.id)}
-            style={{ '--world-color': item.color } as React.CSSProperties}
+            onClick={brandHome}
           >
-            <i />
-            <span>{item.name}</span>
-          </button>
-        ))}
-      </nav>
+            <UniverseIcon name="orbit" size={13} />
+            <span>{navigation.mode === 'explore' ? 'Full universe' : 'All worlds'}</span>
+          </a>
+          {WORLDS.map(item => (
+            <a
+              key={item.id}
+              data-world-choice={item.id}
+              href={routeHref({
+                ...navigation,
+                world: item.id,
+                projectSlug: null,
+                articleSlug: null,
+                vault: false,
+              })}
+              aria-current={navigation.world === item.id ? 'page' : undefined}
+              title={`${item.name} — ${item.form || item.subtitle}`}
+              onKeyDown={worldKeys}
+              onClick={event =>
+                link(event, {
+                  world: item.id,
+                  projectSlug: null,
+                  articleSlug: null,
+                  vault: false,
+                })
+              }
+              style={{ '--world-color': item.color } as React.CSSProperties}
+            >
+              <WorldSymbol world={item.id} />
+              <span>{item.name}</span>
+            </a>
+          ))}
+        </nav>
+      )}
       {navigation.mode === 'explore' && (
         <div className={styles.sceneHUD}>
-          <span>
-            <i />
-            {ready
-              ? world
-                ? `${world.name} / ${expeditionPhase === 'inside' ? 'on the surface' : expeditionPhase}`
-                : `${WORLDS.length} worlds / scroll to begin`
-              : 'Preparing the 3D view'}
-          </span>
           <a
             className={styles.assetCredits}
             href="/assets/CREDITS.txt"

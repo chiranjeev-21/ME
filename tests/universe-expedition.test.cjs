@@ -95,8 +95,17 @@ test('viewport and header changes are measured rather than assuming fixed docume
   assert.equal(frameAtScroll(layout, 600).phase, 'approach');
 });
 
-test('all seven chapters hold their world through reading and hand off at the next measured approach', () => {
-  const worlds = ['about', 'engineering', 'ai-lab', 'projects', 'creative', 'writing', 'contact'];
+test('all eight chapters hold their world through reading and hand off at the next measured approach', () => {
+  const worlds = [
+    'about',
+    'engineering',
+    'ai-lab',
+    'projects',
+    'creative',
+    'hush',
+    'writing',
+    'contact',
+  ];
   let top = 900;
   const chapters = worlds.map((world, index) => {
     const readTop = top + 1125;

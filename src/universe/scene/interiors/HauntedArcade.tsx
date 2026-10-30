@@ -7,6 +7,7 @@ import { Inhabitants } from '../assets/Inhabitants';
 import type { PopulationProps } from '../assets/Inhabitants';
 import { ForestFloor, LivingTrees } from '../assets/SurfaceAssets';
 import { surfaceTexture } from '../textures';
+import { SceneMarker } from '../SceneMarker';
 
 export function HauntedArcade(props: PopulationProps & { illuminated: boolean }) {
   const mist = useRef<Group>(null);
@@ -20,6 +21,18 @@ export function HauntedArcade(props: PopulationProps & { illuminated: boolean })
         (_, index): Placement => ({
           position: [-17 + index * 1.05, 1, -18],
           scale: [0.14, 2 + Math.sin(index) * 0.2, 0.14],
+        })
+      ),
+    []
+  );
+  const gravestones = useMemo(
+    () =>
+      Array.from(
+        { length: 6 },
+        (_, index): Placement => ({
+          position: [-16 + (index % 3) * 2.2, 0.6, -8 - Math.floor(index / 3) * 4],
+          scale: [0.7, 1.2 + (index % 2) * 0.3, 0.3],
+          rotation: [0, (index % 3) * 0.13, (index % 2 ? 1 : -1) * 0.05],
         })
       ),
     []
@@ -38,6 +51,13 @@ export function HauntedArcade(props: PopulationProps & { illuminated: boolean })
       </mesh>
       <LivingTrees {...props} />
       <Batch placements={fence} color="#2a3538" />
+      <Batch placements={gravestones} color="#657a76" />
+      {[-14, -11].map(x => (
+        <group key={x} position={[x, 0, -16]}>
+          <Block position={[0, 0.9, 0]} scale={[0.2, 1.8, 0.2]} color="#81928a" />
+          <Block position={[0, 1.25, 0]} scale={[1, 0.2, 0.2]} color="#81928a" />
+        </group>
+      ))}
       <Block position={[-6, 3.2, -11]} scale={[8.4, 6.4, 0.45]} color="#17252c" />
       <Block position={[-6, 6.5, -10.8]} scale={[9.3, 0.45, 1.2]} color="#38443f" />
       <Block position={[-6, 2, -10.5]} scale={[2.6, 4, 0.25]} color="#071014" />
@@ -81,13 +101,24 @@ export function HauntedArcade(props: PopulationProps & { illuminated: boolean })
           </mesh>
         ))}
       </group>
-      <mesh position={[-6, 5.3, -10.45]}>
-        <sphereGeometry args={[0.16, 16, 12]} />
-        <meshBasicMaterial color={props.illuminated ? '#d9ffbd' : '#6a938a'} />
-      </mesh>
+      <group position={[-6, 5.25, -10.1]}>
+        <Block position={[0, 0.48, 0]} scale={[0.045, 0.5, 0.045]} color="#71867e" />
+        <Block position={[0, -0.22, 0]} scale={[0.58, 0.07, 0.42]} color="#71867e" />
+        <Block position={[0, 0.22, 0]} scale={[0.58, 0.07, 0.42]} color="#71867e" />
+        <mesh>
+          <sphereGeometry args={[0.25, 16, 12]} />
+          <meshStandardMaterial
+            color={props.illuminated ? '#e5ffd1' : '#52766e'}
+            emissive={props.illuminated ? '#c8ffb7' : '#35544b'}
+            emissiveIntensity={props.illuminated ? 1.8 : 0.1}
+            roughness={0.28}
+          />
+        </mesh>
+        <SceneMarker attributes={{ 'data-hush-lantern': props.illuminated ? 'lit' : 'unlit' }} />
+      </group>
       <pointLight
-        position={[-6, 4.5, -5]}
-        intensity={props.illuminated ? 0.055 : 0.004}
+        position={[-6, 4.8, -9]}
+        intensity={props.illuminated ? 0.055 : 0.002}
         color="#c2ffd7"
         distance={1.5}
         decay={2}

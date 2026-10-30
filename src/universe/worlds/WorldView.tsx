@@ -4,6 +4,7 @@ import { EngineeringWorld } from './EngineeringWorld';
 import { LabWorld } from './LabWorld';
 import { ProjectsWorld } from './ProjectsWorld';
 import { CreativeWorld } from './CreativeWorld';
+import { HushWorld } from './HushWorld';
 import { WritingWorld } from './WritingWorld';
 import { ContactWorld } from './ContactWorld';
 import { WorldDocument } from './WorldDocument';
@@ -21,7 +22,7 @@ export function WorldView(props: WorldViewProps) {
 function WorldContent(props: WorldViewProps) {
   switch (props.navigation.world) {
     case 'about':
-      return <AboutWorld {...props} />;
+      return <AboutWorld />;
     case 'engineering':
       return <EngineeringWorld {...props} />;
     case 'ai-lab':
@@ -30,6 +31,8 @@ function WorldContent(props: WorldViewProps) {
       return <ProjectsWorld {...props} />;
     case 'creative':
       return <CreativeWorld {...props} />;
+    case 'hush':
+      return <HushWorld {...props} />;
     case 'writing':
       return <WritingWorld {...props} />;
     case 'contact':

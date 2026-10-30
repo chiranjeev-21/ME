@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { FormEvent, ReactNode } from 'react';
-import { EMAIL, HERO_SKILLS } from '../../constants';
+import type { FormEvent, MouseEvent, ReactNode } from 'react';
+import { HERO_SKILLS } from '../../constants';
 import { WORLDS } from '../worlds';
+import { routeHref } from '../navigation';
 import type { UniverseContent, UniverseNavigation } from '../types';
 import { UniverseIcon } from './Icon';
 import styles from '../Universe.module.css';
@@ -72,52 +73,58 @@ export function UniversePalette({ content, navigation, navigate, close }: Props)
     () =>
       [
         ...WORLDS.map(world => ({
-          key: world.id,
+          key: `world:${world.id}`,
           label: world.name,
-          detail: world.subtitle,
+          detail: world.form ? `${world.subtitle} · ${world.form}` : world.subtitle,
+          keywords: world.id,
           group: 'World',
-          action: () =>
-            navigate({ world: world.id, projectSlug: null, articleSlug: null, vault: false }),
+          destination: {
+            world: world.id,
+            projectSlug: null,
+            articleSlug: null,
+            vault: false,
+          } satisfies Partial<UniverseNavigation>,
         })),
         ...content.projects.map(project => ({
-          key: project.id,
+          key: `project:${project.slug}`,
           label: project.title,
           detail: project.summary,
+          keywords: `${project.slug} ${project.technologies.join(' ')}`,
           group: 'Project',
-          action: () =>
-            navigate({
-              world: 'projects',
-              projectSlug: project.slug,
-              articleSlug: null,
-              vault: false,
-            }),
+          destination: {
+            world: 'projects',
+            projectSlug: project.slug,
+            articleSlug: null,
+            vault: false,
+          } satisfies Partial<UniverseNavigation>,
         })),
         ...content.articles.map(article => ({
-          key: article.slug,
+          key: `article:${article.slug}`,
           label: article.title,
           detail: article.summary,
+          keywords: `${article.slug} ${article.tags.join(' ')}`,
           group: 'Studio note',
-          action: () =>
-            navigate({
-              world: 'writing',
-              articleSlug: article.slug,
-              projectSlug: null,
-              vault: false,
-            }),
+          destination: {
+            world: 'writing',
+            articleSlug: article.slug,
+            projectSlug: null,
+            vault: false,
+          } satisfies Partial<UniverseNavigation>,
         })),
       ]
+        .filter((entry, index, all) => all.findIndex(item => item.key === entry.key) === index)
         .filter(entry =>
-          `${entry.label} ${entry.detail} ${entry.group}`
+          `${entry.label} ${entry.detail} ${entry.group} ${entry.keywords}`
             .toLowerCase()
-            .includes(query.toLowerCase())
+            .includes(query.trim().toLowerCase())
         )
         .slice(0, 10),
-    [content, navigate, query]
+    [content, query]
   );
   const run = (index: number) => {
     if (!entries[index]) return;
     close();
-    entries[index].action();
+    navigate(entries[index].destination);
   };
   return (
     <Dialog title="Command palette" close={close}>
@@ -159,12 +166,18 @@ export function UniversePalette({ content, navigation, navigate, close }: Props)
         className={styles.paletteResults}
       >
         {entries.map((entry, index) => (
-          <button
+          <a
             key={entry.key}
             id={`search-result-${index}`}
+            href={routeHref({ ...navigation, ...entry.destination })}
             role="option"
             aria-selected={selected === index}
-            onClick={() => run(index)}
+            onClick={event => {
+              if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+                return;
+              event.preventDefault();
+              run(index);
+            }}
             onPointerMove={() => setSelected(index)}
           >
             <span>
@@ -173,7 +186,7 @@ export function UniversePalette({ content, navigation, navigate, close }: Props)
             </span>
             <em>{entry.group}</em>
             <UniverseIcon name="arrow" size={15} />
-          </button>
+          </a>
         ))}
         {!entries.length && <p>No destination found. Try a world name, a project, or a note.</p>}
       </div>
@@ -244,7 +257,6 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
   const [input, setInput] = useState('');
   const [lines, setLines] = useState<Line[]>([
     { text: 'CJ UNIVERSE / portfolio shell', tone: 'accent' },
-    { text: 'Chiranjeev Singh — Software Engineer at Microsoft / Azure Direct Drive.' },
     { text: 'Type help. No operating-system commands are executed here.', tone: 'muted' },
   ]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -258,6 +270,11 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
   const visit = (patch: Partial<UniverseNavigation>) => {
     close();
     navigate(patch);
+  };
+  const follow = (event: MouseEvent<HTMLAnchorElement>, patch: Partial<UniverseNavigation>) => {
+    if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    visit(patch);
   };
   const run = (source: string) => {
     if (!source.trim()) return;
@@ -281,7 +298,7 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
       }
       if (name === 'help')
         results.push({
-          text: 'help · whoami · skills · worlds · projects · writing · open <world or project> · read <article> · contact · vault · pwd · echo · history · clear · exit',
+          text: `help · whoami · skills · worlds · projects · writing · open <world or project> · read <article> · contact · vault · pwd · echo · history · clear · exit\n${WORLDS.length} worlds: ${WORLDS.map(world => world.id).join(', ')}. Try open hush.`,
         });
       else if (name === 'whoami' || name === 'neofetch')
         results.push({
@@ -292,7 +309,7 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
       else if (name === 'worlds' || name === 'ls')
         results.push(
           ...WORLDS.map(world => ({
-            text: `${world.number} / ${world.name} — ${world.subtitle} ↗`,
+            text: `${world.number} / ${world.name} — ${world.form || world.subtitle} ↗`,
             action: { world: world.id, projectSlug: null, articleSlug: null, vault: false },
           }))
         );
@@ -312,7 +329,12 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
         results.push(
           ...content.articles.map(article => ({
             text: `${article.title} ↗`,
-            action: { world: 'writing' as const, articleSlug: article.slug, projectSlug: null },
+            action: {
+              world: 'writing' as const,
+              articleSlug: article.slug,
+              projectSlug: null,
+              vault: false,
+            },
           }))
         );
       else if (name === 'contact' || (name === 'sudo' && target === 'hire cj')) {
@@ -341,15 +363,25 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
           article => article.slug === target || article.title.toLowerCase() === target
         );
         if (name === 'open' && world) {
-          visit({ world: world.id, projectSlug: null, articleSlug: null });
+          visit({ world: world.id, projectSlug: null, articleSlug: null, vault: false });
           return;
         }
         if (name === 'open' && project) {
-          visit({ world: 'projects', projectSlug: project.slug, articleSlug: null });
+          visit({
+            world: 'projects',
+            projectSlug: project.slug,
+            articleSlug: null,
+            vault: false,
+          });
           return;
         }
         if (article) {
-          visit({ world: 'writing', articleSlug: article.slug, projectSlug: null });
+          visit({
+            world: 'writing',
+            articleSlug: article.slug,
+            projectSlug: null,
+            vault: false,
+          });
           return;
         }
         results.push({
@@ -380,9 +412,13 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
       <div ref={output} role="log" aria-label="Terminal output" className={styles.terminalOutput}>
         {lines.map((line, index) =>
           line.action ? (
-            <button key={index} onClick={() => visit(line.action!)}>
+            <a
+              key={index}
+              href={routeHref({ ...navigation, ...line.action })}
+              onClick={event => follow(event, line.action!)}
+            >
               {line.text}
-            </button>
+            </a>
           ) : (
             <p key={index} data-tone={line.tone}>
               {line.text}
@@ -391,18 +427,16 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
         )}
       </div>
       <div className={styles.terminalSuggestions}>
-        {(suggestions.length ? suggestions : ['help', 'whoami', 'projects', 'vault']).map(
-          suggestion => (
-            <button
-              key={suggestion}
-              onClick={() =>
-                suggestions.length ? (setInput(suggestion), setSuggestions([])) : run(suggestion)
-              }
-            >
-              {suggestion}
-            </button>
-          )
-        )}
+        {(suggestions.length ? suggestions : ['help', 'worlds', 'open hush']).map(suggestion => (
+          <button
+            key={suggestion}
+            onClick={() =>
+              suggestions.length ? (setInput(suggestion), setSuggestions([])) : run(suggestion)
+            }
+          >
+            {suggestion}
+          </button>
+        ))}
       </div>
       <form className={styles.terminalForm} onSubmit={submit}>
         <label htmlFor="universe-command">cj@universe:~$</label>
@@ -451,7 +485,9 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
                     ...WORLDS.map(world => `open ${world.id}`),
                     ...content.projects.map(project => `open ${project.slug}`),
                   ]
-                : words;
+                : input.startsWith('read ')
+                  ? content.articles.map(article => `read ${article.slug}`)
+                  : words;
               const matches = candidates.filter(word => word.startsWith(input));
               if (matches.length) {
                 event.preventDefault();
@@ -467,7 +503,7 @@ export function UniverseTerminal({ content, navigation, navigate, close }: Props
       </form>
       <footer>
         <span>Read-only portfolio commands. No server shell.</span>
-        <span>{EMAIL}</span>
+        <span>↑ ↓ history · tab complete</span>
       </footer>
     </Dialog>
   );

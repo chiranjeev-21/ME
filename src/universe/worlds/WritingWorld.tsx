@@ -14,7 +14,6 @@ function ReadingRoom({
       <header>
         <Eyebrow>{article.kind} / Written for this portfolio</Eyebrow>
         <h1>{article.title}</h1>
-        <p className="uw-article-deck">{article.summary}</p>
         <p className="uw-article-byline">
           By Chiranjeev Singh <span aria-hidden="true">·</span> {article.tags.join(' / ')}
         </p>
@@ -52,10 +51,7 @@ function ReadingRoom({
       </div>
       <footer>
         <span aria-hidden="true">✳</span>
-        <p>From the CJ Studio: notes written for the work you can explore here.</p>
-        <DestinationLink {...props} target={{ articleSlug: null }} className="uw-text-link">
-          Return to the archive →
-        </DestinationLink>
+        <p>End of note.</p>
       </footer>
     </article>
   );
@@ -96,7 +92,7 @@ export function WritingWorld(props: WorldViewProps) {
       <header className="uw-writing-header">
         <div className="uw-paper-masthead">
           <span>THE CJ STUDIO</span>
-          <span>06 / READING ROOM</span>
+          <span>07 / READING ROOM</span>
         </div>
         <Eyebrow>An archive of decisions</Eyebrow>
         <h1 id="uw-writing-title">
@@ -104,10 +100,7 @@ export function WritingWorld(props: WorldViewProps) {
           <br />
           <em>the making.</em>
         </h1>
-        <p>
-          Field notes on systems, experiments, and the decisions behind this universe.
-          <br />A few ideas worth looking at a little more closely.
-        </p>
+        <p>Field notes on systems, experiments, and the decisions behind this universe.</p>
         <div className="uw-paper-rule" aria-hidden="true">
           ✳
         </div>
@@ -133,8 +126,7 @@ export function WritingWorld(props: WorldViewProps) {
         </label>
       </div>
       <p className="uw-result-count" role="status">
-        {articles.length} {articles.length === 1 ? 'studio note' : 'studio notes'} · written for
-        this universe · CJ Studio
+        {articles.length} {articles.length === 1 ? 'studio note' : 'studio notes'}
       </p>
       <div className="uw-archive-list">
         {articles.map((article, index) => (
@@ -152,13 +144,6 @@ export function WritingWorld(props: WorldViewProps) {
                 </DestinationLink>
               </h2>
               <p>{article.summary}</p>
-              <DestinationLink
-                {...props}
-                target={{ articleSlug: article.slug }}
-                className="uw-text-link"
-              >
-                Read the note <span aria-hidden="true">↗</span>
-              </DestinationLink>
             </div>
           </article>
         ))}
@@ -178,14 +163,6 @@ export function WritingWorld(props: WorldViewProps) {
           </button>
         </div>
       )}
-      <footer className="uw-writing-colophon">
-        <span aria-hidden="true">CJ /</span>
-        <p>
-          Engineering and interface notes.
-          <br />
-          Written here, for the work you can inspect here.
-        </p>
-      </footer>
     </section>
   );
 }

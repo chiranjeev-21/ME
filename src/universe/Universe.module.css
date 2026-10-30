@@ -121,26 +121,6 @@
   border-left: 1px solid #ffffff25;
   padding-left: 17px;
 }
-.brand small {
-  display: block;
-  color: #808c9f;
-  font-size: 6px;
-  letter-spacing: 1px;
-  margin-top: 2px;
-}
-.mainNav {
-  display: flex;
-  gap: clamp(20px, 2.1vw, 36px);
-}
-.mainNav a {
-  color: #a7afbe;
-  font-size: 11px;
-  transition: color 150ms;
-}
-.mainNav a:hover,
-.mainNav a[aria-current] {
-  color: #eee7dc;
-}
 .headerActions {
   display: flex;
   align-items: center;
@@ -170,9 +150,6 @@
   color: #a6afbf;
   background: transparent;
 }
-.mobileMenuButton {
-  display: none;
-}
 .landing {
   position: absolute;
   top: 50dvh;
@@ -201,19 +178,6 @@
   letter-spacing: 0.13em;
   margin-top: 12px;
   color: #e5e0dc;
-}
-.tagline {
-  font: 400 clamp(18px, 1.9vw, 28px)/1.4 var(--u-display);
-  letter-spacing: -0.6px;
-  margin-top: 30px;
-  color: #dbdce3;
-}
-.tagline em {
-  font-style: normal;
-  color: #e6cba3;
-}
-.tagline > span {
-  display: block;
 }
 .introduction {
   max-width: 370px;
@@ -245,46 +209,6 @@
 }
 .primaryButton:hover {
   transform: translateY(-2px);
-}
-.landingActions > a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 11px;
-  color: #d5d4dd;
-}
-.terminalShortcut {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  padding: 0;
-  margin-top: 28px;
-  background: transparent;
-  color: #b4bdcb;
-  font: 9px var(--u-mono);
-}
-.terminalShortcut > span {
-  margin-left: 7px;
-  font: 9px var(--u-body);
-  color: #727e92;
-}
-.overviewCaption {
-  position: fixed;
-  top: 125px;
-  left: 48px;
-  pointer-events: none;
-  max-width: 370px;
-  text-shadow: 0 2px 18px #000;
-}
-.overviewCaption h1 {
-  font: 400 30px/1.3 var(--u-display);
-  letter-spacing: -1px;
-  margin-top: 12px;
-}
-.overviewCaption p {
-  color: #929fb2;
-  font-size: 11px;
-  margin-top: 10px;
 }
 .contentHost {
   pointer-events: auto;
@@ -322,31 +246,29 @@
   scrollbar-color: #b0a7bc33 transparent;
   animation: panelIn 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.breadcrumb {
+.worldCaption {
   position: fixed;
   z-index: 12;
   top: 105px;
   left: 32px;
   display: flex;
   align-items: center;
-  gap: 15px;
-  color: #77859c;
-  font: 8px var(--u-mono);
-  letter-spacing: 1px;
-}
-.breadcrumb button {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 0;
-  background: transparent;
+  gap: 12px;
+  max-width: calc(100vw - 64px);
+  pointer-events: none;
   color: #b5becd;
-  font-size: 10px;
-  letter-spacing: 0;
+  font: 8px var(--u-mono);
+  line-height: 1.6;
+  text-shadow: 0 1px 9px #05080f;
 }
-.breadcrumb strong {
+.worldCaption > span {
   color: var(--u-accent);
-  font-weight: 400;
+  flex-shrink: 0;
+}
+.worldCaption p {
+  border-left: 1px solid #d3d9eb30;
+  padding-left: 12px;
+  overflow-wrap: anywhere;
 }
 .worldNav {
   position: fixed;
@@ -356,21 +278,23 @@
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: clamp(12px, 2vw, 28px);
   width: max-content;
   max-width: calc(100vw - 42px);
+  overflow-x: auto;
+  scrollbar-width: thin;
   padding: 10px 20px;
   border: 1px solid #d4d7e815;
   border-radius: 30px;
   background: #080e18b8;
   backdrop-filter: blur(18px);
 }
-.worldNav button {
+.worldNav a {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 8px;
-  min-height: 26px;
+  min-height: 32px;
   padding: 5px 0;
   border-bottom: 1px solid transparent;
   background: transparent;
@@ -379,24 +303,22 @@
   white-space: nowrap;
   transition: color 180ms;
 }
-.worldNav button i {
-  height: 4px;
-  width: 4px;
-  border: 1px solid var(--world-color);
-  border-radius: 50%;
+.worldNav a svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--world-color, #b5becd);
   opacity: 0.6;
 }
-.worldNav button:hover,
-.worldNav button[aria-current] {
+.worldNav a:hover,
+.worldNav a[aria-current] {
   color: #e8e5e9;
 }
-.worldNav button[aria-current] i {
-  background: var(--world-color);
-  box-shadow: 0 0 9px color-mix(in srgb, var(--world-color) 20%, transparent);
+.worldNav a[aria-current] svg {
   opacity: 1;
 }
-.worldNav button[aria-current] {
-  border-bottom-color: color-mix(in srgb, var(--world-color) 35%, transparent);
+.worldNav a[aria-current] {
+  border-bottom-color: var(--world-color, #b5becd);
 }
 .sceneHUD {
   pointer-events: none;
@@ -411,17 +333,6 @@
   color: #6f7d93;
   font: 7px var(--u-mono);
   letter-spacing: 1px;
-}
-.sceneHUD > span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.sceneHUD > span i {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #cbb58f;
 }
 .sceneHUD label {
   pointer-events: auto;
@@ -448,13 +359,6 @@
 }
 .sceneHUD option {
   background: #101622;
-}
-.sceneHUD > button {
-  display: grid;
-  place-items: center;
-  padding: 2px;
-  background: transparent;
-  color: #8896ab;
 }
 .fallbackBanner {
   position: fixed;
@@ -493,11 +397,6 @@
   letter-spacing: -0.055em;
   margin-top: 25px;
 }
-.browseOverview h1 em {
-  font-family: Georgia, serif;
-  font-weight: 400;
-  color: #d9c3a2;
-}
 .browseOverview > header > p {
   max-width: 530px;
   font-size: 14px;
@@ -505,31 +404,18 @@
   color: #9da8ba;
   margin-top: 26px;
 }
-.browseActions {
-  display: flex;
-  gap: 25px;
-  align-items: center;
-  margin-top: 28px;
-}
-.browseActions > button:not(.primaryButton) {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 0;
-  background: transparent;
-  color: #aeb8c9;
-  font-size: 11px;
-}
 .browseWorlds {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 15px;
   margin-top: 65px;
 }
 .browseWorlds > a {
   position: relative;
-  padding: 26px;
-  min-height: 245px;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  min-height: 225px;
   border: 1px solid #d3d9eb17;
   border-radius: 9px;
   background: #ffffff02;
@@ -546,19 +432,17 @@
   letter-spacing: 1px;
   color: #77869b;
 }
-.browseWorlds i {
+.browseWorlds > a > svg {
   position: absolute;
-  right: 27px;
-  top: 26px;
-  width: 21px;
-  height: 21px;
-  border-radius: 50%;
-  border: 1px solid var(--world-color);
-  box-shadow: inset -6px -4px 0 color-mix(in srgb, var(--world-color) 16%, transparent);
+  right: 24px;
+  top: 22px;
+  width: 27px;
+  height: 27px;
+  color: var(--world-color);
   opacity: 0.8;
 }
 .browseWorlds h2 {
-  font: 400 28px var(--u-display);
+  font: 400 25px var(--u-display);
   letter-spacing: -0.8px;
   margin-top: 32px;
 }
@@ -572,43 +456,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 14px;
   color: var(--world-color);
-  font-size: 10px;
-  margin-top: 22px;
+  font-size: 9px;
+  margin-top: auto;
+  padding-top: 22px;
 }
-.browseProjects {
-  margin-top: 85px;
-}
-.browseProjects > div {
-  margin-bottom: 26px;
-}
-.browseProjects h2 {
-  font: 400 35px var(--u-display);
-  letter-spacing: -1px;
-  margin-top: 15px;
-}
-.browseProjects > a {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-  padding: 23px 0;
-  border-top: 1px solid var(--u-line);
-}
-.browseProjects strong {
-  font: 400 22px var(--u-display);
-}
-.browseProjects small {
-  display: block;
-  max-width: 750px;
-  font-size: 12px;
-  line-height: 1.9;
-  color: #8f9fb4;
-  margin-top: 9px;
-}
-.browseProjects svg {
+.browseWorlds small svg {
   flex-shrink: 0;
-  color: #d4c3a9;
 }
 .universe[data-universe-mode='browse'] .destinationHost {
   position: relative;
@@ -624,13 +479,13 @@
 .universe[data-universe-mode='browse'] .worldNav {
   bottom: 18px;
 }
-.universe[data-universe-mode='browse'] .breadcrumb {
+.universe[data-universe-mode='browse'] .worldCaption {
   top: 104px;
 }
 .universe[data-render-state='fallback'] .browseHost {
   padding-top: 190px;
 }
-.universe[data-render-state='fallback'] .breadcrumb {
+.universe[data-render-state='fallback'] .worldCaption {
   top: 145px;
 }
 .universe[data-render-state='fallback'] .destinationHost {
@@ -703,7 +558,7 @@
   max-height: min(480px, 55dvh);
   overflow: auto;
 }
-.paletteResults > button {
+.paletteResults > a {
   display: flex;
   gap: 15px;
   align-items: center;
@@ -715,11 +570,11 @@
   text-align: left;
   color: #c5cad6;
 }
-.paletteResults > button > span {
+.paletteResults > a > span {
   min-width: 0;
   flex: 1;
 }
-.paletteResults > button[aria-selected='true'] {
+.paletteResults > a[aria-selected='true'] {
   border-color: #d6c3a327;
   background: #d6c3a30e;
 }
@@ -773,7 +628,7 @@
 .terminalOutput [data-tone='error'] {
   color: #dfb887;
 }
-.terminalOutput > button {
+.terminalOutput > a {
   display: block;
   min-height: 36px;
   padding: 7px 0;
@@ -782,7 +637,7 @@
   font: inherit;
   text-align: left;
 }
-.terminalOutput > button:hover {
+.terminalOutput > a:hover {
   text-decoration: underline;
 }
 .terminalSuggestions {
@@ -862,15 +717,9 @@
     padding-inline: 25px;
     gap: 20px;
   }
-  .mainNav {
-    gap: 20px;
-  }
   .brand > b {
     letter-spacing: 1.5px;
     font-size: 8px;
-  }
-  .brand small {
-    font-size: 5px;
   }
   .headerActions {
     gap: 8px;
@@ -886,14 +735,8 @@
   .landing h1 {
     font-size: 72px;
   }
-  .tagline {
-    font-size: 23px;
-  }
   .introduction {
     font-size: 11px;
-  }
-  .terminalShortcut > span {
-    display: none;
   }
   .landingActions {
     gap: 18px;
@@ -906,15 +749,8 @@
     gap: 16px;
     padding-inline: 16px;
   }
-  .worldNav button {
+  .worldNav a {
     font-size: 8px;
-  }
-  .overviewCaption {
-    left: 30px;
-    max-width: 260px;
-  }
-  .overviewCaption h1 {
-    font-size: 25px;
   }
   .browseWorlds {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -934,34 +770,8 @@
     padding-left: 12px;
     letter-spacing: 1.5px;
   }
-  .brand small {
-    display: none;
-  }
   .brand {
     gap: 12px;
-  }
-  .mainNav {
-    display: none;
-    position: absolute;
-    top: 71px;
-    left: 0;
-    right: 0;
-    padding: 16px 24px 24px;
-    background: #080f1bf7;
-    border-bottom: 1px solid #ffffff17;
-    flex-direction: column;
-    gap: 0;
-  }
-  .mainNav a {
-    padding: 15px 0;
-    font-size: 14px;
-    border-bottom: 1px solid #ffffff0a;
-  }
-  .menuOpen {
-    display: flex;
-  }
-  .mobileMenuButton {
-    display: grid;
   }
   .headerActions {
     gap: 8px;
@@ -992,11 +802,6 @@
     font-size: 0.53em;
     letter-spacing: 0.12em;
   }
-  .tagline {
-    font-size: 21px;
-    line-height: 1.35;
-    margin-top: 23px;
-  }
   .introduction {
     font-size: 12px;
     line-height: 1.9;
@@ -1011,9 +816,6 @@
     font-size: 11px;
     gap: 18px;
     padding: 12px 16px;
-  }
-  .terminalShortcut {
-    margin-top: 21px;
   }
   .eyebrow {
     font-size: 7px;
@@ -1035,18 +837,6 @@
   .sceneLoading .orbitIllustration {
     height: 190px;
   }
-  .overviewCaption {
-    top: 107px;
-    left: 24px;
-    right: 24px;
-    max-width: 300px;
-  }
-  .overviewCaption h1 {
-    font-size: 26px;
-  }
-  .overviewCaption p {
-    font-size: 11px;
-  }
   .destinationHost {
     position: relative;
     top: auto;
@@ -1058,19 +848,17 @@
     overflow: visible;
     backdrop-filter: blur(22px);
   }
-  .breadcrumb {
+  .worldCaption {
     top: 89px;
     left: 23px;
+    max-width: calc(100vw - 46px);
     font-size: 7px;
-  }
-  .breadcrumb button {
-    font-size: 10px;
   }
   .universe[data-universe-mode='browse'] .destinationHost {
     width: calc(100% - 28px);
     margin: 130px 14px 120px;
   }
-  .universe[data-universe-mode='browse'] .breadcrumb {
+  .universe[data-universe-mode='browse'] .worldCaption {
     top: 88px;
   }
   .worldNav {
@@ -1085,7 +873,7 @@
     border-radius: 22px;
     background: #080e19eb;
   }
-  .worldNav button {
+  .worldNav a {
     font-size: 9px;
     min-height: 33px;
     flex-shrink: 0;
@@ -1102,9 +890,6 @@
   .sceneHUD label {
     gap: 7px;
   }
-  .sceneHUD > button {
-    display: none;
-  }
   .browseHost {
     padding: 125px 24px 120px;
   }
@@ -1114,12 +899,6 @@
   .browseOverview > header > p {
     font-size: 13px;
     margin-top: 23px;
-  }
-  .browseActions {
-    gap: 20px;
-  }
-  .browseActions > button:not(.primaryButton) {
-    font-size: 10px;
   }
   .browseWorlds {
     grid-template-columns: 1fr;
@@ -1137,18 +916,6 @@
   .browseWorlds p {
     font-size: 12px;
   }
-  .browseProjects {
-    margin-top: 55px;
-  }
-  .browseProjects h2 {
-    font-size: 32px;
-  }
-  .browseProjects strong {
-    font-size: 20px;
-  }
-  .browseProjects small {
-    font-size: 11px;
-  }
   .fallbackBanner {
     top: 77px;
     left: 12px;
@@ -1165,7 +932,7 @@
   .universe[data-render-state='fallback'] .browseHost {
     padding-top: 190px;
   }
-  .universe[data-render-state='fallback'] .breadcrumb {
+  .universe[data-render-state='fallback'] .worldCaption {
     top: 155px;
   }
   .universe[data-render-state='fallback'] .destinationHost {
@@ -1194,7 +961,7 @@
   .paletteResults {
     max-height: 50dvh;
   }
-  .paletteResults > button {
+  .paletteResults > a {
     padding: 12px 10px;
   }
   .paletteResults em {
@@ -1249,30 +1016,15 @@
   .landing h1 {
     font-size: 57px;
   }
-  .tagline {
-    font-size: 20px;
-  }
   .introduction {
     font-size: 11px;
   }
   .landingActions {
     gap: 16px;
   }
-  .landingActions > a {
-    font-size: 10px;
-  }
   .primaryButton {
     font-size: 10px;
     gap: 15px;
-  }
-  .sceneHUD > span {
-    max-width: 160px;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  .browseActions {
-    flex-wrap: wrap;
-    gap: 12px;
   }
   .browseOverview h1 {
     font-size: 42px;
@@ -1300,14 +1052,6 @@
     font-size: 0.64em;
     letter-spacing: 0.09em;
   }
-  .tagline {
-    margin-top: 17px;
-    font-size: 18px;
-    line-height: 1.33;
-  }
-  .tagline > span {
-    display: inline;
-  }
   .introduction {
     margin-top: 13px;
     max-width: 340px;
@@ -1318,10 +1062,7 @@
     margin-top: 18px;
     gap: 20px;
   }
-  .terminalShortcut {
-    margin-top: 15px;
-  }
-  .worldNav button {
+  .worldNav a {
     min-height: 44px;
   }
   .sceneHUD {

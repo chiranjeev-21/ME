@@ -37,7 +37,7 @@ export function ContactWorld() {
         <span>↗</span>
       </div>
       <header>
-        <Eyebrow>07 / An open channel</Eyebrow>
+        <Eyebrow>08 / An open channel</Eyebrow>
         <h1 id="uw-contact-title">
           A good conversation
           <br />
@@ -48,7 +48,7 @@ export function ContactWorld() {
           <br />
           Or something worth building.
         </p>
-        <p>No contact form between us. These are my direct, verified channels.</p>
+        <p>No contact form between us. Pick the channel that suits the conversation.</p>
       </header>
       <div className="uw-contact-email" data-reveal="section">
         <span className="uw-meta">01 / EMAIL</span>
@@ -72,8 +72,8 @@ export function ContactWorld() {
       <div className="uw-contact-socials">
         {PROFILE.socials.map((social, index) => (
           <div key={social.label} data-reveal="section">
-            <span className="uw-meta">
-              0{index + 2} / {social.label.toUpperCase()}
+            <span className="uw-meta" aria-hidden="true">
+              0{index + 2} /
             </span>
             <ExternalLink href={social.href}>{social.label}</ExternalLink>
             <p>
@@ -86,11 +86,6 @@ export function ContactWorld() {
       </div>
       <footer className="uw-contact-signature">
         <span>Chiranjeev Singh</span>
-        <p>
-          Engineer & builder.
-          <br />
-          You can call me CJ.
-        </p>
       </footer>
     </section>
   );

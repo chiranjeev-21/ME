@@ -11,6 +11,7 @@ import { ProjectBeacons } from './ProjectBeacons';
 import { SceneMarker } from './SceneMarker';
 import { AssetBoundary } from './assets/AssetBoundary';
 import { EarthClouds, EarthSurface } from './assets/Earth';
+import { WorldForm } from './WorldForms';
 
 interface Props {
   world: WorldDefinition;
@@ -41,41 +42,40 @@ export function Planet({
 }: Props) {
   const root = useRef<Group>(null);
   const body = useRef<Group>(null);
+  const elapsed = useRef(0);
   const [hovered, setHovered] = useState(false);
   const texture = useMemo(
-    () => surfaceTexture(world.kind, Number(world.number) * 17, high),
-    [high, world.kind, world.number]
+    () => (world.kind === 'ocean' ? surfaceTexture('ocean', 17, high) : null),
+    [high, world.kind]
   );
-  const geometry = useMemo(() => {
-    const sphere = new SphereGeometry(world.radius, high ? 64 : 32, high ? 48 : 24);
-    if (world.kind !== 'ocean') {
-      const positions = sphere.getAttribute('position');
-      for (let i = 0; i < positions.count; i++) {
-        const x = positions.getX(i);
-        const y = positions.getY(i);
-        const z = positions.getZ(i);
-        const relief = 1 + Math.sin(x * 23 + y * 17) * Math.sin(z * 19 - x * 9) * 0.008;
-        positions.setXYZ(i, x * relief, y * relief, z * relief);
-      }
-      sphere.computeVertexNormals();
-    }
-    return sphere;
-  }, [high, world.kind, world.radius]);
+  const geometry = useMemo(
+    () =>
+      world.kind === 'ocean'
+        ? new SphereGeometry(world.radius, high ? 64 : 32, high ? 48 : 24)
+        : null,
+    [high, world.kind, world.radius]
+  );
   const atmosphere = useMemo(
     () => ({ uColor: { value: new Color(world.color) }, uOpacity: { value: 1 } }),
     [world.color]
   );
   useEffect(
     () => () => {
-      texture.dispose();
+      texture?.dispose();
     },
     [texture]
   );
-  useEffect(() => () => geometry.dispose(), [geometry]);
+  useEffect(() => () => geometry?.dispose(), [geometry]);
   useFrame((_, delta) => {
     root.current?.position.fromArray(position);
     if (body.current && !reducedMotion) {
-      body.current.rotation.y += Math.min(delta, 0.05) * (selected ? 0.018 : 0.035);
+      elapsed.current += Math.min(delta, 0.05) * (selected ? 0.5 : 1);
+      if (world.kind === 'ocean') body.current.rotation.y = elapsed.current * 0.035;
+      else if (world.kind === 'industrial') body.current.rotation.z = elapsed.current * 0.025;
+      else if (world.kind !== 'ghost') {
+        // Faces, pages, instruments, and launch platforms stay presented to the visitor.
+        body.current.rotation.y = Math.sin(elapsed.current * 0.12) * 0.075;
+      }
     }
   });
   return (
@@ -92,57 +92,45 @@ export function Planet({
         }}
         onPointerOut={() => setHovered(false)}
       >
-        <AssetBoundary
-          fallback={
-            <mesh>
-              <primitive object={geometry} attach="geometry" />
-              <meshStandardMaterial
-                map={texture}
-                bumpMap={texture}
-                bumpScale={world.kind === 'ocean' ? 0.009 : 0.035}
-                metalness={world.kind === 'research' ? 0.24 : world.kind === 'ocean' ? 0.16 : 0.05}
-                roughness={world.kind === 'ocean' ? 0.4 : 0.88}
-                emissive={world.color}
-                emissiveIntensity={hovered ? 0.09 : 0.012}
-              />
-            </mesh>
-          }
-        >
-          {world.kind === 'ocean' ? (
+        {geometry && texture ? (
+          <AssetBoundary
+            fallback={
+              <mesh geometry={geometry}>
+                <meshStandardMaterial
+                  map={texture}
+                  bumpMap={texture}
+                  bumpScale={0.009}
+                  metalness={0.16}
+                  roughness={0.4}
+                />
+              </mesh>
+            }
+          >
             <EarthSurface geometry={geometry} onReady={onAssetReady} />
-          ) : (
-            <mesh>
-              <primitive object={geometry} attach="geometry" />
-              <meshStandardMaterial
-                map={texture}
-                bumpMap={texture}
-                bumpScale={0.035}
-                metalness={world.kind === 'research' ? 0.24 : 0.05}
-                roughness={0.88}
-                emissive={world.color}
-                emissiveIntensity={hovered ? 0.09 : 0.012}
-              />
-            </mesh>
-          )}
-        </AssetBoundary>
+          </AssetBoundary>
+        ) : (
+          <WorldForm world={world} high={high} reducedMotion={reducedMotion} />
+        )}
         {world.kind === 'ocean' && (
           <EarthClouds radius={world.radius} high={high} reducedMotion={reducedMotion} />
         )}
         <Landmarks world={world} high={high} />
       </group>
-      <mesh scale={hovered ? 1.1 : 1.065}>
-        <sphereGeometry args={[world.radius, high ? 48 : 24, 24]} />
-        <shaderMaterial
-          uniforms={atmosphere}
-          vertexShader={surfaceVertex}
-          fragmentShader={atmosphereFragment}
-          side={BackSide}
-          transparent
-          depthWrite={false}
-          blending={AdditiveBlending}
-          toneMapped={false}
-        />
-      </mesh>
+      {world.kind === 'ocean' && (
+        <mesh scale={hovered ? 1.1 : 1.065}>
+          <sphereGeometry args={[world.radius, high ? 48 : 24, 24]} />
+          <shaderMaterial
+            uniforms={atmosphere}
+            vertexShader={surfaceVertex}
+            fragmentShader={atmosphereFragment}
+            side={BackSide}
+            transparent
+            depthWrite={false}
+            blending={AdditiveBlending}
+            toneMapped={false}
+          />
+        </mesh>
+      )}
       {selected && world.kind === 'terracotta' && !scrollJourney && (
         <ProjectBeacons radius={world.radius} markers={projectMarkers} onSelect={onProjectSelect} />
       )}
@@ -168,6 +156,23 @@ export function Planet({
         )}
       </SceneMarker>
       <SceneMarker position={[world.radius, 0, 0]} attributes={{ 'data-world-limb': world.id }} />
+      <SceneMarker
+        attributes={{
+          'data-world-form': world.id,
+          'data-form-kind': world.kind,
+          'data-form-description': world.form ?? world.name,
+          'data-form-landmark': {
+            about: 'living-earth',
+            engineering: 'reliability-engine',
+            'ai-lab': 'neural-inspection-lens',
+            projects: 'orbital-shipyard',
+            creative: 'living-lyre',
+            hush: 'inhabited-celestial-ghost',
+            writing: 'celestial-open-book',
+            contact: 'deep-space-signal-beacon',
+          }[world.id],
+        }}
+      />
     </group>
   );
 }

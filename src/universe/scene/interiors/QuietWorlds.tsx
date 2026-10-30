@@ -3,7 +3,8 @@ import { useFrame } from '@react-three/fiber';
 import type { Group, MeshStandardMaterial } from 'three';
 import type { MutableRefObject } from 'react';
 import { seededRandom } from '../math.ts';
-import { Batch, Block, KineticLandmark, Ring, Water } from './Scenery';
+import { Batch, Block, Ring, Water } from './Scenery';
+import { CreativeSculpture } from '../WorldForms';
 import type { Placement, Signal } from './Scenery';
 
 interface Props {
@@ -114,13 +115,9 @@ export function ContourGarden({ high, reducedMotion, signal }: Props) {
         <Batch placements={leaves} shape="rock" color="#8faaa0" materialRef={foliageMaterial} />
       </group>
       <Block position={[-6, 2.2, -7]} scale={[0.16, 3, 0.16]} color="#867a59" />
-      <KineticLandmark
-        position={[-6, 3.8, -7]}
-        kind="garden"
-        color="#b8b88b"
-        reducedMotion={reducedMotion}
-        signal={signal}
-      />
+      <group position={[-6, 3.8, -7]} scale={2.8}>
+        <CreativeSculpture high={high} />
+      </group>
       <mesh position={[-19, 0, -42]} scale={[18, 4, 12]}>
         <icosahedronGeometry args={[1, 2]} />
         <meshStandardMaterial color="#526f61" roughness={1} />

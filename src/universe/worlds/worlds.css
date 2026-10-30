@@ -555,24 +555,6 @@
   font-family: var(--u-mono, monospace);
   font-size: 0.65rem;
 }
-.uw-current-work {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  gap: 2rem;
-  padding-block: 1rem 3rem;
-}
-.uw-current-work > div:first-child > p:last-child {
-  margin-top: 1rem;
-  font-size: 0.85rem;
-}
-.uw-current-work > div:last-child > p {
-  margin: 1rem 0 1.5rem;
-  color: var(--uw-muted);
-}
-.uw-current-work li {
-  color: var(--uw-muted);
-  font-size: 0.82rem;
-}
 .uw-principles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
@@ -637,71 +619,11 @@
   margin-top: 1rem;
   color: var(--uw-muted);
 }
-.uw-world .uw-lab-protocol {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
-  gap: 1.5rem;
-  margin: 2.5rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.uw-lab-protocol li {
-  position: relative;
-  margin: 0 !important;
-  padding-top: 1rem;
-  border-top: 1px solid var(--uw-line);
-}
-.uw-lab-protocol li::before {
-  position: absolute;
-  inset: -1px 0 auto;
-  height: 1px;
-  background: var(--u-accent);
-  transform-origin: left;
-  content: '';
-}
-.uw-lab-protocol span {
-  display: block;
-  margin-bottom: 0.7rem;
-  color: var(--u-accent);
-  font-family: var(--u-mono, monospace);
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.uw-lab-protocol strong {
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-.uw-lab-protocol p {
-  margin-top: 0.6rem;
-  color: var(--uw-muted);
-  font-size: 0.78rem;
-}
 .uw-lab-surface {
   min-width: 0;
   margin-top: 2.5rem;
   padding-top: 2rem;
   border-top: 1px solid var(--uw-line);
-}
-.uw-lab-note {
-  display: flex;
-  gap: 1.2rem;
-  margin-top: 2.5rem;
-  padding: 1.2rem 0;
-  border-top: 1px solid var(--uw-line);
-  color: var(--uw-muted);
-}
-.uw-lab-note > span {
-  color: var(--u-accent);
-  font-size: 1.5rem;
-}
-.uw-lab-note p {
-  max-width: 40rem;
-  font-size: 0.77rem;
-}
-.uw-lab-note strong {
-  color: var(--uw-ink);
-  font-weight: 500;
 }
 
 /* Projects: a terracotta spaceport catalog, not a deployment dashboard. */
@@ -867,13 +789,6 @@
 .uw-project-card .uw-tags {
   margin-top: 1.2rem;
 }
-.uw-project-card .uw-provenance {
-  margin-top: 1.2rem;
-}
-.uw-project-card .uw-text-link {
-  margin-top: auto;
-  padding-top: 1.4rem;
-}
 .uw-project-thumb {
   position: relative;
   display: block;
@@ -946,8 +861,16 @@
   padding-top: 2rem;
   border-top: 1px solid var(--uw-line);
 }
-.uw-case-study > footer .uw-text-link {
-  margin-top: 1.5rem;
+.uw-case-study > footer.uw-dossier-technologies {
+  margin-top: 2rem;
+}
+.uw-dossier-note {
+  max-width: 42rem;
+  margin-block: 2rem !important;
+  padding-left: 1rem;
+  border-left: 1px solid var(--u-accent);
+  color: var(--uw-muted);
+  font-size: 0.85rem;
 }
 
 /* Creative: an organic, original drawing surface and a small set of real tools. */
@@ -1060,35 +983,6 @@
 .uw-creative-context h2 em {
   font-family: Georgia, serif;
   font-weight: 400;
-}
-.uw-hush {
-  display: flex;
-  align-items: start;
-  gap: 1.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--uw-line);
-}
-.uw-hush > span {
-  color: #9ab68d30;
-  font:
-    5rem / 1 Georgia,
-    serif;
-}
-.uw-hush > div {
-  min-width: 0;
-}
-.uw-hush .uw-eyebrow {
-  margin-bottom: 0.75rem !important;
-}
-.uw-hush h2 {
-  font-family: Georgia, serif;
-  font-size: 2.2rem;
-}
-.uw-hush p:not(.uw-eyebrow) {
-  max-width: 40rem;
-  margin-top: 1rem;
-  color: var(--uw-muted);
-  font-size: 0.78rem;
 }
 
 /* Writing: a light paper archive, with a proper long-form reading measure. */
@@ -1555,22 +1449,10 @@
     grid-column: 1;
     grid-row: 3;
   }
-  .uw-project-card:not(.uw-project-card-featured) .uw-provenance {
-    grid-column: 2;
-    grid-row: 3;
-  }
-  .uw-project-card:not(.uw-project-card-featured) .uw-text-link {
-    grid-column: 2;
-  }
   .uw-creative-context {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
     gap: 2rem;
-  }
-  .uw-hush {
-    padding: 0 0 0 2rem;
-    border-top: 0;
-    border-left: 1px solid var(--uw-line);
   }
   .uw-contact > .uw-beacon {
     float: right;
@@ -1594,7 +1476,29 @@
     animation: none !important;
   }
 }
-.uw-hush.uw-hush-stage {
+/* Hush: a permanent haunted set, independent of the creative studio. */
+.uw-haunted {
+  --u-accent: #b7cba0;
+  --uw-ink: #dae5df;
+  --uw-muted: #a8bbb8;
+  --uw-line: #6d8d8038;
+  background: radial-gradient(ellipse at 75% 0, #73988a17, transparent 65%), #0b141d;
+}
+.uw-hush-header {
+  padding-block: 1rem 2.5rem;
+}
+.uw-hush-header h1 {
+  font-family: Georgia, serif;
+  font-size: clamp(4.5rem, 16cqi, 9rem);
+  font-style: italic;
+  letter-spacing: -0.07em;
+}
+.uw-hush-header > p:last-child {
+  max-width: 35rem;
+  margin-top: 1.5rem;
+  color: var(--uw-muted);
+}
+.uw-hush-stage {
   display: block;
   position: relative;
   isolation: isolate;
@@ -1618,17 +1522,10 @@
   padding: 30px clamp(20px, 5vw, 44px) 36px;
 }
 .uw-hush-stage h2 {
-  font: 500 clamp(44px, 7vw, 76px)/1 var(--u-display);
-  letter-spacing: 0.16em;
-  margin: 20px 0;
-}
-.uw-hush-stage h2 > span {
-  display: block;
   font:
-    italic 19px/1.5 Georgia,
+    italic clamp(1.6rem, 4cqi, 2.5rem)/1.2 Georgia,
     serif;
-  letter-spacing: 0;
-  margin-top: 16px;
+  letter-spacing: -0.04em;
 }
 .uw-hush-stage p:not(.uw-eyebrow) {
   color: #a8bbb8;
@@ -1641,22 +1538,25 @@
   margin: 26px 0 14px;
 }
 .uw-hush-stage p.uw-hush-status {
-  font: 10px/1.8 var(--u-mono);
+  font: 0.72rem/1.8 var(--u-mono, monospace);
   color: #b7d5c8;
 }
 .uw-hush-stage p.uw-hush-disclaimer {
   margin-top: 24px;
   padding-top: 18px;
   border-top: 1px solid #77988e29;
-  font-size: 11px;
+  font-size: 0.75rem;
   line-height: 1.8;
+}
+.uw-lantern-glow {
+  transition: opacity 350ms ease;
 }
 .uw-hush-spirit {
   animation: hushDrift 5s ease-in-out infinite alternate;
   transform-box: fill-box;
   transform-origin: center;
 }
-.uw-hush-spirit:nth-last-child(2) {
+.uw-hush-scenery svg > g:nth-last-of-type(2) .uw-hush-spirit {
   animation-delay: -2.5s;
 }
 @keyframes hushDrift {

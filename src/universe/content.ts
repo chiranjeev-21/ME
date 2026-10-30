@@ -186,14 +186,12 @@ function curatedProjects(fallback: boolean): UniverseProject[] {
       outcomes: [
         'Implemented desktop and mobile portfolio interactions with shared applications.',
         'Desktop and mobile flows were tested; no performance benchmark is claimed here.',
-        'The image below is an actual CJ OS desktop screenshot, not a design mockup.',
       ],
       sourceUrl: 'https://github.com/chiranjeev-21/ME/tree/feature/cj-os-desktop',
       demoUrl: 'https://portfolio-klmg84qar-capstonelader-9077s-projects.vercel.app',
       image: '/images/projects/cj-os-desktop.webp',
       imageAlt: 'Actual CJ OS desktop runtime showing the implemented portfolio interface.',
-      provenance:
-        'Authored implementation case study · actual runtime image · preview may require sign-in.',
+      provenance: 'Authored implementation case study.',
       source: 'curated',
     },
     {
@@ -201,7 +199,7 @@ function curatedProjects(fallback: boolean): UniverseProject[] {
       slug: 'cj-universe',
       title: 'CJ Universe',
       summary:
-        'The portfolio you are reading: seven distinct destinations, a cinematic solar system, and an equally capable text-first path.',
+        'The portfolio you are reading: eight distinct destinations, a cinematic solar system, and an equally capable text-first path.',
       categories: ['Web', 'Experiments'],
       problem:
         'Make spatial exploration memorable without making it a prerequisite for reading, navigation, or contacting the person behind the work.',
@@ -235,7 +233,7 @@ function curatedProjects(fallback: boolean): UniverseProject[] {
       sourceUrl: 'https://github.com/chiranjeev-21/ME/tree/feature/cj-universe-3d',
       image: '/images/projects/cj-universe.webp',
       imageAlt:
-        'Actual CJ Universe runtime with the rendered central sun and seven selectable worlds.',
+        'Actual CJ Universe runtime of the earlier seven-world layout, before Hush became a separate destination.',
       provenance:
         'Authored case study of this implementation · branch source, not a separate live deployment.',
       source: 'curated',
@@ -348,26 +346,15 @@ export function buildUniverseContent(feed: ContentFeed): UniverseContent {
       id: `${feed.source}-${item.id}`,
       slug,
       title: item.name,
-      summary:
-        item.description ||
-        'No repository description supplied. Open the source for the available project information.',
+      summary: item.description || 'No repository description supplied.',
       categories: projectCategories(item.topics, language),
-      problem:
-        item.description || 'The repository does not supply a public description in this feed.',
-      constraints: [
-        'Only public feed metadata is available here; implementation and case-study detail have not been supplied.',
-      ],
-      architecture: [
-        'Architecture is not documented in this portfolio. Inspect the linked repository for source and documentation.',
-      ],
-      decisions: [
-        'Show the repository description, language, and topics without inferring engineering decisions or outcomes.',
-      ],
-      tradeoffs: [
-        'Repository metadata does not verify functionality, production readiness, deployment status, or performance.',
-      ],
+      problem: '',
+      constraints: [],
+      architecture: [],
+      decisions: [],
+      tradeoffs: [],
       technologies: [...new Set([language, ...item.topics].filter(Boolean))],
-      outcomes: ['No independently documented project outcomes are supplied by this feed.'],
+      outcomes: [],
       sourceUrl,
       demoUrl: safeExternalUrl(item.homepageUrl),
       provenance,

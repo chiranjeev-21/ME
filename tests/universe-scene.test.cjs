@@ -30,6 +30,74 @@ const {
 } = require('../src/universe/scene/scrollMath.ts');
 const { WORLDS } = require('../src/universe/worlds.ts');
 const { createExpeditionLayer } = require('../src/universe/scene/expeditionLayer.ts');
+const {
+  createGhostGeometry,
+  createCognitionGeometry,
+} = require('../src/universe/scene/formGeometry.ts');
+
+test('celestial ghost is a synchronous scalloped body that fits its framing and restores picking', () => {
+  for (const high of [false, true]) {
+    const root = new Group();
+    const geometry = createGhostGeometry(high);
+    const material = new MeshStandardMaterial();
+    const ghost = new Mesh(geometry, material);
+    root.add(ghost);
+    root.updateMatrixWorld(true);
+    const positions = geometry.getAttribute('position');
+    let minHem = 0;
+    let maxHem = -1;
+    for (let index = 0; index < positions.count; index++) {
+      const point = new Vector3().fromBufferAttribute(positions, index);
+      assert.ok(point.length() <= 1, 'cloth stays inside the configured radius');
+      if (point.y < -0.5) {
+        minHem = Math.min(minHem, point.y);
+        maxHem = Math.max(maxHem, point.y);
+      }
+    }
+    assert.ok(maxHem - minHem > 0.15, 'a visible scalloped hem, not a spherical silhouette');
+    const raycaster = new Raycaster(new Vector3(0, 0, 3), new Vector3(0, 0, -1), 0, 10);
+    const hits = () => raycaster.intersectObject(root, true);
+    const initial = hits();
+    assert.ok(initial.length > 0, 'the original cloth surface is pickable before any assets load');
+    assert.ok(initial[0].point.z > 0.4 && initial[0].point.z < 0.5);
+    const layer = createExpeditionLayer(root);
+    try {
+      layer.setOpacity(0);
+      assert.equal(hits().length, 0);
+      layer.setOpacity(1);
+      assert.ok(hits().length > 0, 'scrolling back restores the ghost raycast, not an old sphere');
+      assert.equal(material.opacity, 1);
+    } finally {
+      layer.dispose();
+      geometry.dispose();
+      material.dispose();
+    }
+  }
+});
+
+test('folded cognition geometry has real surface relief and bounded, finite normals at both qualities', () => {
+  for (const high of [false, true]) {
+    const geometry = createCognitionGeometry(high);
+    try {
+      const positions = geometry.getAttribute('position');
+      const normals = geometry.getAttribute('normal');
+      let minimum = Infinity;
+      let maximum = 0;
+      for (let index = 0; index < positions.count; index++) {
+        const radius = new Vector3().fromBufferAttribute(positions, index).length();
+        minimum = Math.min(minimum, radius);
+        maximum = Math.max(maximum, radius);
+        assert.ok(
+          [normals.getX(index), normals.getY(index), normals.getZ(index)].every(Number.isFinite)
+        );
+      }
+      assert.ok(maximum - minimum > 0.08);
+      assert.ok(maximum <= 1.066);
+    } finally {
+      geometry.dispose();
+    }
+  }
+});
 
 const orbit = { orbitRadius: 13.6, phase: 1.65, inclination: 0.04, orbitalSpeed: 0.0035 };
 const tangent = Math.tan((21 * Math.PI) / 180);

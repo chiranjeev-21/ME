@@ -28,6 +28,11 @@ const palettes: Record<WorldDefinition['kind'], [number[], number[], number[]]> 
     [80, 110, 75],
     [160, 164, 112],
   ],
+  ghost: [
+    [30, 56, 59],
+    [117, 160, 153],
+    [198, 218, 210],
+  ],
   archive: [
     [99, 111, 121],
     [175, 186, 190],

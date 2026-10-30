@@ -331,7 +331,7 @@ export const Expedition = forwardRef<ExpeditionHandle, ExpeditionProps>(
         >
           <div className={styles.intro}>{intro}</div>
           <p className={styles.scrollCue}>
-            <span aria-hidden="true">↓</span> Scroll to travel · seven worlds
+            <span aria-hidden="true">↓</span> Scroll to travel · {WORLDS.length} worlds
           </p>
         </section>
         {WORLDS.map(world => (
@@ -351,7 +351,9 @@ export const Expedition = forwardRef<ExpeditionHandle, ExpeditionProps>(
           >
             <div className={styles.landing} hidden={navigation.mode === 'browse'}>
               <header className={styles.chapterTitle}>
-                <p className={styles.chapterNumber}>Chapter {world.number} / 07</p>
+                <p className={styles.chapterNumber}>
+                  Chapter {world.number} / {String(WORLDS.length).padStart(2, '0')}
+                </p>
                 <h2>{world.name}</h2>
                 <p className={styles.subtitle}>{world.subtitle}</p>
                 <a
