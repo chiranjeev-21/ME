@@ -11,6 +11,8 @@ import styles from './ChapterIndex.module.css';
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 const REVEAL = [0.16, 1, 0.3, 1] as const;
+const COUNT = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+const chapterCount = COUNT[CHAPTERS.length] ?? String(CHAPTERS.length);
 
 export function ChapterIndex({ active, onClose }: { active: ChapterId; onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -53,7 +55,7 @@ export function ChapterIndex({ active, onClose }: { active: ChapterId; onClose: 
       exit={{ clipPath: 'inset(100% 0% 0% 0%)', transition: { duration: 0.7, ease: EASE } }}
     >
       <div className={styles.top}>
-        <span className="u-label">Index — seven chapters</span>
+        <span className="u-label">Index — {chapterCount} chapters</span>
         <button type="button" className={styles.close} onClick={onClose} data-autofocus>
           Close <Icon name="close" />
         </button>

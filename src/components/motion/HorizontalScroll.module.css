@@ -12,6 +12,8 @@
   top: 0;
   height: 100svh;
   overflow: hidden;
+  /* Not a scroll container, so focusing a link in the track cannot scroll the stage itself. */
+  overflow: clip;
 }
 
 .root[data-horizontal='true'] .track {

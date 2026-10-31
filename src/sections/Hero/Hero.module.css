@@ -40,10 +40,6 @@
   color: rgba(236, 230, 219, 0.72);
 }
 
-.coords {
-  font-variant-numeric: tabular-nums;
-}
-
 .titleWrap {
   align-self: center;
   margin-top: -6vh;

@@ -13,7 +13,6 @@ export const THEMES: Record<ChapterId, ChapterTheme> = {
   identity: { bg: '#e6dfd2', fg: '#17140f', accent: '#9c4f27' },
   journey: { bg: '#0b0c0e', fg: '#ece6db', accent: '#9cc0de' },
   work: { bg: '#07080a', fg: '#ece6db', accent: '#e2a26a' },
-  lab: { bg: '#0c0e0d', fg: '#dfe3dc', accent: '#8fb9a8' },
   beyond: { bg: '#0f0b08', fg: '#efe2cf', accent: '#dc9d57' },
   contact: { bg: '#040507', fg: '#ece6db', accent: '#d8c299' },
 };

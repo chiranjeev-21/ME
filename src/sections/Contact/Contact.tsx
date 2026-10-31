@@ -103,7 +103,7 @@ export function Contact() {
                   ? 'Copied to your clipboard.'
                   : copy === 'failed'
                     ? 'Copy was blocked — select the address above instead.'
-                    : 'Opens your mail app. Nothing is sent by this site.'}
+                    : null}
               </span>
             </div>
           </div>

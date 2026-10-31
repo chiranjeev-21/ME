@@ -46,7 +46,7 @@ export function Overlay({
     scrollerRef.current?.scrollTo(0, 0);
     scrollerRef.current?.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true });
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      if (event.key !== 'Escape' || event.defaultPrevented || !presentRef.current) return;
       event.preventDefault();
       closeRef.current();
     };

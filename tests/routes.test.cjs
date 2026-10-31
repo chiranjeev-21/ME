@@ -11,7 +11,11 @@ before(
 test('home, chapter anchors, case studies and notes have direct addresses', () => {
   assert.deepEqual(parseRoute('/'), { name: 'home', chapter: null, anchor: null });
   assert.deepEqual(parseRoute('/#journey'), { name: 'home', chapter: 'journey', anchor: null });
-  assert.deepEqual(parseRoute('/#retrieval'), { name: 'home', chapter: null, anchor: 'retrieval' });
+  assert.deepEqual(parseRoute('/#side-quests'), {
+    name: 'home',
+    chapter: null,
+    anchor: 'side-quests',
+  });
   assert.deepEqual(parseRoute('/projects/cj-os-desktop'), {
     name: 'project',
     slug: 'cj-os-desktop',
@@ -28,7 +32,7 @@ test('every previous CJ Universe destination still lands on its new chapter', ()
   const expected = {
     about: '/#identity',
     engineering: '/#work',
-    'ai-lab': '/#retrieval',
+    'ai-lab': '/#work',
     projects: '/#work',
     creative: '/#beyond',
     hush: '/#hush',
@@ -41,6 +45,11 @@ test('every previous CJ Universe destination still lands on its new chapter', ()
   }
   assert.equal(canonicalHref('/world/projects?mode=browse&vault=1'), '/#side-quests');
   assert.equal(canonicalHref('/?mode=browse&vault=1'), '/#side-quests');
+  assert.deepEqual(parseRoute('/?vault=1'), {
+    name: 'home',
+    chapter: 'work',
+    anchor: 'side-quests',
+  });
   assert.equal(canonicalHref('/?mode=explore'), '/');
   assert.equal(canonicalHref('/projects'), '/#work');
   assert.equal(canonicalHref('/writing'), '/#notes');

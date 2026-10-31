@@ -104,20 +104,23 @@ export const RESEARCH_ARTIFACT = {
 // ─── Skills ───────────────────────────────────────────────────────────────
 
 export const SKILLS: SkillItem[] = [
+  { label: 'Java', hot: true },
+  { label: 'Python', hot: true },
+  { label: 'JavaScript' },
+  { label: 'SQL' },
   { label: 'Distributed Computing', hot: true },
   { label: 'Azure', hot: true },
   { label: 'Agentic AI', hot: true },
   { label: 'LLM / RAG', hot: true },
-  { label: 'Java', hot: true },
-  { label: 'Python', hot: true },
-  { label: 'JavaScript' },
+  { label: 'LangChain' },
+  { label: 'System Design' },
   { label: 'Node.js' },
   { label: 'FastAPI' },
   { label: 'AWS' },
   { label: 'PyTorch' },
   { label: 'Kafka' },
   { label: 'Docker' },
-  { label: 'System Design' },
+  { label: 'Version Control' },
 ];
 
 // ─── Education & Certifications ────────────────────────────────────────────────

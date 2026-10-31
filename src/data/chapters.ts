@@ -2,10 +2,9 @@ export const CHAPTERS = [
   { id: 'opening', number: '01', title: 'Opening', caption: 'From orbit' },
   { id: 'identity', number: '02', title: 'Identity', caption: 'Who is building' },
   { id: 'journey', number: '03', title: 'Journey', caption: 'Where I have built' },
-  { id: 'work', number: '04', title: 'Engineering & Work', caption: 'Selected work' },
-  { id: 'lab', number: '05', title: 'Lab', caption: 'Experiments in progress' },
-  { id: 'beyond', number: '06', title: 'Beyond Code', caption: 'Music, games, after hours' },
-  { id: 'contact', number: '07', title: 'Contact', caption: 'Send a signal' },
+  { id: 'work', number: '04', title: 'Engineering & Work', caption: 'Selected work, side quests' },
+  { id: 'beyond', number: '05', title: 'Beyond Code', caption: 'Music, games, after hours' },
+  { id: 'contact', number: '06', title: 'Contact', caption: 'Send a signal' },
 ] as const;
 
 export type ChapterId = (typeof CHAPTERS)[number]['id'];

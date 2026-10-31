@@ -2,8 +2,11 @@ import { Reveal } from '../../components/motion/Reveal';
 import { SplitReveal } from '../../components/motion/SplitReveal';
 import { ChapterMark } from '../../components/ui/ChapterMark';
 import { themeAttributes } from '../../data/themes.ts';
-import type { Project } from '../../data/types.ts';
+import type { PortfolioContent } from '../../data/types.ts';
+import type { GitHubFeedState } from '../../hooks/useGitHubFeed.ts';
 import { ProjectFeature } from './ProjectFeature';
+import { SideQuests } from './SideQuests';
+import { StudioNotes } from './StudioNotes';
 import styles from './Work.module.css';
 
 const PRINCIPLES = [
@@ -24,8 +27,10 @@ const PRINCIPLES = [
   },
 ];
 
-export function Work({ projects }: { projects: Project[] }) {
-  const featured = projects.filter(project => project.treatment);
+export function Work({ content, feed }: { content: PortfolioContent; feed: GitHubFeedState }) {
+  const featured = content.projects.filter(project => project.treatment);
+  // Sub-chapter codes continue after the featured scenes (04.1–04.3).
+  const code = (offset: number) => `04.${featured.length + offset}`;
   return (
     <section
       id="work"
@@ -56,14 +61,17 @@ export function Work({ projects }: { projects: Project[] }) {
       <div className={styles.selected}>
         <p className="u-label">Selected work — {String(featured.length).padStart(2, '0')}</p>
         <p className={styles.selectedNote}>
-          Case studies of things I built, and one published research artifact. Public repositories
-          live in the Lab.
+          Case studies, a published research artifact, and the side quests that came out of
+          curiosity.
         </p>
       </div>
 
       {featured.map((project, index) => (
         <ProjectFeature key={project.id} project={project} index={index} />
       ))}
+
+      <SideQuests projects={content.projects} feed={feed} code={code(1)} />
+      <StudioNotes notes={content.notes} code={code(2)} />
     </section>
   );
 }

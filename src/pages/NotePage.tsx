@@ -8,7 +8,7 @@ export function NotePage({ note, notes }: { note?: Note; notes: Note[] }) {
   const titleId = `note-title-${note?.slug ?? 'missing'}`;
   if (!note)
     return (
-      <Overlay labelledBy={titleId} tone="paper" backLabel="Back to the lab" backHref="/#notes">
+      <Overlay labelledBy={titleId} tone="paper" backLabel="Back to the notes" backHref="/#notes">
         <article className={styles.page}>
           <h1 id={titleId} tabIndex={-1} className={styles.title}>
             This note isn’t in the archive.
@@ -22,7 +22,7 @@ export function NotePage({ note, notes }: { note?: Note; notes: Note[] }) {
   const index = notes.findIndex(item => item.slug === note.slug);
   const next = notes[(index + 1) % notes.length];
   return (
-    <Overlay labelledBy={titleId} tone="paper" backLabel="Back to the lab" backHref="/#notes">
+    <Overlay labelledBy={titleId} tone="paper" backLabel="Back to the notes" backHref="/#notes">
       <article className={styles.page}>
         <header className={styles.head}>
           <p className="u-label">

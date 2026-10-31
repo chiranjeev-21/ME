@@ -1,6 +1,6 @@
 # Chiranjeev Singh — Personal Universe
 
-**From orbit to the details.** A cinematic, scroll-driven portfolio in seven
+**From orbit to the details.** A cinematic, scroll-driven portfolio in six
 chapters: it opens above the night side of Earth, looking across southern India
 toward an orbital sunrise, descends into who I am and what I have built, and
 closes on an eclipse over the same coastline.
@@ -9,17 +9,16 @@ React 18 · TypeScript · Vite · GSAP (ScrollTrigger, SplitText) · Motion · r
 WebGL 2 · CSS Modules. Deployed on Vercel with one serverless function for the
 live GitHub feed.
 
-## The seven chapters
+## The six chapters
 
-| #   | Chapter            | Experience                                                                                                                                 |
-| --- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| 01  | Opening            | Pinned orbital dawn rendered in WebGL; the name surfaces letter by letter, disperses on scroll, and sunrise floods into the next chapter   |
-| 02  | Identity           | Paper-toned editorial chapter: masked line reveals, a portrait opened by a moving mask, reading-pace text, counter-drifting facet lines    |
-| 03  | Journey            | Pinned horizontal timeline driven by vertical scroll; each role has its own light, parallax year numerals and a progress rail              |
-| 04  | Engineering & Work | Principles, then three pinned project scenes: framed → clean full-bleed hold → slate and case-study details; each has a distinct treatment |
-| 05  | Lab                | Working local retrieval lab, seeded contour-garden generator with SVG export, live GitHub "side quests", and studio notes                  |
-| 06  | Beyond Code        | A physically modelled guitar neck (modal string vibration, Karplus–Strong audio, sound off by default) and a torch-lit Hush wordmark       |
-| 07  | Contact            | Eclipse over India; magnetic email action with copy feedback, GitHub, LinkedIn and the résumé                                              |
+| #   | Chapter            | Experience                                                                                                                                            |
+| --- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 01  | Opening            | Pinned orbital dawn rendered in WebGL; the name surfaces letter by letter, disperses on scroll, and sunrise floods into the next chapter              |
+| 02  | Identity           | Paper-toned editorial chapter: masked line reveals, a portrait opened by a moving mask, reading-pace text, counter-drifting facet lines               |
+| 03  | Journey            | Pinned horizontal timeline driven by vertical scroll; each role has its own light, parallax year numerals and a progress rail                         |
+| 04  | Engineering & Work | Principles; three pinned project scenes (framed → full-bleed hold → slate and details); a horizontal gallery of live GitHub side quests; studio notes |
+| 05  | Beyond Code        | A physically modelled guitar neck (modal string vibration, Karplus–Strong audio, sound off by default) and a torch-lit Hush wordmark                  |
+| 06  | Contact            | Eclipse over India; magnetic email action with copy feedback, GitHub, LinkedIn and the résumé                                                         |
 
 All career facts come from `src/data/facts.ts`, which mirrors the résumé PDF in
 `public/resume`. Project case studies, the research artifact and notes are
@@ -70,8 +69,8 @@ development-only scene harness (used to render the posters).
 ## Routes
 
 ```text
-/                                   the seven chapters
-/#journey, /#lab, /#contact …        chapter and experiment anchors
+/                                   the six chapters
+/#journey, /#side-quests, /#notes …  chapter and section anchors
 /projects/cj-os-desktop             case study overlay (also cj-universe, face-mask-detection)
 /projects/repo-<name>               live GitHub repository dossier
 /writing/retrieval-is-not-evidence  studio note overlay
@@ -91,14 +90,14 @@ src\
     motion\     reusable GSAP / Motion primitives listed above
     navigation\ header with chapter marker and reading hairline, chapter index dialog
     ui\         icons, external links, résumé rich text, chapter marks
-  sections\     Hero, Identity, Experience (Journey), Projects (Work), Lab, BeyondCode, Contact
+  sections\     Hero, Identity, Experience (Journey), Projects (Work, side quests, notes), BeyondCode, Contact
   pages\        Home, case-study / note / not-found overlays
   scenes\
     orbital\    camera math, GLSL, WebGL 2 renderer, React scene component
     strings\    string physics + Karplus–Strong synthesis, canvas instrument
   data\         facts (résumé), content adapter, chapters, chapter themes, types
   hooks\        GitHub feed, reduced motion
-  lib\          GSAP registration and eases, retrieval, Motion feature loader
+  lib\          GSAP registration and eases, idle motion queue, Motion feature loader
   styles\       tokens and global styles
 server\, api\   GitHub feed (pinned with a token, recent without one)
 ```
@@ -117,12 +116,13 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`npm test` covers content provenance, routes (including legacy links), the
-retrieval lab, camera framing and sunrise behaviour, and string physics.
+`npm test` covers content provenance, routes (including legacy links), camera
+framing and sunrise behaviour, and string physics.
 `npm run test:e2e` drives Chromium on desktop and mobile: every chapter and
 contact link, the chapter index dialog, case-study overlays and history, legacy
-links, notes and 404, the lab, side quests, instruments, clipboard feedback,
-pinned motion and chapter light, the live WebGL scene, the no-WebGL fallback,
+links, notes and 404, side quests (live feed, fallback, and keyboard travel
+through the horizontal gallery), instruments, clipboard feedback, pinned motion
+and chapter light, the live WebGL scene, the no-WebGL fallback,
 and narrow layouts. Set `PORTFOLIO_PREVIEW=1` to test the production build.
 
 The live GitHub check is opt-in:
@@ -138,7 +138,9 @@ Remove-Item Env:\LIVE_GITHUB
 - The Hush section is an atmosphere study; it contains no gameplay footage.
   Real stills can be added later as project imagery.
 - Earth's atmosphere is thickened (~5×) so it reads at portfolio scale.
-- The retrieval lab is local TF-IDF, not an LLM; it quotes sources and abstains.
+- Side quests show public repository metadata (description, language, topics),
+  never inferred case studies; with no live feed they say so instead of
+  showing stale entries.
 - GitHub pins need an optional server-side token (see `.env.example`); without
   one the feed shows recent public repositories and labels them as such.
 

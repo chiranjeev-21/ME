@@ -1,0 +1,130 @@
+.studio {
+  display: grid;
+  gap: clamp(2.5rem, 6vh, 4rem);
+  padding: clamp(6rem, 16vh, 11rem) var(--gutter) var(--section-pad);
+  border-top: 1px solid var(--line);
+}
+
+.head {
+  display: grid;
+  gap: clamp(1.25rem, 3vh, 1.75rem);
+  align-content: start;
+}
+
+.code {
+  color: var(--accent);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  line-height: var(--lh-display);
+  letter-spacing: -0.025em;
+}
+
+.title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.lede {
+  max-width: 30ch;
+  color: var(--fg-muted);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.notes {
+  border-top: 1px solid var(--line-strong);
+}
+
+.note {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) auto;
+  grid-template-areas:
+    'num title arrow'
+    'num summary arrow'
+    'num tags arrow';
+  column-gap: 1.5rem;
+  row-gap: 0.55rem;
+  padding: 1.75rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.note .u-label {
+  grid-area: num;
+  color: var(--fg-faint);
+  padding-top: 0.7rem;
+}
+
+.noteTitle {
+  grid-area: title;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 2.8vw, 2.8rem);
+  line-height: 1.05;
+  transition: transform var(--dur-mid) var(--ease-reveal);
+}
+
+.noteSummary {
+  grid-area: summary;
+  max-width: 58ch;
+  color: var(--fg-muted);
+}
+
+.noteTags {
+  grid-area: tags;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+}
+
+.noteArrow {
+  grid-area: arrow;
+  align-self: center;
+  font-size: 1.4rem;
+  color: var(--fg-faint);
+  transition:
+    transform var(--dur-mid) var(--ease-reveal),
+    color var(--dur-mid);
+}
+
+.note:hover .noteTitle,
+.note:focus-visible .noteTitle {
+  transform: translateX(0.6rem);
+  font-style: italic;
+}
+
+.note:hover .noteArrow,
+.note:focus-visible .noteArrow {
+  transform: translateX(0.4rem);
+  color: var(--accent);
+}
+
+@media (min-width: 900px) {
+  .studio {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    column-gap: clamp(2rem, 4vw, 4.5rem);
+  }
+
+  .head {
+    position: sticky;
+    top: calc(var(--header-h) + 2.5rem);
+    align-self: start;
+  }
+}
+
+@media (max-width: 899px) {
+  .note {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'num arrow'
+      'title arrow'
+      'summary arrow'
+      'tags arrow';
+  }
+
+  .note .u-label {
+    padding-top: 0;
+  }
+}

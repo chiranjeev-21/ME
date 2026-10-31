@@ -31,7 +31,7 @@ export function BeyondCode() {
 
       <div className={styles.music}>
         <Reveal className={styles.musicCopy}>
-          <p className="u-label">06.1 — Music &amp; guitar</p>
+          <p className="u-label">05.1 — Music &amp; guitar</p>
           <h3 className={styles.musicTitle}>
             Leave a little <em>space.</em>
           </h3>

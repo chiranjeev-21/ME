@@ -11,11 +11,11 @@ export type Route =
 const LEGACY_WORLDS: Record<string, { chapter: ChapterId; anchor?: string }> = {
   about: { chapter: 'identity' },
   engineering: { chapter: 'work' },
-  'ai-lab': { chapter: 'lab', anchor: 'retrieval' },
+  'ai-lab': { chapter: 'work' },
   projects: { chapter: 'work' },
   creative: { chapter: 'beyond' },
   hush: { chapter: 'beyond', anchor: 'hush' },
-  writing: { chapter: 'lab', anchor: 'notes' },
+  writing: { chapter: 'work', anchor: 'notes' },
   contact: { chapter: 'contact' },
 };
 
@@ -38,7 +38,7 @@ export function parseRoute(input: string): Route {
   const hash = url.hash.slice(1);
   if (!parts.length) {
     if (url.searchParams.get('vault') === '1')
-      return { name: 'home', chapter: 'lab', anchor: 'side-quests' };
+      return { name: 'home', chapter: 'work', anchor: 'side-quests' };
     if (isChapterId(hash)) return { name: 'home', chapter: hash, anchor: null };
     return { name: 'home', chapter: null, anchor: ANCHOR.test(hash) ? hash : null };
   }
@@ -50,13 +50,13 @@ export function parseRoute(input: string): Route {
   }
   if (section === 'writing') {
     if (value && SLUG.test(value)) return { name: 'note', slug: value.toLowerCase() };
-    if (!value) return { name: 'home', chapter: 'lab', anchor: 'notes' };
+    if (!value) return { name: 'home', chapter: 'work', anchor: 'notes' };
   }
   if (section === 'world' && value && Object.prototype.hasOwnProperty.call(LEGACY_WORLDS, value)) {
     const legacy = LEGACY_WORLDS[value];
     const vault = value === 'projects' && url.searchParams.get('vault') === '1';
     return vault
-      ? { name: 'home', chapter: 'lab', anchor: 'side-quests' }
+      ? { name: 'home', chapter: 'work', anchor: 'side-quests' }
       : { name: 'home', chapter: legacy.chapter, anchor: legacy.anchor ?? null };
   }
   return { name: 'not-found', path: url.pathname };

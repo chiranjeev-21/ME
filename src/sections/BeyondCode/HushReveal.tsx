@@ -80,7 +80,7 @@ export function HushReveal() {
           <span className={styles.whisper}>something is still watching</span>
         </div>
         <div className={styles.copy}>
-          <p className="u-label">06.2 — Games</p>
+          <p className="u-label">05.2 — Games</p>
           <h3 className={styles.heading}>
             A little curiosity.
             <br />

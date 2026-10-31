@@ -48,7 +48,6 @@ test('every chapter and the primary contact links are present and readable', asy
     /Engineer by trade/,
     /Where I.ve been/,
     /Design for the/,
-    /Experiments,/,
     /After/,
     /A good conversation/,
   ])
@@ -148,6 +147,17 @@ test('studio notes and unknown paths have real, recoverable pages', async ({ pag
     page.getByRole('heading', { level: 2, name: /Start with the actual mechanism/ })
   ).toBeVisible();
   await expect(page).toHaveTitle(/Retrieval is not evidence/);
+  await page.keyboard.press('Escape');
+  await expect(page).toHaveURL(/\/#notes$/);
+  await expect.poll(() => inView(page, '#notes')).toBe(true);
+  await page
+    .locator('#work #notes')
+    .getByRole('link', { name: /Reliable interfaces have one map/ })
+    .click();
+  await expect(page).toHaveURL(/\/writing\/reliable-interfaces-have-one-map$/);
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Reliable interfaces have one map.' })
+  ).toBeVisible();
 
   await page.goto('/definitely/not/here');
   await expect(page.getByRole('heading', { level: 1, name: 'Nothing orbits here.' })).toBeVisible();
@@ -156,44 +166,49 @@ test('studio notes and unknown paths have real, recoverable pages', async ({ pag
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
-test('the lab retrieves real evidence locally and abstains honestly', async ({ page }) => {
-  await page.goto('/#retrieval');
-  const lab = page.locator('#retrieval');
-  await lab.getByLabel('Query').fill('distributed systems navigation');
-  await lab.getByRole('button', { name: 'Run' }).click();
-  const results = lab.getByRole('region', { name: 'Retrieval results' });
-  await expect(results.getByText('Evidence, not a generated answer.')).toBeVisible();
-  await expect(results.getByRole('listitem').first()).toBeVisible();
-  await lab.getByLabel('Query').fill('zebra quantum marmalade');
-  await lab.getByRole('button', { name: 'Run' }).click();
-  await expect(results.getByText('No supported evidence found.')).toBeVisible();
-});
-
-test('side quests show the live feed as repository dossiers, not invented case studies', async ({
+test('side quests sit in the work chapter as repository dossiers, not invented case studies', async ({
   page,
 }) => {
   await page.goto('/#side-quests');
-  const quests = page.locator('#side-quests');
+  const quests = page.locator('#work #side-quests');
   await expect(quests.getByText('Recently updated on GitHub')).toBeVisible();
-  await expect(quests.getByRole('link', { name: 'Source', exact: false }).first()).toHaveAttribute(
+  await expect(quests.getByRole('heading', { level: 4, name: 'Public Research' })).toBeVisible();
+  await expect(quests.getByText('Updated Oct 2026')).toBeVisible();
+  await expect(quests.getByRole('link', { name: /Source on GitHub/ })).toHaveAttribute(
     'href',
     'https://github.com/chiranjeev-21/public-research-fixture'
   );
-  await quests.getByRole('link', { name: 'Public Research' }).click();
+  await quests.getByRole('link', { name: /Read the dossier/ }).click();
+  await expect(page).toHaveURL(/\/projects\/repo-public-research$/);
   await expect(page.getByText('Repository dossier — public metadata')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Architecture' })).toHaveCount(0);
+});
+
+test('without the live feed the work chapter stays whole and side quests say so', async ({
+  page,
+}) => {
+  await page.route('**/api/github-pinned', route =>
+    route.fulfill({ status: 503, json: { error: 'unavailable' } })
+  );
+  await page.goto('/#side-quests');
+  const work = page.locator('#work');
+  await expect(work.getByRole('heading', { level: 2, name: /Design for the/ })).toBeVisible();
+  const quests = work.locator('#side-quests');
+  await expect(quests.getByText('Local fallback — not a live GitHub result')).toBeVisible();
+  await expect(
+    work.getByRole('heading', { level: 3, name: 'Real-Time Face-Mask Detection' })
+  ).toHaveCount(1);
+  await expect(quests.getByText('Real-Time Face-Mask Detection')).toHaveCount(0);
+  await expect(quests.locator('[data-panel]')).toHaveCount(0);
+  await expect(quests.getByRole('link', { name: /Everything on GitHub/ })).toHaveAttribute(
+    'href',
+    'https://github.com/chiranjeev-21'
+  );
 });
 
 test('creative instruments work with keyboard and touch, with sound off by default', async ({
   page,
 }) => {
-  await page.goto('/#contour');
-  const garden = page.locator('#contour');
-  const title = garden.locator('svg title');
-  const before = await title.textContent();
-  await garden.getByRole('button', { name: 'New composition' }).click();
-  await expect(title).not.toHaveText(before || '');
-
   await page.goto('/#beyond');
   const sound = page.getByRole('button', { name: /Sound off/ });
   await expect(sound).toHaveAttribute('aria-pressed', 'false');
@@ -261,6 +276,33 @@ test.describe('with motion', () => {
     await expect.poll(x, { timeout: 10000 }).toBeLessThan(start - 600);
   });
 
+  test('side quests become a horizontal gallery that keyboard focus can travel', async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== 'desktop',
+      'The horizontal gallery is a wide-screen presentation.'
+    );
+    test.setTimeout(90000);
+    await page.goto('/#side-quests');
+    const gallery = page.locator('#side-quests [data-horizontal="true"]');
+    await expect(gallery).toBeAttached();
+    const last = gallery.getByRole('link', { name: /Continue to the studio notes/ });
+    await last.focus();
+    const onScreen = () =>
+      last.evaluate(element => {
+        const rect = element.getBoundingClientRect();
+        return (
+          rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight
+        );
+      });
+    await expect.poll(onScreen, { timeout: 10000 }).toBe(true);
+    // Focus must move the page, never scroll the clipped stage itself.
+    expect(
+      await gallery.locator('[data-track]').evaluate(track => track.parentElement!.scrollLeft)
+    ).toBe(0);
+  });
+
   test('the orbital scene goes live, and without WebGL the poster carries the opening', async ({
     page,
     browser,
@@ -303,12 +345,13 @@ test('narrow layouts never scroll sideways and keep the journey vertical', async
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', 'Mobile layout check.');
   await page.goto('/');
-  for (const id of ['identity', 'journey', 'work', 'lab', 'beyond', 'contact']) {
+  for (const id of ['identity', 'journey', 'work', 'side-quests', 'notes', 'beyond', 'contact']) {
     await page.evaluate(target => document.getElementById(target)!.scrollIntoView(), id);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     expect(overflow, id).toBeLessThanOrEqual(1);
   }
   await expect(page.locator('#journey [data-horizontal="true"]')).toHaveCount(0);
+  await expect(page.locator('#side-quests [data-horizontal="true"]')).toHaveCount(0);
 });
 
 test('actual live GitHub feed remains functional', async ({ request }, testInfo) => {

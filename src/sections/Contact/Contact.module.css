@@ -118,6 +118,11 @@
   color: rgba(236, 230, 219, 0.5);
 }
 
+/* Idle: the live region stays mounted (so it can announce) but takes no room in the row. */
+.copyStatus:empty {
+  position: absolute;
+}
+
 .links {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -138,7 +138,7 @@ export function Hero() {
         <div className={styles.content}>
           <p className={`u-label ${styles.kicker}`} data-kicker>
             <span>A personal universe</span>
-            <span className={styles.coords}>Bengaluru · 12.97° N, 77.59° E</span>
+            <span>Bengaluru, India</span>
           </p>
           <div className={styles.titleWrap} data-title-wrap>
             <div data-title-pointer>

@@ -50,7 +50,7 @@ export function ProjectPage({ project, projects }: { project?: Project; projects
   return (
     <Overlay
       labelledBy={titleId}
-      backLabel={dossier ? 'Back to the lab' : 'Back to the work'}
+      backLabel={dossier ? 'Back to the side quests' : 'Back to the work'}
       backHref={dossier ? '/#side-quests' : '/#work'}
     >
       <article className={styles.page}>

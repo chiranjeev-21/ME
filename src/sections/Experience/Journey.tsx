@@ -142,10 +142,7 @@ export function Journey() {
           <SplitReveal as="h2" id="journey-title" className={styles.title}>
             Where I’ve been <em>building.</em>
           </SplitReveal>
-          <p className={styles.lede}>
-            From production services and AI pipelines to Azure’s distributed storage. Four chapters,
-            in the order they happened.
-          </p>
+          <p className={styles.lede}>Three companies. Four roles. Oldest first.</p>
           <p className={`u-label ${styles.hint}`} aria-hidden="true">
             Keep scrolling <span>→</span>
           </p>

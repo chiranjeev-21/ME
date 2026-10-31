@@ -7,7 +7,6 @@ import { Contact } from '../sections/Contact/Contact';
 import { Journey } from '../sections/Experience/Journey';
 import { Hero } from '../sections/Hero/Hero';
 import { Identity } from '../sections/Identity/Identity';
-import { Lab } from '../sections/Lab/Lab';
 import { Work } from '../sections/Projects/Work';
 
 export function Home({ content, feed }: { content: PortfolioContent; feed: GitHubFeedState }) {
@@ -19,8 +18,7 @@ export function Home({ content, feed }: { content: PortfolioContent; feed: GitHu
       <Hero />
       <Identity />
       <Journey />
-      <Work projects={content.projects} />
-      <Lab content={content} feed={feed} />
+      <Work content={content} feed={feed} />
       <BeyondCode />
       <Contact />
     </main>

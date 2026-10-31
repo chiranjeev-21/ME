@@ -73,14 +73,6 @@ export function Identity() {
                 B.E. Computer Science, Thapar <span>— 9.30 CGPA</span>
               </dd>
             </div>
-            <div>
-              <dt className="u-label">Résumé</dt>
-              <dd>
-                <a className="u-link" href={PROFILE.resume} download>
-                  Download the original PDF
-                </a>
-              </dd>
-            </div>
           </Reveal>
         </div>
       </div>
