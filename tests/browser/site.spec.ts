@@ -47,7 +47,7 @@ test('every chapter and the primary contact links are present and readable', asy
   for (const name of [
     /Engineer by trade/,
     /Where I.ve been/,
-    /Design for the/,
+    /Things I.ve built/,
     /After/,
     /A good conversation/,
   ])
@@ -111,7 +111,7 @@ test('case studies are addressable overlays and closing returns to the page', as
   );
   await expect(page.locator('#main')).toHaveAttribute('inert', '');
   await overlay.getByRole('link', { name: /Next project/ }).click();
-  await expect(page).toHaveURL(/\/projects\/cj-universe$/);
+  await expect(page).toHaveURL(/\/projects\/face-mask-detection$/);
   await page.goBack();
   await expect(page).toHaveURL(/\/projects\/cj-os-desktop$/);
   await page.keyboard.press('Escape');
@@ -172,8 +172,17 @@ test('side quests sit in the work chapter as repository dossiers, not invented c
   await page.goto('/#side-quests');
   const quests = page.locator('#work #side-quests');
   await expect(quests.getByText('Recently updated on GitHub')).toBeVisible();
-  await expect(quests.getByRole('heading', { level: 4, name: 'Public Research' })).toBeVisible();
-  await expect(quests.getByText('Updated Oct 2026')).toBeVisible();
+  // Each repository is its own scene; with no screenshot or excerpt on record, its name is the plate.
+  const scene = quests.locator('section[data-quest]');
+  await expect(scene).toHaveCount(1);
+  await expect(scene).toHaveAttribute('data-treatment', 'type');
+  await expect(scene.getByRole('heading', { level: 4, name: 'Public Research' })).toBeVisible();
+  await expect(scene.getByText('Side quest 01 / 01 — TypeScript').first()).toBeVisible();
+  await expect(scene.getByText('Updated Oct 2026 · 7 stars')).toBeVisible();
+  await expect(scene.getByRole('link', { name: /Live site/ })).toHaveAttribute(
+    'href',
+    'https://chiranjeev.vercel.app/'
+  );
   await expect(quests.getByRole('link', { name: /Source on GitHub/ })).toHaveAttribute(
     'href',
     'https://github.com/chiranjeev-21/public-research-fixture'
@@ -192,14 +201,14 @@ test('without the live feed the work chapter stays whole and side quests say so'
   );
   await page.goto('/#side-quests');
   const work = page.locator('#work');
-  await expect(work.getByRole('heading', { level: 2, name: /Design for the/ })).toBeVisible();
+  await expect(work.getByRole('heading', { level: 2, name: /Things I.ve built/ })).toBeVisible();
   const quests = work.locator('#side-quests');
   await expect(quests.getByText('Local fallback — not a live GitHub result')).toBeVisible();
   await expect(
     work.getByRole('heading', { level: 3, name: 'Real-Time Face-Mask Detection' })
   ).toHaveCount(1);
   await expect(quests.getByText('Real-Time Face-Mask Detection')).toHaveCount(0);
-  await expect(quests.locator('[data-panel]')).toHaveCount(0);
+  await expect(quests.locator('section[data-quest]')).toHaveCount(0);
   await expect(quests.getByRole('link', { name: /Everything on GitHub/ })).toHaveAttribute(
     'href',
     'https://github.com/chiranjeev-21'
@@ -276,31 +285,62 @@ test.describe('with motion', () => {
     await expect.poll(x, { timeout: 10000 }).toBeLessThan(start - 600);
   });
 
-  test('side quests become a horizontal gallery that keyboard focus can travel', async ({
+  test('each side quest pins and opens its frame like the featured work, even when the feed arrives late', async ({
     page,
   }, testInfo) => {
-    test.skip(
-      testInfo.project.name !== 'desktop',
-      'The horizontal gallery is a wide-screen presentation.'
-    );
+    test.skip(testInfo.project.name !== 'desktop', 'Pinned scenes are a wide-screen presentation.');
     test.setTimeout(90000);
+    // The live feed lands after the page has built its pins, as it can in production.
+    await page.route('**/api/github-pinned', async route => {
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      await route.fulfill({ json: feed });
+    });
     await page.goto('/#side-quests');
-    const gallery = page.locator('#side-quests [data-horizontal="true"]');
-    await expect(gallery).toBeAttached();
-    const last = gallery.getByRole('link', { name: /Continue to the studio notes/ });
-    await last.focus();
-    const onScreen = () =>
-      last.evaluate(element => {
-        const rect = element.getBoundingClientRect();
-        return (
-          rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight
-        );
-      });
-    await expect.poll(onScreen, { timeout: 10000 }).toBe(true);
-    // Focus must move the page, never scroll the clipped stage itself.
-    expect(
-      await gallery.locator('[data-track]').evaluate(track => track.parentElement!.scrollLeft)
-    ).toBe(0);
+    const scene = page.locator('#side-quests section[data-quest]');
+    await expect(scene).toHaveAttribute('data-pinned', 'true', { timeout: 15000 });
+    const frame = scene.locator('[data-media]');
+    const insets = () =>
+      frame.evaluate(element =>
+        (getComputedStyle(element).clipPath.match(/[\d.]+(?=%)/g) ?? []).map(Number)
+      );
+    const scrollInto = (fraction: number) =>
+      scene.evaluate((element, at) => {
+        const top = element.getBoundingClientRect().top + scrollY;
+        scrollTo(0, top + (element.offsetHeight - innerHeight) * at);
+      }, fraction);
+
+    // The frame starts as an inset window beside the title…
+    await scrollInto(0.01);
+    await expect.poll(insets, { timeout: 10000 }).toEqual([17, 47, 17, 6]);
+    // …and opens to full bleed while the stage holds at the top of the viewport.
+    await scrollInto(0.45);
+    await expect
+      .poll(async () => (await insets()).every(value => value === 0), { timeout: 10000 })
+      .toBe(true);
+    const stageTop = await scene
+      .locator('[data-stage]')
+      .evaluate(element => element.getBoundingClientRect().top);
+    expect(Math.abs(stageTop)).toBeLessThan(1);
+    await scrollInto(0.97);
+    await expect(scene.locator('[data-detail]').last()).toHaveCSS('opacity', '1');
+    await expect(scene.getByRole('link', { name: /Read the dossier/ })).toBeInViewport();
+
+    // Later chapters were re-measured once the scenes mounted: the work chapter's light
+    // holds inside the scene, and the next chapter's own light is there when it arrives.
+    const background = () =>
+      page.evaluate(() => getComputedStyle(document.getElementById('backdrop')!).backgroundColor);
+    const lightOf = (id: string) =>
+      page.evaluate(target => {
+        const probe = document.createElement('i');
+        probe.style.color = document.getElementById(target)!.dataset.bg!;
+        document.body.append(probe);
+        const colour = getComputedStyle(probe).color;
+        probe.remove();
+        return colour;
+      }, id);
+    await expect.poll(background).toBe(await lightOf('work'));
+    await page.evaluate(() => document.getElementById('beyond')!.scrollIntoView());
+    await expect.poll(background).toBe(await lightOf('beyond'));
   });
 
   test('the orbital scene goes live, and without WebGL the poster carries the opening', async ({
@@ -351,7 +391,7 @@ test('narrow layouts never scroll sideways and keep the journey vertical', async
     expect(overflow, id).toBeLessThanOrEqual(1);
   }
   await expect(page.locator('#journey [data-horizontal="true"]')).toHaveCount(0);
-  await expect(page.locator('#side-quests [data-horizontal="true"]')).toHaveCount(0);
+  await expect(page.locator('#side-quests [data-pinned="true"]')).toHaveCount(0);
 });
 
 test('actual live GitHub feed remains functional', async ({ request }, testInfo) => {

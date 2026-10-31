@@ -173,8 +173,9 @@ test('verified profile, career qualifications, and original source destinations 
     'https://portfolio-klmg84qar-capstonelader-9077s-projects.vercel.app'
   );
   assert.equal(
-    projects.find(project => project.slug === 'cj-universe').sourceUrl,
-    'https://github.com/chiranjeev-21/ME/tree/feature/cj-universe-3d'
+    projects.find(project => project.slug === 'cj-universe'),
+    undefined,
+    'the previous portfolio build is no longer presented as a project'
   );
   assert.equal(
     projects.find(project => project.slug === 'face-mask-detection').sourceUrl,
@@ -210,7 +211,6 @@ test('portrait, original résumé, project screenshots and orbital textures reso
   const { PROFILE, buildContent } = await load;
   const projects = buildContent(emptyFeed).projects;
   const os = projects.find(project => project.slug === 'cj-os-desktop');
-  const universe = projects.find(project => project.slug === 'cj-universe');
   assert.equal(PROFILE.resume, '/resume/Chiranjeev-Singh-Resume.pdf');
   const assets = [
     PROFILE.portrait.src,
@@ -218,8 +218,6 @@ test('portrait, original résumé, project screenshots and orbital textures reso
     PROFILE.resume,
     os.image.src,
     os.image.srcSmall,
-    universe.image.src,
-    universe.image.srcSmall,
     '/assets/orbit/earth-day-3k.webp',
     '/assets/orbit/earth-data-2k.webp',
     '/assets/orbit/lights-southasia-2k.webp',
@@ -232,7 +230,6 @@ test('portrait, original résumé, project screenshots and orbital textures reso
       asset
     );
   assert.match(os.image.alt, /Actual CJ OS desktop runtime/);
-  assert.match(universe.image.alt, /Actual CJ Universe runtime/);
 });
 
 test('every featured project has a distinct staging treatment and the artifact has no image', async () => {
@@ -242,11 +239,63 @@ test('every featured project has a distinct staging treatment and the artifact h
     featured.map(project => [project.slug, project.treatment]),
     [
       ['cj-os-desktop', 'monitor'],
-      ['cj-universe', 'iris'],
       ['face-mask-detection', 'surveillance'],
     ]
   );
-  assert.equal(featured[2].image, undefined);
+  assert.equal(featured[1].image, undefined);
+  // Repositories are side quests, never featured scenes.
+  const withRepo = buildContent({ ...emptyFeed, items: [repository()] }).projects;
+  assert.ok(withRepo.filter(project => project.source === 'github').every(p => !p.treatment));
+});
+
+const loadQuests = import(pathToFileURL(path.join(root, 'src', 'data', 'questMedia.ts')).href);
+
+test('side-quest visuals match repositories by name and only show a site still linked from the repository', async () => {
+  const { questMedia } = await loadQuests;
+  const site = questMedia('WhoDis', 'https://whodis-fawn.vercel.app');
+  assert.equal(site.kind, 'site');
+  assert.deepEqual(questMedia('  whodis ', 'https://WHODIS-fawn.vercel.app/'), site);
+  // A screenshot of a site the repository no longer points to would misrepresent it.
+  assert.equal(questMedia('WhoDis'), undefined);
+  assert.equal(questMedia('WhoDis', 'https://example.com'), undefined);
+  assert.equal(questMedia('WhoDis', 'not a url'), undefined);
+  // Source excerpts belong to the repository itself, whatever its homepage.
+  assert.equal(questMedia('LEETCODE').kind, 'source');
+  assert.equal(questMedia('Decentralised-Package-manager', 'https://example.com').kind, 'source');
+  for (const name of ['Public Research', 'constructor', '__proto__', 'toString', ''])
+    assert.equal(questMedia(name, 'https://example.com'), undefined, name);
+});
+
+test('side-quest screenshots resolve to real assets and excerpts carry their real line ranges', async () => {
+  const { questMedia } = await loadQuests;
+  for (const [name, homepage] of [
+    ['WhoDis', 'https://whodis-fawn.vercel.app'],
+    ['InterviewStack', 'https://interview-stack.vercel.app'],
+    ['Token-generator', 'https://token-generator-woad.vercel.app'],
+  ]) {
+    const { image } = questMedia(name, homepage);
+    for (const asset of [image.src, image.srcSmall])
+      assert.ok(
+        fs.statSync(path.join(root, 'public', ...asset.split('/').filter(Boolean))).size > 0
+      );
+    assert.match(image.alt, new RegExp(`${name}.*live site`));
+  }
+  for (const name of ['Decentralised-Package-manager', 'Leetcode']) {
+    const excerpt = questMedia(name);
+    assert.ok(excerpt.startLine > 0 && excerpt.lines.length >= 15 && excerpt.lines.length <= 30);
+    assert.ok(excerpt.lines.every(line => !line.includes('\t') && line === line.trimEnd()));
+  }
+});
+
+test('language accents use a safe feed colour, else GitHub’s published colour, else none', async () => {
+  const { languageColour } = await loadQuests;
+  assert.equal(languageColour('Go', '#123abc'), '#123abc');
+  assert.equal(languageColour('Go', null), '#00add8');
+  assert.equal(languageColour(' c++ '), '#f34b7d');
+  assert.equal(languageColour('Go', 'red; background: url(x)'), '#00add8');
+  assert.equal(languageColour('Brainfork', 'url(x)'), undefined);
+  assert.equal(languageColour('constructor'), undefined);
+  assert.equal(languageColour(undefined), undefined);
 });
 
 test('résumé emphasis is split into text runs without passing markup through', async () => {

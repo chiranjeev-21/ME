@@ -37,6 +37,9 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       allowedHosts: 'all',
+      // Playwright writes trace pages into per-run output folders (test-results-*);
+      // watching them would full-reload every open page mid-test.
+      watch: { ignored: ['**/test-results*/**', '**/playwright-report/**'] },
     },
     build: {
       rollupOptions: {

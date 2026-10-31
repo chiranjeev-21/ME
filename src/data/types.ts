@@ -62,7 +62,10 @@ export interface GitHubFeed {
 export type ProjectCategory = 'AI/ML' | 'Web' | 'Systems' | 'Games' | 'Experiments';
 
 /** How a featured project is staged in the Work chapter. */
-export type ProjectTreatment = 'monitor' | 'iris' | 'surveillance';
+export type ProjectTreatment = 'monitor' | 'surveillance';
+
+/** How a side quest is staged: its live site, a real source excerpt, or its name alone. */
+export type QuestTreatment = 'site' | 'source' | 'type';
 
 export interface ProjectImage {
   /** Large source, used for full-bleed expansion. */

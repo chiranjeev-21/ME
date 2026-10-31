@@ -31,12 +31,14 @@ Vercel sign-in. A sign-in page does not mean the build failed.
 ```text
 /projects/cj-os-desktop
 /writing/retrieval-is-not-evidence
+/playbox
 /world/hush?mode=explore        (previous CJ Universe link → /#hush)
 ```
 
-`vercel.json` rewrites only `/world/*`, `/projects/*`, and `/writing/*` to the
-client entry point. **Do not replace these with a global rewrite that sends
-`/api/*` to `index.html`.** Static assets live under `/images/*`, `/resume/*`,
+`vercel.json` rewrites only `/world/*`, `/projects/*`, `/writing/*`, and the
+single `/playbox` path to the client entry point. **Do not replace these with a
+global rewrite that sends `/api/*` to `index.html`.** Static assets live under
+`/images/*`, `/resume/*`,
 and `/assets/*` (Earth textures in `/assets/orbit`, credits in
 `/assets/CREDITS.txt`). Fonts are self-hosted in the build; no font CDN is used.
 

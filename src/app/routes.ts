@@ -5,6 +5,7 @@ export type Route =
   | { name: 'home'; chapter: ChapterId | null; anchor: string | null }
   | { name: 'project'; slug: string }
   | { name: 'note'; slug: string }
+  | { name: 'playbox' }
   | { name: 'not-found'; path: string };
 
 /** Destinations from the previous CJ Universe build keep working as chapter links. */
@@ -44,6 +45,7 @@ export function parseRoute(input: string): Route {
   }
   const [section, value, ...rest] = parts;
   if (rest.length) return { name: 'not-found', path: url.pathname };
+  if (section === 'playbox' && !value) return { name: 'playbox' };
   if (section === 'projects') {
     if (value && SLUG.test(value)) return { name: 'project', slug: value.toLowerCase() };
     if (!value) return { name: 'home', chapter: 'work', anchor: null };
@@ -68,6 +70,8 @@ export function routeHref(route: Route): string {
       return `/projects/${encodeURIComponent(route.slug)}`;
     case 'note':
       return `/writing/${encodeURIComponent(route.slug)}`;
+    case 'playbox':
+      return '/playbox';
     case 'home':
       return route.anchor ? `/#${route.anchor}` : route.chapter ? `/#${route.chapter}` : '/';
     default:

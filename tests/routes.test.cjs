@@ -28,6 +28,15 @@ test('home, chapter anchors, case studies and notes have direct addresses', () =
   assert.equal(routeHref({ name: 'home', chapter: 'contact', anchor: null }), '/#contact');
 });
 
+test('the playbox has its own address and nothing beneath it', () => {
+  assert.deepEqual(parseRoute('/playbox'), { name: 'playbox' });
+  assert.deepEqual(parseRoute('/playbox/?from=guitar#top'), { name: 'playbox' });
+  assert.equal(routeHref({ name: 'playbox' }), '/playbox');
+  assert.equal(canonicalHref('/playbox?ref=beyond'), '/playbox');
+  assert.equal(parseRoute('/playbox/extra').name, 'not-found');
+  assert.equal(parseRoute('/playboxes').name, 'not-found');
+});
+
 test('every previous CJ Universe destination still lands on its new chapter', () => {
   const expected = {
     about: '/#identity',

@@ -95,7 +95,7 @@
   padding: clamp(5rem, 14vh, 9rem) var(--gutter);
 }
 
-.copy .u-label {
+.copy :global(.u-label) {
   color: #a8c1ba;
 }
 

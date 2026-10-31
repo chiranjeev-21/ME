@@ -1,0 +1,176 @@
+.scroller {
+  position: relative;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  border-block: 1px solid var(--line);
+}
+
+.track {
+  position: relative;
+}
+
+/* Beat ticks, with a taller tick and a number at every 4/4 bar. */
+.ruler {
+  position: relative;
+  height: 1.9rem;
+  border-bottom: 1px solid var(--line);
+  background:
+    repeating-linear-gradient(
+        90deg,
+        var(--line-strong) 0 1px,
+        transparent 1px calc(var(--beat) * 4)
+      )
+      0 100% / 100% 0.7rem no-repeat,
+    repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px var(--beat)) 0 100% / 100%
+      0.35rem no-repeat;
+}
+
+.ruler span {
+  position: absolute;
+  top: 0.3rem;
+  padding-left: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+}
+
+.steps {
+  display: flex;
+  height: 8rem;
+}
+
+.step {
+  position: relative;
+  flex: none;
+  border-right: 1px solid var(--line);
+}
+
+.block {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  align-items: start;
+  gap: 0.3rem;
+  width: 100%;
+  height: 100%;
+  padding: 0.55rem 0.6rem 0.6rem;
+  text-align: left;
+  overflow: hidden;
+  transition: background var(--dur-fast);
+}
+
+@media (hover: hover) {
+  .block:hover {
+    background: color-mix(in oklab, var(--fg) 4%, transparent);
+  }
+}
+
+.block:focus-visible {
+  outline-offset: -3px;
+}
+
+.block[aria-pressed='true'] {
+  background: color-mix(in oklab, var(--fg) 8%, transparent);
+  box-shadow: inset 0 2px 0 var(--fg);
+}
+
+.step[data-active] .block {
+  background: color-mix(in oklab, var(--accent) 15%, transparent);
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+}
+
+.step[data-active] .meta {
+  color: var(--accent);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.name[data-rest] {
+  font-style: italic;
+  color: var(--fg-faint);
+}
+
+.diagram {
+  width: 3.25rem;
+  height: auto;
+  overflow: visible;
+}
+
+.diagram line {
+  stroke: var(--line-strong);
+  stroke-width: 0.6;
+}
+
+.diagram .nut {
+  stroke: var(--fg-muted);
+  stroke-width: 1.6;
+}
+
+.diagram text {
+  font-family: var(--font-mono);
+  font-size: 4.5px;
+  fill: var(--fg-faint);
+}
+
+.diagram .dotMark {
+  fill: #eadcc5;
+}
+
+.diagram .open {
+  fill: none;
+  stroke: var(--fg-muted);
+  stroke-width: 0.6;
+}
+
+.length {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.playhead::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -4px;
+  border: 4.5px solid transparent;
+  border-top: 6px solid var(--accent);
+}
+
+.playhead[data-visible] {
+  opacity: 1;
+}

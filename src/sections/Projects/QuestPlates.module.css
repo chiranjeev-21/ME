@@ -1,0 +1,303 @@
+/* Plates fill the scene's frame; sizes follow the frame (container units), so the
+   composition holds both full-bleed and in the static layout. */
+
+.site,
+.source,
+.type {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  container-type: size;
+  background: #08090b;
+  color: rgba(236, 230, 219, 0.82);
+}
+
+.hud {
+  z-index: 1;
+  max-width: 44%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Live site ───────────────────────────────────────────────────────────── */
+
+/* Full bleed, the capture starts below the portfolio header, under a strip naming
+   where and when it was taken; the capture itself is left untouched. */
+.site {
+  display: flex;
+  flex-direction: column;
+}
+
+[data-pinned='true'] .site {
+  padding-top: var(--header-h);
+}
+
+.siteBar {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.8rem 4%;
+  border-block: 1px solid rgba(236, 230, 219, 0.1);
+  color: rgba(236, 230, 219, 0.62);
+  white-space: nowrap;
+}
+
+.host {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.site .shot {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: 50% 0%;
+}
+
+/* ─── Source excerpt ──────────────────────────────────────────────────────── */
+
+.light {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      52% 64% at 72% 50%,
+      color-mix(in oklab, var(--tint) 15%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(90% 90% at 50% 50%, #0d0e11 0%, #060708 100%);
+}
+
+[data-side='left'] .light {
+  background:
+    radial-gradient(
+      52% 64% at 28% 50%,
+      color-mix(in oklab, var(--tint) 15%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(90% 90% at 50% 50%, #0d0e11 0%, #060708 100%);
+}
+
+.word,
+.ghost {
+  position: absolute;
+  inset: 0 auto;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.word > span,
+.ghost > span {
+  font-family: var(--font-display);
+  line-height: 0.8;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--tint) 55%, transparent);
+  will-change: transform;
+}
+
+.word {
+  left: 5%;
+  font-size: min(26cqw, 58cqh, calc(80cqw / var(--chars)));
+}
+
+[data-side='left'] .word {
+  left: auto;
+  right: 5%;
+}
+
+.code {
+  position: absolute;
+  top: 54%;
+  left: 50%;
+  width: 46%;
+  translate: 0 -50%;
+  font-family: var(--font-mono);
+  font-size: max(9px, min(1.12cqw, calc(72cqh / (var(--lines) * 1.75))));
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  color: rgba(236, 230, 219, 0.86);
+  -webkit-mask-image: linear-gradient(90deg, #000 84%, transparent);
+  mask-image: linear-gradient(90deg, #000 84%, transparent);
+}
+
+[data-side='left'] .code {
+  left: 7%;
+}
+
+.line {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3ch minmax(0, 1fr);
+  column-gap: 2.4ch;
+  white-space: pre;
+}
+
+.line code {
+  font: inherit;
+}
+
+.number {
+  text-align: right;
+  color: rgba(236, 230, 219, 0.2);
+}
+
+.comment {
+  font-style: italic;
+  color: color-mix(in oklab, var(--tint) 55%, rgba(236, 230, 219, 0.45));
+}
+
+/* One line tall; the timeline carries it down the excerpt like a reading light. */
+.band {
+  position: absolute;
+  inset: 0 -3% auto -2ch;
+  height: 1lh;
+  border-left: 2px solid var(--tint);
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--tint) 16%, transparent),
+    transparent 85%
+  );
+  pointer-events: none;
+}
+
+/* ─── Typographic plate: the name as a type specimen ─────────────────────── */
+
+.type {
+  --size: min(40cqh, calc(190cqw / var(--chars)));
+}
+
+.type .light {
+  background:
+    radial-gradient(
+      60% 70% at 50% 50%,
+      color-mix(in oklab, var(--tint) 13%, transparent),
+      transparent 75%
+    ),
+    radial-gradient(90% 90% at 50% 50%, #0d0e11 0%, #060708 100%);
+}
+
+/* Guides sit on the display face's own metrics (cap 0.73em, x 0.51em, descender
+   0.21em from a baseline 0.34em below the centre of a centred line). */
+.specimen {
+  position: absolute;
+  inset: 0;
+  font-size: var(--size);
+}
+
+.specimen i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(236, 230, 219, 0.08);
+}
+
+.capLine {
+  top: calc(50% - 0.39em);
+}
+
+.xLine {
+  top: calc(50% - 0.17em);
+}
+
+.baseLine {
+  top: calc(50% + 0.34em);
+}
+
+.specimen .baseLine {
+  background: color-mix(in oklab, var(--tint) 38%, transparent);
+}
+
+.descLine {
+  top: calc(50% + 0.55em);
+}
+
+.specimen span {
+  position: absolute;
+  left: 4%;
+  bottom: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(236, 230, 219, 0.3);
+}
+
+[data-side='left'] .specimen span {
+  left: auto;
+  right: 4%;
+}
+
+.ghost {
+  inset: 0;
+  justify-content: center;
+  font-size: var(--size);
+}
+
+.ghost > span {
+  letter-spacing: -0.03em;
+  -webkit-text-stroke: 1.25px color-mix(in oklab, var(--tint) 72%, transparent);
+}
+
+.dot {
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-right: 0.55rem;
+  border-radius: 50%;
+  background: var(--tint);
+}
+
+.fade {
+  display: none;
+}
+
+/* Small frames (the static layout on phones) crop the excerpt instead of shrinking it
+   past reading size, and drop the secondary labels. */
+@container (max-width: 640px) {
+  .code {
+    top: 24%;
+    left: 6%;
+    width: 92%;
+    translate: none;
+    font-size: max(8px, 2.5cqw);
+  }
+
+  .word,
+  .low,
+  .specimen span {
+    display: none;
+  }
+
+  .fade {
+    display: block;
+    position: absolute;
+    inset: auto 0 0;
+    height: 42%;
+    background: linear-gradient(180deg, transparent, #07080a 85%);
+  }
+
+  .siteBar {
+    padding-block: 0.6rem;
+  }
+
+  .siteBar > span {
+    font-size: 0.56rem;
+  }
+}
+
+@media (max-width: 899px) {
+  .hud {
+    font-size: 0.56rem;
+  }
+}

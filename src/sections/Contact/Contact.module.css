@@ -138,7 +138,7 @@
   transition: color var(--dur-mid);
 }
 
-.link .u-label {
+.link :global(.u-label) {
   grid-column: 1;
   color: rgba(236, 230, 219, 0.92);
 }
@@ -156,7 +156,7 @@
   transition: transform var(--dur-mid) var(--ease-reveal);
 }
 
-.link:hover .u-label {
+.link:hover :global(.u-label) {
   color: var(--c-signal);
 }
 

@@ -6,7 +6,8 @@
   "rewrites": [
     { "source": "/world/:path*", "destination": "/" },
     { "source": "/projects/:path*", "destination": "/" },
-    { "source": "/writing/:path*", "destination": "/" }
+    { "source": "/writing/:path*", "destination": "/" },
+    { "source": "/playbox", "destination": "/" }
   ],
   "functions": {
     "api/github-pinned.js": {

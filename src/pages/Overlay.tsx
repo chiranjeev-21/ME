@@ -10,9 +10,11 @@ const EASE = [0.76, 0, 0.24, 1] as const;
 
 interface OverlayProps {
   labelledBy: string;
-  tone?: 'night' | 'paper';
+  tone?: 'night' | 'paper' | 'tungsten';
   backLabel: string;
   backHref: string;
+  /** Controls that stay reachable in the sticky bar, e.g. an instrument's transport. */
+  actions?: ReactNode;
   children: ReactNode;
 }
 
@@ -25,6 +27,7 @@ export function Overlay({
   tone = 'night',
   backLabel,
   backHref,
+  actions,
   children,
 }: OverlayProps) {
   const { navigate } = useRouter();
@@ -70,7 +73,8 @@ export function Overlay({
           <button type="button" className={styles.back} onClick={close}>
             <Icon name="arrow-left" /> {backLabel}
           </button>
-          <span className="u-label">Esc to close</span>
+          {actions && <div className={styles.actions}>{actions}</div>}
+          <span className={`u-label ${styles.hint}`}>Esc to close</span>
         </div>
         <m.div
           initial={{ y: 70, opacity: 0 }}

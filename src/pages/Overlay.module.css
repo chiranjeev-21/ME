@@ -10,7 +10,8 @@
 }
 
 .overlay,
-.overlay[data-tone='paper'] {
+.overlay[data-tone='paper'],
+.overlay[data-tone='tungsten'] {
   --fg-muted: color-mix(in oklab, var(--fg) 64%, transparent);
   --fg-faint: color-mix(in oklab, var(--fg) 40%, transparent);
   --line: color-mix(in oklab, var(--fg) 16%, transparent);
@@ -21,6 +22,13 @@
   --fg: #17140f;
   --bg: #e9e3d6;
   --accent: #9c4f27;
+}
+
+/* After hours: warm tungsten on near-black, the Beyond Code palette. */
+.overlay[data-tone='tungsten'] {
+  --fg: #efe2cf;
+  --bg: #0f0b08;
+  --accent: #dc9d57;
 }
 
 .scroller {
@@ -41,8 +49,25 @@
   background: linear-gradient(180deg, var(--bg) 55%, transparent);
 }
 
-.bar .u-label {
+.hint {
   color: var(--fg-faint);
+}
+
+/* An instrument's bar carries live controls, so it is solid rather than a fade. */
+.overlay[data-tone='tungsten'] .bar {
+  background: var(--bg);
+  box-shadow: 0 1px 0 var(--line);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.actions + .hint {
+  margin-left: clamp(1rem, 2.5vw, 2rem);
 }
 
 .back {
@@ -61,7 +86,11 @@
 }
 
 @media (max-width: 720px) {
-  .bar .u-label {
+  .hint {
     display: none;
+  }
+
+  .actions {
+    gap: 0.35rem;
   }
 }

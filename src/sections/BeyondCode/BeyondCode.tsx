@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import { AppLink } from '../../app/router.tsx';
 import { Reveal } from '../../components/motion/Reveal';
 import { SplitReveal } from '../../components/motion/SplitReveal';
 import { ChapterMark } from '../../components/ui/ChapterMark';
 import { Icon } from '../../components/ui/Icon';
 import { themeAttributes } from '../../data/themes.ts';
+import { loadPlaybox } from '../../pages/Playbox/load.ts';
 import { GuitarStrings } from '../../scenes/strings/GuitarStrings';
 import { HushReveal } from './HushReveal';
 import styles from './BeyondCode.module.css';
+
+const prefetchPlaybox = () => void loadPlaybox().catch(() => undefined);
 
 export function BeyondCode() {
   const [sound, setSound] = useState(false);
@@ -54,6 +58,17 @@ export function BeyondCode() {
                 ? 'Strings are silent until you turn sound on.'
                 : 'Synthesised in your browser: a Karplus–Strong plucked string.'}
             </span>
+          </div>
+          <div className={styles.playbox}>
+            <AppLink
+              href="/playbox"
+              className="u-link"
+              onPointerEnter={prefetchPlaybox}
+              onFocus={prefetchPlaybox}
+            >
+              Open the playbox <Icon name="arrow-right" />
+            </AppLink>
+            <span>Build chords, line them up, record a take.</span>
           </div>
         </Reveal>
         <GuitarStrings sound={sound} onFirstPluck={() => setTouched(true)} />

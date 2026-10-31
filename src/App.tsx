@@ -12,6 +12,7 @@ import { motionReady } from './lib/motionQueue.ts';
 import { Home } from './pages/Home';
 import { NotFound } from './pages/NotFound';
 import { NotePage } from './pages/NotePage';
+import { loadPlaybox } from './pages/Playbox/load.ts';
 import { ProjectPage } from './pages/ProjectPage';
 
 // Development-only scene tuning view; excluded from production bundles.
@@ -20,6 +21,9 @@ const loadMotionFeatures = () => import('./lib/motionFeatures.ts').then(module =
 const SceneHarness = import.meta.env.DEV
   ? lazy(() => import('./scenes/orbital/SceneHarness'))
   : null;
+
+// The instrument space loads only when someone opens it.
+const Playbox = lazy(() => loadPlaybox().then(module => ({ default: module.Playbox })));
 
 function titleFor(route: Route, content: PortfolioContent) {
   const base = 'Chiranjeev Singh — Personal Universe';
@@ -31,6 +35,7 @@ function titleFor(route: Route, content: PortfolioContent) {
     const note = content.notes.find(item => item.slug === route.slug);
     return note ? `${note.title} — Chiranjeev Singh` : base;
   }
+  if (route.name === 'playbox') return 'Playbox — Chiranjeev Singh';
   if (route.name === 'not-found') return 'Not found — Chiranjeev Singh';
   return base;
 }
@@ -129,6 +134,11 @@ function Site() {
             note={content.notes.find(item => item.slug === route.slug)}
             notes={content.notes}
           />
+        )}
+        {route.name === 'playbox' && (
+          <Suspense key="playbox" fallback={null}>
+            <Playbox />
+          </Suspense>
         )}
         {route.name === 'not-found' && <NotFound key="not-found" path={route.path} />}
       </AnimatePresence>

@@ -216,55 +216,6 @@ function curatedProjects(fallback: boolean): Project[] {
       source: 'curated',
     },
     {
-      id: 'curated-cj-universe',
-      slug: 'cj-universe',
-      title: 'CJ Universe',
-      summary:
-        'The previous iteration of this portfolio: eight distinct destinations, a cinematic solar system, and an equally capable text-first path.',
-      categories: ['Web', 'Experiments'],
-      problem:
-        'Make spatial exploration memorable without making it a prerequisite for reading, navigation, or contacting the person behind the work.',
-      constraints: [
-        'Explore and Browse must share content and navigation.',
-        'WebGL availability and reduced-motion preferences must not block access to the portfolio.',
-        'Public repository metadata cannot support invented implementation claims.',
-      ],
-      architecture: [
-        'A shared navigation model identifies worlds, projects, articles, and presentation mode.',
-        'A Three.js scene provides spatial discovery; React destination views carry the readable content.',
-        'A typed content adapter separates authored case studies from public GitHub metadata.',
-        'The AI Lab is one shared working surface supplied by the application, not a duplicate demonstration.',
-      ],
-      decisions: [
-        'Give each destination a distinct visual grammar rather than recoloring one card template.',
-        'Use real anchor destinations with client navigation only for ordinary primary clicks.',
-        'Provide an original procedural sketch in the creative studio instead of fabricated project media.',
-      ],
-      tradeoffs: [
-        'Spatial rendering introduces capability and motion considerations absent from a plain document.',
-        'A GitHub feed may be unavailable, so fallback provenance stays visible.',
-        'This case study describes the implementation, not a measured performance or business outcome.',
-      ],
-      technologies: ['React', 'TypeScript', 'Vite', 'Three.js', 'React Three Fiber'],
-      outcomes: [
-        'One content model supports both an exploratory presentation and direct Browse routes.',
-        'The catalog includes authored implementation notes and explicitly labeled repository metadata.',
-        'This was the portfolio implementation before the current redesign; no external launch metrics are claimed.',
-      ],
-      sourceUrl: 'https://github.com/chiranjeev-21/ME/tree/feature/cj-universe-3d',
-      image: {
-        src: '/images/projects/cj-universe-2400.webp',
-        srcSmall: '/images/projects/cj-universe-1200.webp',
-        width: 2400,
-        height: 1500,
-        alt: 'Actual CJ Universe runtime: the solar-system overview with eight destination worlds orbiting the CJ core.',
-      },
-      treatment: 'iris',
-      provenance:
-        'Authored case study of this implementation · branch source, not a separate live deployment.',
-      source: 'curated',
-    },
-    {
       id: research.id,
       slug: 'face-mask-detection',
       title: research.title,
@@ -348,7 +299,7 @@ export function buildContent(feed: GitHubFeed): PortfolioContent {
       names.has(displayName)
     )
       continue;
-    // Both curated portfolio implementations already document this repository.
+    // This site's own repository: the CJ OS case study already documents it.
     if (/^https?:\/\/github\.com\/chiranjeev-21\/me(?:\/|$)/i.test(sourceUrl)) continue;
     ids.add(item.id);
     urls.add(canonical);

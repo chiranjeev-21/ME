@@ -51,7 +51,7 @@
   border-bottom: 1px solid var(--line);
 }
 
-.note .u-label {
+.note :global(.u-label) {
   grid-area: num;
   color: var(--fg-faint);
   padding-top: 0.7rem;
@@ -124,7 +124,7 @@
       'tags arrow';
   }
 
-  .note .u-label {
+  .note :global(.u-label) {
     padding-top: 0;
   }
 }

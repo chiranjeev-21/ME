@@ -1,13 +1,16 @@
 import { useEffect, useRef } from 'react';
+import { createAudioEngine } from './audio.ts';
 import {
-  TUNING,
-  createString,
-  displacement,
-  energy,
-  envelopeAt,
-  karplusStrong,
-  pluck,
-} from './physics.ts';
+  fretPositions,
+  paintBlurBand,
+  paintFade,
+  paintFret,
+  paintInlays,
+  paintNut,
+  paintRosewood,
+  strokeString,
+} from './neck.ts';
+import { TUNING, createString, displacement, energy, envelopeAt, pluck } from './physics.ts';
 import type { StringState } from './physics.ts';
 import styles from './GuitarStrings.module.css';
 
@@ -39,8 +42,7 @@ export function GuitarStrings({ sound, onFirstPluck }: GuitarStringsProps) {
     let dpr = 1;
     let frame = 0;
     let last = 0;
-    let audio: AudioContext | null = null;
-    const buffers = new Map<number, AudioBuffer>();
+    const engine = createAudioEngine();
     let plucked = false;
 
     const geometry = () => {
@@ -63,94 +65,14 @@ export function GuitarStrings({ sound, onFirstPluck }: GuitarStringsProps) {
       const boardTop = top - spacing * 0.62;
       const boardBottom = top + spacing * (TUNING.length - 1) + spacing * 0.62;
       const boardHeight = boardBottom - boardTop;
-      // Rosewood: dark warm base, long grain streaks, light falling off toward the edges.
-      const wood = b.createLinearGradient(0, boardTop, 0, boardBottom);
-      wood.addColorStop(0, '#1a110b');
-      wood.addColorStop(0.5, '#24170e');
-      wood.addColorStop(1, '#140d08');
-      b.fillStyle = wood;
-      b.fillRect(x0, boardTop, width - x0, boardHeight);
-      let seed = 7;
-      const rand = () => {
-        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-        return seed / 4294967296;
-      };
-      for (let i = 0; i < 140; i++) {
-        const y = boardTop + rand() * boardHeight;
-        const length = width * (0.15 + rand() * 0.6);
-        const start = x0 + rand() * (width - x0);
-        b.strokeStyle = rand() > 0.5 ? 'rgba(60, 38, 22, 0.35)' : 'rgba(8, 5, 3, 0.45)';
-        b.lineWidth = 0.5 + rand() * 1.4;
-        b.beginPath();
-        b.moveTo(start, y);
-        b.bezierCurveTo(
-          start + length * 0.33,
-          y + (rand() - 0.5) * 3,
-          start + length * 0.66,
-          y + (rand() - 0.5) * 3,
-          start + length,
-          y + (rand() - 0.5) * 2
-        );
-        b.stroke();
-      }
-      const pool = b.createRadialGradient(
-        width * 0.42,
-        boardTop + boardHeight * 0.3,
-        10,
-        width * 0.42,
-        boardTop + boardHeight * 0.3,
-        width * 0.6
-      );
-      pool.addColorStop(0, 'rgba(255, 196, 128, 0.10)');
-      pool.addColorStop(1, 'rgba(0, 0, 0, 0.35)');
-      b.fillStyle = pool;
-      b.fillRect(x0, boardTop, width - x0, boardHeight);
-      // Nut: bone.
-      b.fillStyle = '#d8cfbf';
-      b.fillRect(x0 - 7, boardTop - 2, 7, boardHeight + 4);
-      b.fillStyle = 'rgba(0,0,0,0.35)';
-      b.fillRect(x0, boardTop, 3, boardHeight);
+      paintRosewood(b, x0, boardTop, width, boardHeight);
+      paintNut(b, x0, boardTop, boardHeight);
       // Frets at equal-tempered positions; narrow screens show the first five.
       const frets = width < 640 ? 5 : 12;
-      const scale = (x1 - x0) / (1 - Math.pow(2, -(frets + 0.6) / 12));
-      const fretX = (n: number) => x0 + scale * (1 - Math.pow(2, -n / 12));
-      for (let n = 1; n <= frets; n++) {
-        const x = fretX(n);
-        const fret = b.createLinearGradient(x - 2, 0, x + 2, 0);
-        fret.addColorStop(0, '#5a564f');
-        fret.addColorStop(0.45, '#d9d4c9');
-        fret.addColorStop(1, '#3d3a35');
-        b.fillStyle = 'rgba(0,0,0,0.45)';
-        b.fillRect(x + 1.5, boardTop, 3, boardHeight);
-        b.fillStyle = fret;
-        b.fillRect(x - 1.5, boardTop - 1, 3, boardHeight + 2);
-      }
-      // Pearl inlays at 3, 5, 7, 9 and a pair at 12.
-      const inlay = (x: number, y: number) => {
-        const r = Math.min(spacing * 0.22, 9);
-        const pearl = b.createRadialGradient(x - r * 0.3, y - r * 0.3, 1, x, y, r);
-        pearl.addColorStop(0, '#f1ece2');
-        pearl.addColorStop(1, '#a9a196');
-        b.fillStyle = pearl;
-        b.beginPath();
-        b.arc(x, y, r, 0, Math.PI * 2);
-        b.fill();
-      };
-      const middle = boardTop + boardHeight / 2;
-      [3, 5, 7, 9]
-        .filter(n => n <= frets)
-        .forEach(n => inlay((fretX(n - 1) + fretX(n)) / 2, middle));
-      if (frets >= 12) {
-        const twelve = (fretX(11) + fretX(12)) / 2;
-        inlay(twelve, middle - spacing * 1.05);
-        inlay(twelve, middle + spacing * 1.05);
-      }
-      // Fade the far end into darkness so the neck feels lit, not boxed.
-      const fade = b.createLinearGradient(width * 0.82, 0, width, 0);
-      fade.addColorStop(0, 'rgba(15, 11, 8, 0)');
-      fade.addColorStop(1, 'rgba(15, 11, 8, 0.85)');
-      b.fillStyle = fade;
-      b.fillRect(width * 0.82, boardTop - 2, width * 0.18, boardHeight + 4);
+      const fretX = fretPositions(x0, x1, frets);
+      for (let n = 1; n <= frets; n++) paintFret(b, fretX(n), boardTop, boardHeight);
+      paintInlays(b, fretX, frets, boardTop + boardHeight / 2, spacing);
+      paintFade(b, width * 0.82, width, boardTop, boardHeight);
     };
 
     const resize = () => {
@@ -184,46 +106,11 @@ export function GuitarStrings({ sound, onFirstPluck }: GuitarStringsProps) {
           envelope.push(live ? envelopeAt(state, t) : 0);
         }
 
-        if (live) {
-          // Long-exposure band: the blur a camera sees on a fast-moving string.
-          ctx.beginPath();
-          points.forEach(([x], i) =>
-            i ? ctx.lineTo(x, y0 - envelope[i]) : ctx.moveTo(x, y0 - envelope[i])
-          );
-          for (let i = SAMPLES; i >= 0; i--) ctx.lineTo(points[i][0], y0 + envelope[i]);
-          ctx.closePath();
-          ctx.fillStyle = `rgba(220, 157, 87, ${Math.min(0.13, energy(state) * 0.006)})`;
-          ctx.fill();
-        }
+        if (live) paintBlurBand(ctx, points, envelope, y0, energy(state));
 
         const path = new Path2D();
         points.forEach(([x, y], i) => (i ? path.lineTo(x, y) : path.moveTo(x, y)));
-
-        ctx.save();
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetY = 6;
-        ctx.lineWidth = tuning.gauge;
-        ctx.strokeStyle = tuning.wound ? '#9a7e5c' : '#b9b4aa';
-        ctx.stroke(path);
-        ctx.restore();
-
-        if (tuning.wound) {
-          ctx.save();
-          ctx.setLineDash([0.9, 1.5]);
-          ctx.lineWidth = tuning.gauge;
-          ctx.strokeStyle = 'rgba(20, 12, 6, 0.45)';
-          ctx.stroke(path);
-          ctx.restore();
-        }
-
-        // Specular line: tungsten light catching the top of the string.
-        ctx.save();
-        ctx.translate(0, -tuning.gauge * 0.32);
-        ctx.lineWidth = Math.max(0.5, tuning.gauge * 0.32);
-        ctx.strokeStyle = live ? 'rgba(255, 228, 190, 0.85)' : 'rgba(255, 236, 210, 0.5)';
-        ctx.stroke(path);
-        ctx.restore();
+        strokeString(ctx, path, tuning, live);
       });
     };
 
@@ -242,29 +129,7 @@ export function GuitarStrings({ sound, onFirstPluck }: GuitarStringsProps) {
     };
 
     const play = (index: number, amplitude: number) => {
-      if (!soundRef.current) return;
-      try {
-        audio ??= new AudioContext();
-        if (audio.state === 'suspended') void audio.resume();
-        let buffer = buffers.get(index);
-        if (!buffer) {
-          const data = karplusStrong(TUNING[index].hz, audio.sampleRate);
-          buffer = audio.createBuffer(1, data.length, audio.sampleRate);
-          buffer.copyToChannel(data, 0);
-          buffers.set(index, buffer);
-        }
-        const source = audio.createBufferSource();
-        source.buffer = buffer;
-        const filter = audio.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 1800 + amplitude * 110;
-        const gain = audio.createGain();
-        gain.gain.value = Math.min(0.55, 0.12 + amplitude / 60);
-        source.connect(filter).connect(gain).connect(audio.destination);
-        source.start();
-      } catch {
-        // Audio is an enhancement; the visual instrument keeps working without it.
-      }
+      if (soundRef.current) engine.pluckNote(TUNING[index].hz, { velocity: amplitude / 26 });
     };
 
     const pluckString = (index: number, p: number, amplitude: number) => {
@@ -345,7 +210,7 @@ export function GuitarStrings({ sound, onFirstPluck }: GuitarStringsProps) {
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerleave', onLeave);
       canvas.removeEventListener('pointerdown', onDown);
-      void audio?.close();
+      engine.dispose();
       api.current = null;
     };
   }, []);

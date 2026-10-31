@@ -8,7 +8,7 @@
   max-width: 70rem;
 }
 
-.head > .u-label {
+.head > :global(.u-label) {
   color: var(--accent);
 }
 
@@ -93,7 +93,7 @@
   align-content: start;
 }
 
-.rowHead .u-label {
+.rowHead :global(.u-label) {
   color: var(--accent);
 }
 
@@ -134,7 +134,7 @@
   margin-top: clamp(3rem, 8vh, 5rem);
 }
 
-.stack .u-label {
+.stack :global(.u-label) {
   color: var(--fg-muted);
 }
 
@@ -155,7 +155,7 @@
   border-top: 1px solid var(--line);
 }
 
-.next .u-label {
+.next :global(.u-label) {
   color: var(--fg-muted);
 }
 

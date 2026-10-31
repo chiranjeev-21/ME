@@ -154,7 +154,7 @@
   grid-column: 8 / span 5;
 }
 
-.toolkit .u-label {
+.toolkit :global(.u-label) {
   color: var(--fg-muted);
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--line);

@@ -1,0 +1,710 @@
+.page {
+  padding: clamp(1.25rem, 4.5vh, 3.5rem) var(--gutter) clamp(5rem, 14vh, 9rem);
+}
+
+/* ─── Masthead ─────────────────────────────────────────────────────────────── */
+
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 25rem);
+  align-items: end;
+  gap: 2rem 4rem;
+  padding-bottom: clamp(2rem, 4.5vh, 3.25rem);
+}
+
+.intro {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.intro :global(.u-label) {
+  color: var(--accent);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(3.25rem, 7.4vw, 8.25rem);
+  line-height: var(--lh-display);
+  letter-spacing: -0.03em;
+  outline: none;
+}
+
+.title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.lede {
+  max-width: 44ch;
+  font-size: var(--fs-lead);
+  line-height: 1.4;
+  color: var(--fg-muted);
+}
+
+.spec {
+  border-top: 1px solid var(--line-strong);
+}
+
+.spec > div {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.spec dt,
+.notes dt,
+.controlLabel {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--fg-faint);
+}
+
+.spec dt {
+  padding-top: 0.2rem;
+}
+
+.spec dd {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--fg-muted);
+}
+
+/* ─── Sections ─────────────────────────────────────────────────────────────── */
+
+.section {
+  display: grid;
+  gap: clamp(1.25rem, 3vh, 2rem);
+  padding-block: clamp(1.75rem, 4vh, 3rem);
+  border-top: 1px solid var(--line);
+}
+
+.sectionHead {
+  display: grid;
+  grid-template-columns: 3.5rem auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.5rem 1.25rem;
+}
+
+.sectionHead :global(.u-label) {
+  color: var(--accent);
+}
+
+.sectionHead h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  line-height: 1;
+}
+
+.sectionHead p {
+  justify-self: end;
+  max-width: 42ch;
+  text-align: right;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+/* ─── Chord readout ────────────────────────────────────────────────────────── */
+
+.readout {
+  display: grid;
+  grid-template-columns: minmax(13rem, auto) minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 1.5rem 3rem;
+}
+
+.chord {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.chord :global(.u-label) {
+  color: var(--fg-faint);
+}
+
+.chordName {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 7vw, 6.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.chordName[data-empty],
+.chordName[data-unnamed] {
+  font-style: italic;
+  color: var(--fg-faint);
+}
+
+.notes {
+  display: grid;
+  gap: 0.45rem;
+  padding-bottom: 0.4rem;
+}
+
+.notes > div {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.notes dd {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  padding-left: 1px;
+}
+
+.presets button {
+  position: relative;
+  min-width: 2.85rem;
+  height: 2.6rem;
+  margin: 0 0 -1px -1px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  transition:
+    background var(--dur-fast),
+    color var(--dur-fast);
+}
+
+@media (hover: hover) {
+  .presets button:hover {
+    color: var(--fg);
+    background: color-mix(in oklab, var(--fg) 6%, transparent);
+  }
+}
+
+.presets button[aria-pressed='true'] {
+  z-index: 1;
+  border-color: var(--fg);
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* ─── Controls ─────────────────────────────────────────────────────────────── */
+
+.controls,
+.transport {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
+}
+
+.transport {
+  gap: 1rem 1.5rem;
+}
+
+.segmented {
+  display: inline-flex;
+}
+
+.segmented button,
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  height: 2.75rem;
+  padding: 0 1.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background var(--dur-fast),
+    border-color var(--dur-fast),
+    color var(--dur-fast);
+}
+
+.segmented button {
+  position: relative;
+  border: 1px solid var(--line-strong);
+  color: var(--fg-muted);
+}
+
+.segmented button + button {
+  margin-left: -1px;
+}
+
+.segmented button[aria-pressed='true'] {
+  z-index: 1;
+  border-color: var(--fg);
+  background: color-mix(in oklab, var(--fg) 8%, transparent);
+  color: var(--fg);
+}
+
+.segmented svg,
+.primary svg,
+.secondary svg {
+  font-size: 1rem;
+}
+
+.primary {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.primary:hover {
+  background: color-mix(in oklab, var(--fg) 82%, var(--accent));
+}
+
+.secondary {
+  border: 1px solid var(--line-strong);
+}
+
+.secondary:hover {
+  border-color: var(--fg);
+}
+
+.secondary[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.primary:disabled,
+.secondary:disabled,
+.stepper button:disabled,
+.inspectorActions button:disabled,
+.text:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+
+.primary:disabled:hover {
+  background: var(--fg);
+}
+
+.text {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  padding: 0.75rem 0;
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - 0.55rem) / 100% 1px
+    no-repeat;
+  transition: color var(--dur-fast);
+}
+
+.text:hover:not(:disabled) {
+  color: var(--fg);
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stepper button {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--line-strong);
+  transition: border-color var(--dur-fast);
+}
+
+.stepper button:hover:not(:disabled) {
+  border-color: var(--fg);
+}
+
+.stepper output {
+  display: grid;
+  justify-items: center;
+  min-width: 6.25rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.stepper small,
+.tempoValue {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+}
+
+.stepper small {
+  margin-top: 0.3rem;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.tempo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.tempoValue {
+  min-width: 4.5rem;
+  font-size: 0.76rem;
+  color: var(--fg);
+}
+
+/* A fader: hairline track, ivory cap. */
+.tempo input {
+  appearance: none;
+  width: clamp(8rem, 14vw, 12rem);
+  height: 2.75rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.tempo input::-webkit-slider-runnable-track {
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.tempo input::-webkit-slider-thumb {
+  appearance: none;
+  width: 0.7rem;
+  height: 1.5rem;
+  margin-top: -0.75rem;
+  border-radius: 1px;
+  background: var(--fg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+.tempo input::-moz-range-track {
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.tempo input::-moz-range-thumb {
+  width: 0.7rem;
+  height: 1.5rem;
+  border: 0;
+  border-radius: 1px;
+  background: var(--fg);
+}
+
+.summary {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+}
+
+/* ─── Sequence ─────────────────────────────────────────────────────────────── */
+
+.empty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding: 2.4rem 0;
+  border-block: 1px solid var(--line);
+}
+
+.empty p {
+  max-width: 44ch;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  line-height: 1.3;
+  color: var(--fg-muted);
+}
+
+.inspector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+.inspector p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  font-size: 0.92rem;
+  color: var(--fg-muted);
+}
+
+.inspector p :global(.u-label) {
+  color: var(--accent);
+}
+
+.inspectorActions {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 1px;
+}
+
+.inspectorActions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: 2.6rem;
+  margin: 0 0 -1px -1px;
+  padding: 0 0.95rem;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  transition: color var(--dur-fast);
+}
+
+.inspectorActions button:hover:not(:disabled) {
+  color: var(--fg);
+}
+
+.inspectorActions svg {
+  font-size: 0.95rem;
+}
+
+/* ─── Take ─────────────────────────────────────────────────────────────────── */
+
+.take {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.meter {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.meterTime {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 5vw, 4.25rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.meterTime small {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+}
+
+.meterBar {
+  position: relative;
+  height: 1px;
+  background: var(--line);
+}
+
+.meterBar::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--progress) * 100%);
+  background: var(--accent);
+}
+
+.takeNote {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.03em;
+  color: var(--fg-muted);
+}
+
+.takeReady {
+  display: grid;
+  gap: 1rem;
+  max-width: 44rem;
+}
+
+/* The native player, recast as an ivory strip to match the primary keys. */
+.takeReady audio {
+  width: 100%;
+  height: 2.9rem;
+  color-scheme: light;
+}
+
+.takeReady audio::-webkit-media-controls-enclosure {
+  border-radius: 1px;
+  background: #e9dcc6;
+}
+
+.takeReady audio::-webkit-media-controls-panel {
+  background: #e9dcc6;
+}
+
+.takeReady .buttons {
+  margin-left: 0;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.takeMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-faint);
+}
+
+/* ─── Bar transport ────────────────────────────────────────────────────────── */
+
+.barKey,
+.record {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 2.4rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition:
+    border-color var(--dur-fast),
+    color var(--dur-fast);
+}
+
+.barKey svg {
+  font-size: 1rem;
+}
+
+.barKey[aria-pressed='false'] {
+  color: var(--fg-muted);
+}
+
+.barKey:hover,
+.record:hover:not(:disabled) {
+  border-color: var(--fg);
+}
+
+.record:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.recordDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #c4553b;
+}
+
+.record[data-state='recording'] {
+  border-color: #c4553b;
+}
+
+.record[data-state='recording'] .recordDot {
+  animation: tally 1.6s ease-in-out infinite;
+}
+
+.recordTime {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes tally {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ─── Narrow screens ───────────────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  .readout {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .presets {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sectionHead {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  .sectionHead p {
+    grid-column: 1 / -1;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .readout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .controls {
+    gap: 1rem 1.25rem;
+  }
+
+  .buttons {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .buttons > * {
+    flex: 1 1 auto;
+  }
+
+  .tempo input {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .tempo {
+    flex: 1 1 100%;
+  }
+
+  .summary {
+    margin-left: 0;
+  }
+
+  .barText {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .barKey,
+  .record {
+    padding: 0 0.7rem;
+  }
+}

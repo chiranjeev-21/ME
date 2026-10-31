@@ -1,0 +1,192 @@
+.scroller {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+  padding-bottom: 0.75rem;
+}
+
+.instrument {
+  --row: 2.75rem;
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  min-width: 46rem;
+}
+
+.ruler {
+  grid-column: 2;
+  position: relative;
+  height: 1.75rem;
+}
+
+.ruler span {
+  position: absolute;
+  bottom: 0.45rem;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+}
+
+.ruler span[data-inlay] {
+  color: var(--fg-muted);
+}
+
+.rail {
+  grid-column: 1;
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: repeat(6, var(--row));
+}
+
+.railRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mute {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--fg-faint);
+  transition:
+    color var(--dur-fast),
+    border-color var(--dur-fast);
+}
+
+@media (hover: hover) {
+  .mute:hover {
+    color: var(--fg);
+  }
+}
+
+.mute[aria-pressed='true'] {
+  color: var(--accent);
+  border-color: color-mix(in oklab, var(--accent) 32%, transparent);
+}
+
+.stringName {
+  min-width: 1.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+}
+
+.stringName sub {
+  font-size: 0.55rem;
+  vertical-align: baseline;
+  opacity: 0.6;
+}
+
+.board {
+  grid-column: 2;
+  grid-row: 2;
+  position: relative;
+  height: calc(var(--row) * 6);
+  box-shadow: 0 40px 70px -40px rgba(0, 0, 0, 0.9);
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cell {
+  position: absolute;
+  top: calc(var(--row) * var(--s));
+  height: var(--row);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cell:focus-visible {
+  outline-offset: -3px;
+}
+
+.dot {
+  position: absolute;
+  top: 50%;
+  left: var(--c);
+  display: grid;
+  place-items: center;
+  width: 2.05rem;
+  height: 2.05rem;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #1b120a;
+  background: radial-gradient(circle at 34% 30%, #fbf4e8, #eadcc5 55%, #c9b596);
+  box-shadow:
+    0 8px 14px -6px rgba(0, 0, 0, 0.85),
+    inset 0 -1px 0 rgba(60, 38, 22, 0.25);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.7);
+  transition:
+    opacity var(--dur-fast) var(--ease-settle),
+    transform var(--dur-fast) var(--ease-settle);
+  pointer-events: none;
+}
+
+.cell[aria-pressed='true'] .dot {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+/* An open string is marked as a ring at the nut, as on a chord chart. */
+.cell[data-open][aria-pressed='true'] .dot {
+  color: #f3e8d6;
+  background: #0f0b08;
+  box-shadow: inset 0 0 0 1.5px #eadcc5;
+}
+
+@media (hover: hover) {
+  .cell[aria-pressed='false']:hover .dot {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    color: color-mix(in oklab, #efe2cf 80%, transparent);
+    background: rgba(15, 11, 8, 0.55);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, #efe2cf 45%, transparent);
+  }
+}
+
+.cell[aria-pressed='false']:focus-visible .dot {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  color: color-mix(in oklab, #efe2cf 80%, transparent);
+  background: rgba(15, 11, 8, 0.55);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #efe2cf 45%, transparent);
+}
+
+.swipe {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .swipe {
+    display: block;
+    margin-top: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: var(--fg-faint);
+  }
+
+  .instrument {
+    --row: 2.6rem;
+    grid-template-columns: 3.9rem minmax(0, 1fr);
+    min-width: 42rem;
+  }
+}
