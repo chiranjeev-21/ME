@@ -1,0 +1,241 @@
+.identity {
+  position: relative;
+  padding: calc(var(--section-pad) * 0.9) 0 var(--section-pad);
+  overflow: clip;
+}
+
+.opening {
+  padding-inline: var(--gutter);
+}
+
+.statement {
+  margin-top: clamp(2rem, 5vh, 3.5rem);
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: -0.025em;
+}
+
+.statement em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* ─── Portrait composition ────────────────────────────────────────────────── */
+
+.composition {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2vw, 2rem);
+  align-items: start;
+  margin-top: clamp(5rem, 14vh, 10rem);
+  padding-inline: var(--gutter);
+}
+
+.monogram {
+  position: absolute;
+  top: -6%;
+  left: 2%;
+  z-index: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(14rem, 38vw, 42rem);
+  line-height: 0.75;
+  letter-spacing: -0.06em;
+  color: color-mix(in oklab, var(--fg) 7%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+
+.portraitWrap {
+  position: relative;
+  z-index: 1;
+  grid-column: 2 / span 4;
+}
+
+.portrait > div {
+  aspect-ratio: 3 / 4;
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+  grid-column: 7 / span 6;
+  padding-top: clamp(4rem, 18vh, 12rem);
+}
+
+.lead {
+  font-family: var(--font-display);
+  font-size: var(--fs-heading);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem 2.5rem;
+  margin-top: clamp(3rem, 8vh, 5rem);
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.facts dt {
+  color: var(--fg-muted);
+  margin-bottom: 0.6rem;
+}
+
+.facts dd {
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+.facts dd span {
+  color: var(--fg-muted);
+}
+
+/* ─── Facet lines: two layers drifting in opposite directions ──────────────── */
+
+.facets {
+  margin-top: clamp(6rem, 18vh, 12rem);
+  display: grid;
+  gap: 0.2em;
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 10.5vw, 12rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.facetLine {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  width: max-content;
+  padding-left: 6vw;
+}
+
+.facetLineMuted {
+  padding-left: 0;
+  margin-left: -18vw;
+  color: color-mix(in oklab, var(--fg) 26%, transparent);
+}
+
+.facetLine em {
+  font-style: italic;
+}
+
+.facetDot {
+  display: inline-block;
+  width: 0.12em;
+  height: 0.12em;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+
+/* ─── Toolkit ──────────────────────────────────────────────────────────────── */
+
+.toolkit {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2vw, 2rem);
+  row-gap: 3rem;
+  margin-top: clamp(6rem, 16vh, 10rem);
+  padding-inline: var(--gutter);
+}
+
+.toolkit > div:first-child {
+  grid-column: 1 / span 6;
+}
+
+.toolkit > div:last-child {
+  grid-column: 8 / span 5;
+}
+
+.toolkit .u-label {
+  color: var(--fg-muted);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 1.5rem;
+}
+
+.skills {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.6vw, 2.6rem);
+  line-height: 1.25;
+  color: var(--fg-faint);
+}
+
+.skills i {
+  font-style: normal;
+  color: var(--fg-faint);
+}
+
+.skills .hot {
+  color: var(--fg);
+}
+
+.credentials {
+  display: grid;
+  gap: 1.35rem;
+}
+
+.credentials li {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.credentials strong {
+  font-weight: 500;
+}
+
+.credentials span {
+  color: var(--fg-muted);
+  font-size: 0.95rem;
+}
+
+.credentials span strong {
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.decisions {
+  margin-top: clamp(8rem, 22vh, 14rem);
+  padding-inline: var(--gutter);
+}
+
+.decisionLine {
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 899px) {
+  .composition,
+  .toolkit {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portraitWrap,
+  .copy,
+  .toolkit > div:first-child,
+  .toolkit > div:last-child {
+    grid-column: 1;
+  }
+
+  .portraitWrap {
+    width: 86%;
+  }
+
+  .copy {
+    padding-top: 3rem;
+  }
+
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,14 @@
+.root {
+  position: relative;
+}
+
+.root[data-pinned='true'] {
+  height: calc((1 + var(--pin-length)) * 100svh);
+}
+
+.root[data-pinned='true'] > .stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}

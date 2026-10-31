@@ -1,93 +1,111 @@
-# CJ Universe
+# Chiranjeev Singh — Personal Universe
 
-**Engineering ideas. Building experiences. Exploring what's next.**
+**From orbit to the details.** A cinematic, scroll-driven portfolio in seven
+chapters: it opens above the night side of Earth, looking across southern India
+toward an orbital sunrise, descends into who I am and what I have built, and
+closes on an eclipse over the same coastline.
 
-Chiranjeev Singh's explorable constellation: eight content-shaped worlds in a real
-Three.js scene, with an equally capable text-first portfolio. Earth is the human
-home world; the other bodies are deliberately sculpted metaphors, not arbitrary
-astronomical planets with different colors.
+React 18 · TypeScript · Vite · GSAP (ScrollTrigger, SplitText) · Motion · raw
+WebGL 2 · CSS Modules. Deployed on Vercel with one serverless function for the
+live GitHub feed.
 
-The existing React 18 / TypeScript / Vite application and Vercel API integration
-are retained. The renderer uses **React Three Fiber 8, Drei 9, and Three.js**;
-there is no framework migration or database requirement.
+## The seven chapters
 
-## Explore or browse
+| #   | Chapter            | Experience                                                                                                                                 |
+| --- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 01  | Opening            | Pinned orbital dawn rendered in WebGL; the name surfaces letter by letter, disperses on scroll, and sunrise floods into the next chapter   |
+| 02  | Identity           | Paper-toned editorial chapter: masked line reveals, a portrait opened by a moving mask, reading-pace text, counter-drifting facet lines    |
+| 03  | Journey            | Pinned horizontal timeline driven by vertical scroll; each role has its own light, parallax year numerals and a progress rail              |
+| 04  | Engineering & Work | Principles, then three pinned project scenes: framed → clean full-bleed hold → slate and case-study details; each has a distinct treatment |
+| 05  | Lab                | Working local retrieval lab, seeded contour-garden generator with SVG export, live GitHub "side quests", and studio notes                  |
+| 06  | Beyond Code        | A physically modelled guitar neck (modal string vibration, Karplus–Strong audio, sound off by default) and a torch-lit Hush wordmark       |
+| 07  | Contact            | Eclipse over India; magnetic email action with copy feedback, GitHub, LinkedIn and the résumé                                              |
 
-**Explore Mode** renders an animated central sun, procedural planets, atmospheres,
-rings, moons, landmarks, thin orbital guides, stars, and restrained environmental
-effects. **Native scrolling drives the journey:** approach a planet, cross its
-atmosphere, then read inside its themed 3D environment. Scroll backwards to
-reverse the flight. Real chapter geometry, including changing document heights,
-controls the camera rather than an artificial timer or wheel trap.
-Planet controls, mesh selection, and direct links skip straight to a destination.
-Project beacons open the same case studies as the catalog.
+All career facts come from `src/data/facts.ts`, which mirrors the résumé PDF in
+`public/resume`. Project case studies, the research artifact and notes are
+carried over from the previous builds; nothing is invented.
 
-The inhabited-world graphics layer adds a 2K NASA Earth map and rotating clouds,
-real skinned walking people, animated robot guides, original articulated aliens,
-modeled trees, and CC0 photogrammetry materials. High quality adds a local 1K HDRI.
-**Hush** is a separate ghost-inspired world with a moonlit haunted
-arcade, floating ghosts, and an interactive lantern. This is original portfolio
-scenery, explicitly **not Hush gameplay footage**.
+## Motion system
 
-**Browse Mode** uses the same content, destination components, project selections,
-filters, and routes, without creating a WebGL renderer. Switching modes does not
-replace a project or article with a different version of its content.
+| Primitive               | Role                                                                                   |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| `SplitReveal`           | Masked line/word/char reveals (GSAP SplitText, re-splits on resize, accessible labels) |
+| `Reveal`                | One-time block entrances: rise, fade, or clip wipe; optional child stagger             |
+| `ScrubText`             | Words brighten at reading pace as the passage crosses the viewport                     |
+| `ImageReveal`           | Clip-path mask with a settling camera push and scroll drift                            |
+| `Parallax`              | Depth/drift layers scrubbed to scroll                                                  |
+| `PinnedSection`         | CSS-sticky stage with a scrubbed timeline (no pin-spacer reflow)                       |
+| `HorizontalScroll`      | Pinned horizontal track with `containerAnimation` hooks and keyboard focus handling    |
+| `useChapterTransitions` | Scrubs `--bg`, `--fg`, `--accent` between chapters; publishes the active chapter       |
+| `Magnetic`              | Spring-based magnetic pull (Motion) for primary actions, fine pointers only            |
 
-| World       | Experience                                                                                                          |
-| ----------- | ------------------------------------------------------------------------------------------------------------------- |
-| About       | Editorial portrait, verified career history, credentials, skills, original résumé PDF                               |
-| Engineering | Working request-reasoning diagram and design principles, rather than a second résumé                                |
-| AI Lab      | Working local lexical retrieval with source text, computed cosine scores, measured timings, and explicit abstention |
-| Projects    | Searchable/filterable case studies, real runtime screenshots, source links, GitHub metadata, builder vault          |
-| Creative    | Original seeded contour-garden studio, palette/density controls, SVG export, and creative process                   |
-| Hush        | Dedicated ghost world and original haunted arcade, with a working lantern and one clear footage disclaimer          |
-| Writing     | Paper reading room, searchable archive, three substantive implementation notes, direct article links                |
-| Contact     | Verified direct email/social destinations and clipboard feedback                                                    |
+GSAP owns scroll choreography; Motion owns component-level UI (chapter index,
+case-study overlays, magnetic action). They never animate the same properties.
+Easing tokens (`reveal`, `cine`, `settle`) are shared between CSS and GSAP.
 
-Information has a primary home: career details live in About, projects in the
-catalog, long-form notes in Writing, and professional links in Contact. The shell
-offers one destination map rather than repeating header menus, hero promotions,
-and project shelves. Public repository entries are concise metadata dossiers,
-not repeated placeholder case studies.
+Every primitive runs inside `gsap.matchMedia()` and is reverted on unmount via
+`useGSAP`. With `prefers-reduced-motion: reduce` there are no pins, scrubs or
+live WebGL: chapters are ordinary documents and the scenes show static posters.
 
-Original Hush gameplay/screenshots/build links and music/guitar recordings were
-not supplied in this portfolio repository. Hush has one compact footage disclaimer;
-the illustrated haunted set does not substitute for actual footage or game claims.
+## The orbital scene
 
-## Controls
+`src/scenes/orbital` is a single full-screen WebGL 2 pass (no Three.js):
+analytic ray/sphere Earth with NASA Blue Marble, Black Marble city lights (plus
+a 2K South Asia crop) and clouds; single-scattering Rayleigh + Mie atmosphere
+with planet shadowing and airglow; star field with colour temperature; sun disk,
+glare and a restrained anamorphic streak; ACES tone mapping and grain.
 
-- **Begin the journey** scrolls into the first planetary approach.
-- Keep scrolling to enter, explore the content, and travel to the next world.
-- Reverse scrolling retraces the approach and returns to the solar system.
-- Select a planet by pointer/touch, a planet-selector button, or the command palette.
-- Use left/right arrows and Home/End within the planet selector; Enter selects.
-- **Full universe / All worlds** returns to the overview.
-- Escape backs out of a project/article, then a world. It does not intercept typing.
-- `Ctrl+K` / `Cmd+K` opens the searchable command palette.
-- Backtick or **Launch Terminal** opens the read-only portfolio shell.
-- Terminal supports history, quoted arguments, completion, and clickable destinations.
-- The quality selector provides Auto, Low, and High settings.
+- Lazy: the renderer module loads only as a scene nears the viewport, and the
+  hero waits until its entrance has played. Posters (`public/images/orbit`) are
+  shown first and remain if WebGL 2 is unavailable.
+- Non-blocking: `KHR_parallel_shader_compile`, uniform lookups after linking,
+  `createImageBitmap` decoding, and one texture upload per frame.
+- Adaptive: quality tier by device, DPR caps, and automatic resolution scaling
+  when frames run slow. Rendering stops off-screen, in hidden tabs and under
+  overlays. Camera state is read from refs, so scrolling causes no React renders.
 
-## Direct routes
+`npm run dev`, then open `/?scene=dawn&p=0.5` or `/?scene=eclipse&p=1` for the
+development-only scene harness (used to render the posters).
+
+## Routes
 
 ```text
-/?mode=explore
-/?mode=browse
-/world/engineering?mode=browse
-/world/ai-lab?mode=browse
-/world/hush?mode=explore
-/projects/cj-os-desktop?mode=browse
-/writing/one-universe-two-ways-in?mode=browse
-/world/projects?mode=browse&vault=1
+/                                   the seven chapters
+/#journey, /#lab, /#contact …        chapter and experiment anchors
+/projects/cj-os-desktop             case study overlay (also cj-universe, face-mask-detection)
+/projects/repo-<name>               live GitHub repository dossier
+/writing/retrieval-is-not-evidence  studio note overlay
 ```
 
-An optional `quality=low` query chooses the lightweight renderer on first load.
-Real anchors support new tabs and browser navigation. Vercel rewrites only the
-three destination route prefixes; `/api/*` and static assets remain untouched.
+Overlays sit above the still-mounted home page, so closing returns to the exact
+scroll position and browser Back/Forward work as expected. Links from the
+previous CJ Universe build (`/world/hush?mode=explore`, `?vault=1`, …) are
+rewritten to their new chapter anchors.
+
+## Architecture
+
+```text
+src\
+  app\          router (real anchors, history), route parsing, active-chapter store
+  components\
+    motion\     reusable GSAP / Motion primitives listed above
+    navigation\ header with chapter marker and reading hairline, chapter index dialog
+    ui\         icons, external links, résumé rich text, chapter marks
+  sections\     Hero, Identity, Experience (Journey), Projects (Work), Lab, BeyondCode, Contact
+  pages\        Home, case-study / note / not-found overlays
+  scenes\
+    orbital\    camera math, GLSL, WebGL 2 renderer, React scene component
+    strings\    string physics + Karplus–Strong synthesis, canvas instrument
+  data\         facts (résumé), content adapter, chapters, chapter themes, types
+  hooks\        GitHub feed, reduced motion
+  lib\          GSAP registration and eases, retrieval, Motion feature loader
+  styles\       tokens and global styles
+server\, api\   GitHub feed (pinned with a token, recent without one)
+```
 
 ## Run and verify
 
-Node.js 24+ is recommended; the core tests use native TypeScript stripping.
+Node.js 24+ is recommended; unit tests use native TypeScript stripping.
 
 ```powershell
 npm ci
@@ -99,13 +117,15 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Use `PORTFOLIO_TEST_PORT` to choose another browser-test port. Browser automation
-uses Chromium software WebGL so the real scene can be verified without requiring
-a particular host GPU. It checks native-scroll zoom and reversal, mesh raycasting, planet and project
-selection, both modes, direct routes, local research, creative export, reduced
-motion, narrow layouts, unavailable WebGL, and actual context loss.
+`npm test` covers content provenance, routes (including legacy links), the
+retrieval lab, camera framing and sunrise behaviour, and string physics.
+`npm run test:e2e` drives Chromium on desktop and mobile: every chapter and
+contact link, the chapter index dialog, case-study overlays and history, legacy
+links, notes and 404, the lab, side quests, instruments, clipboard feedback,
+pinned motion and chapter light, the live WebGL scene, the no-WebGL fallback,
+and narrow layouts. Set `PORTFOLIO_PREVIEW=1` to test the production build.
 
-The separate real-network smoke check is opt-in:
+The live GitHub check is opt-in:
 
 ```powershell
 $env:LIVE_GITHUB = '1'
@@ -113,72 +133,14 @@ npm run test:e2e -- --project=desktop --grep 'actual live GitHub'
 Remove-Item Env:\LIVE_GITHUB
 ```
 
-`npm run dev` includes the local GitHub API middleware. `npm run preview` is a
-static preview; use Vercel or the development middleware for the serverless feed.
+## Honest limits
 
-## Architecture
+- The Hush section is an atmosphere study; it contains no gameplay footage.
+  Real stills can be added later as project imagery.
+- Earth's atmosphere is thickened (~5×) so it reads at portfolio scale.
+- The retrieval lab is local TF-IDF, not an LLM; it quotes sources and abstains.
+- GitHub pins need an optional server-side token (see `.env.example`); without
+  one the feed shows recent public repositories and labels them as such.
 
-```text
-src\universe\
-  Universe.tsx          Application shell, modes, HUD, renderer recovery
-  navigation.ts        Typed URL parsing and shared destination state
-  useNavigation.ts     Browser history and local presentation preference
-  journey\             Measured native-scroll chapters and reversible expedition state
-  worlds.ts            Eight typed content-shaped world definitions
-  content.ts           Verified profile, project adapter, authored studio notes
-  scene\               Camera rig, models, shaders, procedural textures, environment
-    assets\            Local model loading, skinned animation, population routes
-  worlds\              Distinct destination interfaces and readable detail views
-  lab\                 Bounded TF-IDF retrieval and inspectable research interface
-  ui\                  Shared icons, command palette, read-only terminal
-```
-
-The scene emits navigation requests. It does not own a parallel content router.
-Projects, articles, planet selection, terminal commands, and both presentation
-modes converge on the same destination model.
-Scrolling replaces the current world URL without adding a history entry for every
-chapter. Explicit navigation and browser history use measured destination anchors.
-Both modes retain the same mounted documents, including local drafts and filters.
-
-## Performance, accessibility, and honest limits
-
-- The Three.js renderer is lazy-loaded; important text and navigation arrive first.
-- Geometry detail, particles, and DPR are device-aware. Low quality uses DPR 1;
-  High is capped at 1.5. Repeated environmental details are instanced.
-- Camera choreography reads scroll progress from refs, without per-frame React
-  state updates. Only world and phase boundaries update application state.
-- Only the current planetary interior is mounted. Document motion pauses off-world;
-  section reveals and interactive diagrams respect reduced motion.
-- Rendering pauses when the document is hidden. No heavy real-time shadows or
-  full-screen postprocessing stack are required.
-- Sun glow/corona, surface textures, atmospheres, stars, and structures are original
-  procedural assets, complemented by locally hosted licensed models and textures.
-  The complete additional graphics asset set is below 5 MB; only active interiors
-  request their inhabitants. Low quality uses fewer citizens and omits the HDRI.
-- Asset credits, source URLs, licenses, and modifications are linked from the HUD
-  at `/assets/CREDITS.txt`. No runtime asset CDN, decoder CDN, or asset API is needed.
-- `npm run assets:worlds` regenerates the original alien, ghost, and tree GLBs from
-  `scripts\build-world-models.mjs`. It does not replace third-party licensed models.
-- Local asset boundaries preserve the base scenery and navigation if a model or
-  texture fails. Late-loading surfaces join the current scroll fade.
-- Reduced motion defaults to Browse; explicit Explore remains usable with static
-  environments and immediate camera changes.
-- WebGL 2 failure or context loss preserves the current destination in Browse.
-- Portrait and real project screenshots are appropriately sized WebP assets.
-- The local research lab is **not a remote LLM, embedding model, or autonomous
-  agent**. It quotes actual evidence, computes actual scores, and measures local
-  execution rather than inventing benchmarks.
-- GitHub pins require an optional server-side token. Without one, recent public
-  repositories are labeled as recent; upstream failure is an honest local fallback.
-- Dynamic repository descriptions do not become invented architecture, impact,
-  launch, or service-health claims.
-
-## Deployment
-
-The distinct-worlds release uses `feature/cj-universe-distinct-worlds`, with
-`feature/cj-universe-3d` and `design/personal-universe` tracking the verified release.
-Vercel generates Preview deployments from pushes. The approved CJ OS branches,
-Engineering Workbench, `main`, and production are not changed by this release.
-
-See [deployment instructions](docs/DEPLOYMENT.md) for branch previews, optional
-GitHub pins, environment variables, and production promotion.
+Asset credits: [`public/assets/CREDITS.txt`](public/assets/CREDITS.txt).
+Deployment: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).

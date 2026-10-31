@@ -1,0 +1,76 @@
+/*
+ * Personal Universe — design tokens.
+ * Palette: orbital night with a single sunrise accent. Each chapter shifts the
+ * live theme variables (--bg, --fg, --accent) through ChapterBackdrop.
+ */
+:root {
+  /* Fixed palette */
+  --c-void: #040507;
+  --c-ink: #0b0c0e;
+  --c-ink-2: #121417;
+  --c-ink-3: #1b1e22;
+  --c-bone: #ece6db;
+  --c-paper: #e6dfd2;
+  --c-paper-ink: #16130f;
+  --c-ember: #e2a26a;
+  --c-atmo: #9cc0de;
+  --c-signal: #d8c299;
+  --c-tungsten: #dc9d57;
+  --c-moon: #a8c1ba;
+
+  /* Live chapter theme (tweened) */
+  --bg: var(--c-void);
+  --fg: var(--c-bone);
+  --accent: var(--c-ember);
+  --fg-muted: color-mix(in oklab, var(--fg) 64%, transparent);
+  --fg-faint: color-mix(in oklab, var(--fg) 40%, transparent);
+  --line: color-mix(in oklab, var(--fg) 16%, transparent);
+  --line-strong: color-mix(in oklab, var(--fg) 32%, transparent);
+
+  /* Type */
+  --font-display: 'Instrument Serif', 'Iowan Old Style', 'Times New Roman', serif;
+  --font-sans: 'Geist Variable', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --fs-colossal: clamp(4.25rem, 15.2vw, 17.5rem);
+  --fs-display: clamp(3.25rem, 9vw, 10.5rem);
+  --fs-title: clamp(2.6rem, 6.2vw, 6.75rem);
+  --fs-heading: clamp(1.9rem, 3.6vw, 3.6rem);
+  --fs-lead: clamp(1.2rem, 1.75vw, 1.7rem);
+  --fs-body: clamp(1rem, 0.96rem + 0.18vw, 1.125rem);
+  --fs-small: 0.875rem;
+  --fs-label: 0.6875rem;
+
+  --lh-colossal: 0.84;
+  --lh-display: 0.92;
+  --lh-heading: 1.02;
+  --lh-body: 1.62;
+  --tracking-label: 0.16em;
+
+  /* Space */
+  --gutter: clamp(1.25rem, 4vw, 4.5rem);
+  --section-pad: clamp(6rem, 16vh, 13rem);
+  --measure: 62ch;
+  --header-h: 4.5rem;
+
+  /* Motion (mirrors the GSAP CustomEase names in lib/gsap.ts) */
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-cine: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 240ms;
+  --dur-mid: 560ms;
+  --dur-slow: 1100ms;
+
+  /* Layers */
+  --z-backdrop: 0;
+  --z-content: 1;
+  --z-header: 50;
+  --z-overlay: 80;
+  --z-grain: 90;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --header-h: 3.75rem;
+  }
+}

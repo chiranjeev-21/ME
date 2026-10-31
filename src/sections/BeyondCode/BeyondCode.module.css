@@ -1,0 +1,121 @@
+.beyond {
+  position: relative;
+  padding-top: var(--section-pad);
+  overflow: clip;
+}
+
+/* A warm, low tungsten pool — the only light in the room. */
+.light {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 120vw;
+  height: 110vh;
+  transform: translateX(-50%);
+  background: radial-gradient(50% 50% at 50% 40%, rgba(220, 157, 87, 0.13), transparent 70%);
+  pointer-events: none;
+}
+
+.header {
+  position: relative;
+  display: grid;
+  gap: clamp(1.5rem, 4vh, 2.5rem);
+  padding-inline: var(--gutter);
+  text-align: center;
+  justify-items: center;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-colossal);
+  line-height: var(--lh-colossal);
+  letter-spacing: -0.035em;
+}
+
+.title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.lede {
+  font-size: var(--fs-lead);
+  color: var(--fg-muted);
+}
+
+.music {
+  position: relative;
+  display: grid;
+  gap: clamp(2rem, 5vh, 3.5rem);
+  margin-top: clamp(6rem, 16vh, 10rem);
+  padding-inline: var(--gutter);
+}
+
+.musicCopy {
+  display: grid;
+  gap: 1.1rem;
+  max-width: 38rem;
+}
+
+.musicCopy .u-label {
+  color: var(--accent);
+}
+
+.musicTitle {
+  font-family: var(--font-display);
+  font-size: var(--fs-heading);
+  line-height: 1.04;
+}
+
+.musicTitle em {
+  font-style: italic;
+}
+
+.musicCopy p {
+  color: var(--fg-muted);
+}
+
+.soundRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.sound {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.1rem;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition:
+    background var(--dur-mid),
+    color var(--dur-mid);
+}
+
+.sound svg {
+  font-size: 1.05rem;
+}
+
+.sound[aria-pressed='true'] {
+  background: var(--accent);
+  color: #0f0b08;
+  border-color: var(--accent);
+}
+
+.soundHint {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--fg-faint);
+}
+
+@media (max-width: 720px) {
+  .header {
+    text-align: left;
+    justify-items: start;
+  }
+}

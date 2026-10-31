@@ -1,42 +1,38 @@
-CJ UNIVERSE - SCENE ASSET CREDITS
+CHIRANJEEV SINGH — PERSONAL UNIVERSE · ASSET CREDITS
 
-These are illustrative portfolio environments, not footage, models, or assets
-from Hush or from any employer. No endorsement by the asset creators is implied.
-All files are served locally. No asset-service account or API key is required.
+All files are served locally. No asset service, account or API key is required.
+No endorsement by NASA or any other source is implied.
 
-EARTH DAY MAP
-NASA / Visible Earth, The Blue Marble: land surface, ocean color and sea ice.
-Source: https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/land_ocean_ice_2048.png
+EARTH — DAY SURFACE
+NASA Visible Earth, Blue Marble Next Generation: Topography and Bathymetry
+(December 2004, 5400 × 2700).
+https://visibleearth.nasa.gov/images/73909
 Usage: https://www.nasa.gov/nasa-brand-center/images-and-media/
-NASA imagery used under its media usage guidelines for personal Internet pages.
-Converted from the original 2048px PNG to WebP. No NASA logos are included.
+Resized to 3072 and 1536 px and converted to WebP
+(public/assets/orbit/earth-day-*.webp).
 
-WALKING HUMAN - CESIUM MAN
-Copyright 2017 Cesium. Creative Commons Attribution 4.0 International.
-https://creativecommons.org/licenses/by/4.0/
-https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CesiumMan
-Model unchanged; normalized, instanced and animated in the portfolio scene.
-The Cesium mark on the original model remains its owner's trademark; its use
-in this model conveys no permission to reuse it elsewhere or claim endorsement.
-https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/LICENSES/LicenseRef-LegalMark-Cesium.txt
+EARTH — CITY LIGHTS
+NASA Earth Observatory, Black Marble 2016 (0.1° and 3 km global composites).
+https://earthobservatory.nasa.gov/features/NightLights
+Background land luminance removed so only emitted light remains. The global
+map is packed into the red channel of public/assets/orbit/earth-data-*.webp; a
+South Asia crop (40°E–120°E, 15°S–45°N) from the 3 km composite is
+public/assets/orbit/lights-southasia-2k.webp.
 
-ROBOT EXPRESSIVE
-Tomás Laulhé (Quaternius), CC0 1.0.
-https://creativecommons.org/publicdomain/zero/1.0/
-https://quaternius.com/
-Modifications by Don McCurdy: facial morph targets, FBX2GLTF conversion,
-deduplicated materials and reduced metalness.
-https://threejs.org/examples/models/gltf/RobotExpressive/README.md
-Model unchanged; normalized and animated in the portfolio scene.
+EARTH — CLOUDS
+NASA Visible Earth, Blue Marble: Clouds (cloud_combined_2048).
+https://visibleearth.nasa.gov/images/57747
+Packed into the green channel of public/assets/orbit/earth-data-*.webp. The blue
+channel is an ocean mask derived from the day surface.
 
-FOREST GROUND 04 AND KIARA 1 DAWN HDRI
-Poly Haven, CC0 1.0.
-https://polyhaven.com/a/forest_ground_04
-https://polyhaven.com/a/kiara_1_dawn
-https://polyhaven.com/license
-1K diffuse and OpenGL normal maps converted to WebP. 1K HDRI unchanged.
+ORIGINAL WORK
+Atmosphere scattering, stars, lens response, film grain, guitar neck,
+Karplus–Strong synthesis and every other visual in this site are original,
+generated in code (src/scenes). Poster images in public/images/orbit are
+renders of that scene. Project images are screenshots of the actual CJ OS and
+CJ Universe builds. No NASA logos are included.
 
-ALIEN, GHOST, TREE, CLOUDS, PARTICLES AND HAUNTED SET
-Original CJ Universe artwork generated for this portfolio.
-Model sources: scripts/build-world-models.mjs
-These are not original Hush game assets and are not represented as gameplay.
+FONTS
+Instrument Serif (Instrument) and Geist / Geist Mono (Vercel), SIL Open Font
+License 1.1. Latin subsets are self-hosted in /fonts; licences:
+/fonts/OFL-instrument-serif.txt and /fonts/OFL-geist.txt.

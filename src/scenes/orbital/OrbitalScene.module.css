@@ -1,0 +1,28 @@
+.scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--c-void);
+}
+
+.poster,
+.poster img,
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.poster img {
+  object-fit: cover;
+}
+
+.canvas {
+  opacity: 0;
+  transition: opacity 1.6s var(--ease-settle);
+}
+
+.scene[data-live='true'] .canvas {
+  opacity: 1;
+}

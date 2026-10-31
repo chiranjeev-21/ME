@@ -38,5 +38,16 @@ export default defineConfig(({ mode }) => {
     server: {
       allowedHosts: 'all',
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // Stable vendor chunks cache across deploys of portfolio content.
+          manualChunks(id) {
+            if (/node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return 'react';
+            if (/node_modules[\\/](gsap|@gsap)[\\/]/.test(id)) return 'gsap';
+          },
+        },
+      },
+    },
   };
 });

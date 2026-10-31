@@ -1,0 +1,110 @@
+.page {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: clamp(2rem, 8vh, 6rem) var(--gutter) clamp(5rem, 14vh, 9rem);
+}
+
+.head {
+  display: grid;
+  gap: 1.5rem;
+  padding-bottom: clamp(2.5rem, 6vh, 4rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.head > .u-label {
+  color: var(--accent);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  outline: none;
+}
+
+.summary {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-lead);
+  line-height: 1.35;
+  color: var(--fg-muted);
+}
+
+.context {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-faint);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.body {
+  display: grid;
+  gap: clamp(3rem, 8vh, 4.5rem);
+  margin-top: clamp(3rem, 8vh, 4.5rem);
+}
+
+.body section {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.body h2 {
+  display: grid;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.08;
+}
+
+.body h2 .u-label {
+  color: var(--accent);
+}
+
+.body p {
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: color-mix(in oklab, var(--fg) 88%, transparent);
+}
+
+.body pre {
+  padding: 1.25rem 1.5rem;
+  background: color-mix(in oklab, var(--fg) 6%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+.next {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: clamp(4rem, 12vh, 7rem);
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.next .u-label {
+  color: var(--fg-muted);
+}
+
+.nextTitle {
+  font-family: var(--font-display);
+  font-size: var(--fs-heading);
+  line-height: 1.05;
+}
+
+.next:hover .nextTitle {
+  font-style: italic;
+}

@@ -1,0 +1,268 @@
+.journey {
+  position: relative;
+}
+
+.track {
+  gap: 0;
+}
+
+/* ─── Intro panel ─────────────────────────────────────────────────────────── */
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vh, 2.5rem);
+  padding: var(--section-pad) var(--gutter) clamp(3rem, 8vh, 5rem);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  line-height: var(--lh-display);
+  letter-spacing: -0.02em;
+  max-width: 10ch;
+}
+
+.title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.lede {
+  max-width: 38ch;
+  color: var(--fg-muted);
+  font-size: var(--fs-lead);
+  line-height: 1.4;
+}
+
+.hint {
+  display: none;
+  color: var(--fg-faint);
+}
+
+/* ─── Panels ──────────────────────────────────────────────────────────────── */
+
+.panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+  padding: clamp(3rem, 8vh, 5rem) var(--gutter);
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    42% 50% at 46% 0%,
+    color-mix(in oklab, var(--tint) 12%, transparent),
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.year {
+  position: absolute;
+  right: -2vw;
+  bottom: -0.16em;
+  z-index: -1;
+  font-family: var(--font-display);
+  font-size: clamp(10rem, 30vw, 34rem);
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--tint) 34%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+
+.panelHead {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.count {
+  color: var(--tint);
+}
+
+.company {
+  font-family: var(--font-display);
+  font-size: clamp(3.6rem, 8vw, 9rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+.role {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.5rem, 2.4vw, 2.4rem);
+  line-height: 1.1;
+  color: var(--tint);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.75rem;
+  margin-top: 0.75rem;
+  color: var(--fg-muted);
+}
+
+.body {
+  display: grid;
+  gap: 2rem;
+  align-content: start;
+}
+
+.highlights {
+  display: grid;
+  gap: 1.05rem;
+  counter-reset: item;
+}
+
+.highlights li {
+  position: relative;
+  padding-left: 2.6rem;
+  font-size: clamp(0.98rem, 1.02vw, 1.08rem);
+  line-height: 1.58;
+  color: color-mix(in oklab, var(--fg) 84%, transparent);
+  counter-increment: item;
+}
+
+.highlights li::before {
+  content: counter(item, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.25em;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--tint);
+}
+
+.highlights strong {
+  color: var(--fg);
+  font-weight: 550;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+}
+
+/* ─── Outro ───────────────────────────────────────────────────────────────── */
+
+.outro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.75rem;
+  padding: var(--section-pad) var(--gutter);
+  color: var(--fg-muted);
+}
+
+.outroLine {
+  max-width: 14ch;
+  font-family: var(--font-display);
+  font-size: var(--fs-heading);
+  line-height: 1.05;
+  color: var(--fg);
+}
+
+.outroLine em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.outro a {
+  align-self: flex-start;
+  color: var(--fg);
+}
+
+/* ─── Rail (horizontal mode only) ─────────────────────────────────────────── */
+
+.rail {
+  display: none;
+}
+
+/* ─── Horizontal presentation ─────────────────────────────────────────────── */
+
+[data-horizontal='true'] .intro {
+  width: min(46vw, 760px);
+  flex: none;
+  padding-block: 0;
+}
+
+[data-horizontal='true'] .hint {
+  display: block;
+}
+
+[data-horizontal='true'] .panel {
+  width: min(86vw, 1560px);
+  flex: none;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2.5rem, 5vw, 6rem);
+  align-content: center;
+  padding: calc(var(--header-h) + 3vh) clamp(2.5rem, 5vw, 6rem) 12vh;
+  border-top: 0;
+  border-left: 1px solid var(--line);
+}
+
+[data-horizontal='true'] .outro {
+  width: min(52vw, 820px);
+  flex: none;
+  padding-block: 0;
+  border-left: 1px solid var(--line);
+}
+
+[data-horizontal='true'] .rail {
+  position: absolute;
+  inset: auto var(--gutter) clamp(1.5rem, 4vh, 2.5rem);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  color: var(--fg-faint);
+}
+
+.railTrack {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.railTrack > span {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+@media (max-height: 760px) {
+  [data-horizontal='true'] .highlights li {
+    font-size: 0.92rem;
+    line-height: 1.48;
+  }
+
+  [data-horizontal='true'] .highlights {
+    gap: 0.7rem;
+  }
+
+  [data-horizontal='true'] .company {
+    font-size: clamp(3rem, 6vw, 6rem);
+  }
+}

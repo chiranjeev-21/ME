@@ -1,0 +1,262 @@
+.lab {
+  display: grid;
+  gap: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.form > .u-label {
+  color: var(--fg-muted);
+}
+
+.inputRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  border: 1px solid var(--line-strong);
+}
+
+.inputRow input,
+.inputRow select {
+  min-width: 0;
+  padding: 1rem 1.1rem;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+}
+
+.inputRow input:focus-visible,
+.inputRow select:focus-visible {
+  outline: 1.5px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.inputRow select {
+  border-left: 1px solid var(--line);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.inputRow select option {
+  background: #0c0e0d;
+}
+
+.inputRow button {
+  padding: 0 1.6rem;
+  background: var(--accent);
+  color: #0c0e0d;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.inputRow button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.samples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.samples .u-label {
+  color: var(--fg-faint);
+}
+
+.samples button {
+  color: var(--fg-muted);
+  border-bottom: 1px dotted var(--line-strong);
+}
+
+.samples button:hover {
+  color: var(--fg);
+}
+
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.pipeline button {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.85rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  text-align: left;
+  position: relative;
+}
+
+.pipeline button span {
+  font-size: 0.62rem;
+}
+
+.pipeline button[aria-pressed='true'] {
+  color: var(--fg);
+}
+
+.pipeline button[aria-pressed='true']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 1rem;
+  bottom: -1px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.explanation {
+  min-height: 3.2em;
+  color: var(--fg-muted);
+  max-width: 62ch;
+}
+
+.output {
+  border: 1px solid var(--line);
+  padding: clamp(1rem, 2vw, 1.75rem);
+  background: color-mix(in oklab, var(--fg) 3%, transparent);
+}
+
+.empty {
+  color: var(--fg-faint);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.metrics div {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.metrics dt {
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.metrics dd {
+  color: var(--accent);
+}
+
+.verdict {
+  margin: 1.25rem 0 1rem;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1.15;
+}
+
+.verdict span {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--fg-faint);
+}
+
+.matches {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.matchHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-weight: 500;
+}
+
+.matchHead a {
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.matchHead a:hover {
+  border-color: var(--accent);
+}
+
+.matchHead span {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--accent);
+}
+
+.score {
+  height: 1px;
+  margin: 0.6rem 0 0.9rem;
+  background: var(--line);
+}
+
+.score i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+}
+
+.matches blockquote {
+  color: var(--fg-muted);
+  line-height: 1.6;
+  padding-left: 1rem;
+  border-left: 1px solid var(--line-strong);
+}
+
+.terms {
+  margin-top: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--fg-faint);
+}
+
+.limits summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+}
+
+.limits p {
+  margin-top: 0.75rem;
+  max-width: 68ch;
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .inputRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .inputRow button {
+    grid-column: 1 / -1;
+    padding: 0.9rem;
+  }
+
+  .pipeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

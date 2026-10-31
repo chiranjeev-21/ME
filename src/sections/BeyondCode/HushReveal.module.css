@@ -1,0 +1,190 @@
+.hush {
+  position: relative;
+  margin-top: clamp(3rem, 8vh, 6rem);
+  padding-top: 34vh;
+  background: linear-gradient(180deg, transparent 0, #060807 34vh);
+}
+
+.stage {
+  --lx: 62%;
+  --ly: 46%;
+  --lr: 260px;
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #060807;
+  color: #e9e4da;
+  cursor: none;
+  isolation: isolate;
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .stage {
+    cursor: auto;
+  }
+}
+
+.dark,
+.lit {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.word {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(9rem, 34vw, 40rem);
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  transform: translate(8%, 6%);
+}
+
+.dark .word {
+  color: #0d1110;
+}
+
+.lit {
+  background:
+    radial-gradient(
+      circle var(--lr) at var(--lx) var(--ly),
+      rgba(255, 214, 158, 0.16),
+      transparent 70%
+    ),
+    #0b0d0b;
+  -webkit-mask-image: radial-gradient(
+    circle var(--lr) at var(--lx) var(--ly),
+    #000 0%,
+    rgba(0, 0, 0, 0.85) 38%,
+    rgba(0, 0, 0, 0.25) 66%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--lr) at var(--lx) var(--ly),
+    #000 0%,
+    rgba(0, 0, 0, 0.85) 38%,
+    rgba(0, 0, 0, 0.25) 66%,
+    transparent 100%
+  );
+}
+
+.lit .word {
+  color: #d9cdb8;
+  text-shadow: 0 0 60px rgba(255, 214, 158, 0.08);
+}
+
+.whisper {
+  position: absolute;
+  right: 12%;
+  bottom: 22%;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(217, 205, 184, 0.55);
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1.25rem;
+  max-width: 30rem;
+  padding: clamp(5rem, 14vh, 9rem) var(--gutter);
+}
+
+.copy .u-label {
+  color: #a8c1ba;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--fs-heading);
+  line-height: 1.04;
+}
+
+.heading em {
+  font-style: italic;
+  color: #a8c1ba;
+}
+
+.copy p {
+  color: rgba(233, 228, 218, 0.72);
+}
+
+.controls {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.lantern {
+  justify-self: start;
+  padding: 0.85rem 1.2rem;
+  border: 1px solid rgba(233, 228, 218, 0.3);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--dur-mid),
+    color var(--dur-mid);
+}
+
+.lantern:hover,
+.lantern[aria-pressed='true'] {
+  background: #e9e4da;
+  color: #060807;
+}
+
+.status {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: rgba(233, 228, 218, 0.5) !important;
+}
+
+.note {
+  font-size: 0.82rem;
+  color: rgba(233, 228, 218, 0.45) !important;
+}
+
+/* Lantern raised, or no pointer light: the room is lit evenly. */
+.hush[data-lantern='true'] .lit {
+  -webkit-mask-image: none;
+  mask-image: none;
+  background:
+    radial-gradient(70% 70% at 60% 50%, rgba(255, 214, 158, 0.14), transparent 75%), #0b0d0b;
+  transition: background 0.6s;
+}
+
+@media (max-width: 720px) {
+  .word {
+    font-size: 46vw;
+    transform: translate(6%, 34%);
+  }
+
+  .whisper {
+    right: 8%;
+    bottom: 10%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lit {
+    -webkit-mask-image: radial-gradient(
+      circle 32vw at 62% 48%,
+      #000 0%,
+      rgba(0, 0, 0, 0.4) 60%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      circle 32vw at 62% 48%,
+      #000 0%,
+      rgba(0, 0, 0, 0.4) 60%,
+      transparent 100%
+    );
+  }
+}

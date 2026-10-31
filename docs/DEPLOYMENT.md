@@ -1,9 +1,7 @@
-# CJ Universe deployment
+# Personal Universe deployment
 
-The distinct-worlds release uses **`feature/cj-universe-distinct-worlds`**.
-**`feature/cj-universe-3d`** and **`design/personal-universe`** also track the
-verified Universe implementation.
-`main`, CJ OS, and Engineering Workbench are not changed by this release.
+The cinematic redesign lives on **`feature/cinematic-universe`**. `main`, CJ OS,
+the 3D CJ Universe and Engineering Workbench branches are not changed by it.
 
 ## Vercel previews
 
@@ -11,13 +9,12 @@ verified Universe implementation.
 2. Open the existing portfolio project connected to `chiranjeev-21/ME`.
 3. Confirm **Settings > Git** still points to this repository.
 4. Keep Production branch tracking on **`main`**.
-5. In **Deployments**, filter by one of the Universe branches.
+5. In **Deployments**, filter by `feature/cinematic-universe`.
 6. Wait for **Ready**, open its details, and use **Visit** or **Copy URL**.
 7. Prefer the branch URL for ongoing review; a commit URL is an immutable snapshot.
 
-Vercel normally creates these Preview deployments automatically on a non-main
-branch push. One project can host the different design previews. No separate
-project, database, model service, or paid API is required.
+Vercel normally creates Preview deployments automatically on a non-main branch
+push. No separate project, database, model service, or paid API is required.
 
 Build settings are supplied by `vercel.json`:
 
@@ -26,53 +23,22 @@ Build settings are supplied by `vercel.json`:
 - Output directory: **`dist`**
 - GitHub API: **`api/github-pinned.js`**, Node function with a bounded upstream request
 
-Node.js 24+ is recommended for local core tests. The production client is compiled
-by Vite; the browser does not execute raw TypeScript.
-
-If a push has no deployment, inspect the commit's Vercel status, GitHub App access,
-disabled automatic deployments, branch restrictions, and any Ignored Build Step.
-The deployment dashboard also permits manually creating a deployment from a branch.
-Do not change the production branch merely to review a preview.
-
 Preview URLs may use the project's existing **Deployment Protection** and require
-Vercel sign-in. A sign-in page does not mean the build failed. Review sharing settings
-deliberately; this implementation does not disable account protection.
+Vercel sign-in. A sign-in page does not mean the build failed.
 
 ## Direct routes must survive refresh
 
-The application shares one URL/content model across Explore and Browse:
-
 ```text
-/?mode=explore
-/?mode=browse
-/world/engineering?mode=browse
-/world/creative?mode=explore
-/world/hush?mode=explore
-/projects/cj-os-desktop?mode=browse
-/writing/one-universe-two-ways-in?mode=browse
+/projects/cj-os-desktop
+/writing/retrieval-is-not-evidence
+/world/hush?mode=explore        (previous CJ Universe link → /#hush)
 ```
 
-`vercel.json` rewrites only `/world/*`, `/projects/*`, and `/writing/*` to the client
-entry point. **Do not replace these with a global rewrite that sends `/api/*` to
-`index.html`.** Static assets live under `/images/*`, `/resume/*`, and `/assets/*`.
-
-The same project/article can be opened in either mode. A failed or interrupted
-WebGL context retains the destination and switches to Browse; it does not invent
-a second copy of the project.
-
-Hush is an independent eighth destination, not a second version of the Creative
-studio. Both `/world/hush?mode=explore` and `/world/hush?mode=browse` survive refresh
-through the existing world-route rewrite; no additional backend route is required.
-
-Licensed scene files live under `public\assets\worlds`; keep these static paths
-outside client-route rewrites. `/assets/CREDITS.txt` lists sources and permissions.
-No new environment variables, model API, or asset CDN is needed. The Hush set is
-an original portfolio interpretation, not a game build or captured gameplay.
-
-Explore uses native document scrolling through approach, atmosphere entry, and
-themed surface environments. Shared world documents stay mounted when switching
-to Browse, preserving filters, creative settings, and lab drafts. Direct links
-skip travel spacers and open at the readable destination.
+`vercel.json` rewrites only `/world/*`, `/projects/*`, and `/writing/*` to the
+client entry point. **Do not replace these with a global rewrite that sends
+`/api/*` to `index.html`.** Static assets live under `/images/*`, `/resume/*`,
+and `/assets/*` (Earth textures in `/assets/orbit`, credits in
+`/assets/CREDITS.txt`). Fonts are self-hosted in the build; no font CDN is used.
 
 ## GitHub feed
 
@@ -99,7 +65,7 @@ fallback caching keep transient failures from turning into a long-lived fake
 6. Leave unnecessary permissions unset, generate the token, and copy it once.
 7. In Vercel, open the project, then **Settings > Environment Variables**.
 8. Add `GITHUB_TOKEN` as a **Secret** for **Preview** and **Production** as desired.
-   Apply it to both Universe preview branches if branch restrictions are offered.
+   Apply it to the `feature/cinematic-universe` preview if branch restrictions are offered.
 9. Optionally add `GITHUB_PROFILE_LOGIN=chiranjeev-21` as a Config variable.
 10. Save and **redeploy**. Changed variables do not update older deployments.
 11. Check `/api/github-pinned`: `"source":"github","selection":"pinned"` confirms
@@ -130,9 +96,10 @@ GitHub fixtures so upstream rate limits are not confused with UI regressions.
 
 ## Promote deliberately
 
-After review, merge the chosen Universe branch into `main` through a pull request.
-That is the step that changes the production website. Do not merge every alternate
-design branch together; they intentionally provide different experiences.
+After review, merge `feature/cinematic-universe` into `main` through a pull
+request. That is the step that changes the production website. Do not merge the
+alternate design branches together; they intentionally provide different
+experiences.
 
 ## References
 

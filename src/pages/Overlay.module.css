@@ -1,0 +1,67 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  background: var(--bg);
+  color: var(--fg);
+  --fg: #ece6db;
+  --bg: #07080a;
+  --accent: #e2a26a;
+}
+
+.overlay,
+.overlay[data-tone='paper'] {
+  --fg-muted: color-mix(in oklab, var(--fg) 64%, transparent);
+  --fg-faint: color-mix(in oklab, var(--fg) 40%, transparent);
+  --line: color-mix(in oklab, var(--fg) 16%, transparent);
+  --line-strong: color-mix(in oklab, var(--fg) 32%, transparent);
+}
+
+.overlay[data-tone='paper'] {
+  --fg: #17140f;
+  --bg: #e9e3d6;
+  --accent: #9c4f27;
+}
+
+.scroller {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  padding-inline: var(--gutter);
+  background: linear-gradient(180deg, var(--bg) 55%, transparent);
+}
+
+.bar .u-label {
+  color: var(--fg-faint);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  transition: gap var(--dur-mid) var(--ease-reveal);
+}
+
+.back:hover {
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .bar .u-label {
+    display: none;
+  }
+}

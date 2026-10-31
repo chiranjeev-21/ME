@@ -1,0 +1,25 @@
+.figure {
+  position: relative;
+}
+
+.frame {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.caption {
+  margin-top: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+}

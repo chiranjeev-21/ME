@@ -1,0 +1,118 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 0 var(--gutter) clamp(1.25rem, 4vh, 2.5rem);
+  background: #0b0c0e;
+  color: #ece6db;
+  overflow-y: auto;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  color: rgba(236, 230, 219, 0.6);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: #ece6db;
+}
+
+.list {
+  align-self: center;
+  display: grid;
+  border-top: 1px solid rgba(236, 230, 219, 0.12);
+}
+
+.list li {
+  border-bottom: 1px solid rgba(236, 230, 219, 0.12);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 4rem 1fr auto;
+  align-items: baseline;
+  gap: 1rem;
+  padding: clamp(0.35rem, 1.2vh, 0.8rem) 0;
+  transition: color var(--dur-mid) var(--ease-settle);
+}
+
+.number {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.12em;
+  color: rgba(236, 230, 219, 0.45);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5.6vh, 4.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  transition: transform var(--dur-mid) var(--ease-reveal);
+}
+
+.caption {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(236, 230, 219, 0.45);
+}
+
+.item:hover .title,
+.item:focus-visible .title {
+  transform: translateX(1.25rem);
+  font-style: italic;
+}
+
+.item[aria-current='location'] .number {
+  color: var(--c-ember);
+}
+
+.item[aria-current='location'] .title::after {
+  content: '';
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-left: 1rem;
+  border-radius: 50%;
+  background: var(--c-ember);
+  vertical-align: middle;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  padding-top: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: rgba(236, 230, 219, 0.7);
+}
+
+.footer a:hover {
+  color: #ece6db;
+}
+
+@media (max-width: 720px) {
+  .item {
+    grid-template-columns: 2.5rem 1fr;
+  }
+
+  .caption {
+    display: none;
+  }
+}
