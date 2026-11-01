@@ -1,7 +1,9 @@
 # Personal Universe deployment
 
-The cinematic redesign lives on **`feature/cinematic-universe`**. `main`, CJ OS,
-the 3D CJ Universe and Engineering Workbench branches are not changed by it.
+The cinematic redesign is in production: **`main`** deploys to
+**https://chiranjeev.vercel.app**. `feature/cinematic-universe` is its working
+branch. The original portfolio is preserved on **`og-portfolio`**; the CJ OS,
+3D CJ Universe and Engineering Workbench designs keep their own branches.
 
 ## Vercel previews
 
@@ -9,7 +11,7 @@ the 3D CJ Universe and Engineering Workbench branches are not changed by it.
 2. Open the existing portfolio project connected to `chiranjeev-21/ME`.
 3. Confirm **Settings > Git** still points to this repository.
 4. Keep Production branch tracking on **`main`**.
-5. In **Deployments**, filter by `feature/cinematic-universe`.
+5. In **Deployments**, filter by the branch you want to review (e.g. `feature/cinematic-universe`).
 6. Wait for **Ready**, open its details, and use **Visit** or **Copy URL**.
 7. Prefer the branch URL for ongoing review; a commit URL is an immutable snapshot.
 
@@ -67,7 +69,7 @@ fallback caching keep transient failures from turning into a long-lived fake
 6. Leave unnecessary permissions unset, generate the token, and copy it once.
 7. In Vercel, open the project, then **Settings > Environment Variables**.
 8. Add `GITHUB_TOKEN` as a **Secret** for **Preview** and **Production** as desired.
-   Apply it to the `feature/cinematic-universe` preview if branch restrictions are offered.
+   Apply it to Production and any preview branches if branch restrictions are offered.
 9. Optionally add `GITHUB_PROFILE_LOGIN=chiranjeev-21` as a Config variable.
 10. Save and **redeploy**. Changed variables do not update older deployments.
 11. Check `/api/github-pinned`: `"source":"github","selection":"pinned"` confirms
@@ -98,10 +100,11 @@ GitHub fixtures so upstream rate limits are not confused with UI regressions.
 
 ## Promote deliberately
 
-After review, merge `feature/cinematic-universe` into `main` through a pull
-request. That is the step that changes the production website. Do not merge the
-alternate design branches together; they intentionally provide different
-experiences.
+Work on `feature/cinematic-universe` (or another branch) and review its Preview.
+Then fast-forward or merge it into `main` — that is the step that changes
+https://chiranjeev.vercel.app. Do not merge the alternate design branches into
+`main`; they intentionally provide different experiences. To restore the
+original site, deploy or merge `og-portfolio`.
 
 ## References
 
