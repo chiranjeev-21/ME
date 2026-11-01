@@ -18,7 +18,17 @@ export interface SourceExcerpt {
   lines: readonly string[];
 }
 
-export type QuestMedia = SiteCapture | SourceExcerpt;
+/**
+ * A rendered illustration of the peer-to-peer swarm the repository's README
+ * describes: CI machines sharing a content-addressed, hash-verified bundle.
+ */
+export interface SwarmIllustration {
+  kind: 'swarm';
+  /** Where the depicted architecture is documented. */
+  basis: string;
+}
+
+export type QuestMedia = SiteCapture | SourceExcerpt | SwarmIllustration;
 
 const site = (name: string, host: string, title: string): SiteCapture => ({
   kind: 'site',
@@ -38,47 +48,7 @@ const site = (name: string, host: string, title: string): SiteCapture => ({
 const MEDIA = new Map<string, QuestMedia>([
   ['whodis', site('whodis', 'whodis-fawn.vercel.app', 'WhoDis')],
   ['interviewstack', site('interviewstack', 'interview-stack.vercel.app', 'InterviewStack')],
-  [
-    'token-generator',
-    site('token-generator', 'token-generator-woad.vercel.app', 'Token-generator'),
-  ],
-  [
-    'decentralised-package-manager',
-    {
-      kind: 'source',
-      path: 'internal/swarm/swarm.go',
-      startLine: 95,
-      comment: '//',
-      lines: [
-        '// Fan out: ask all peers simultaneously, return first hit.',
-        'type result struct {',
-        '    addr   string',
-        '    reader io.ReadCloser',
-        '    ct     string',
-        '    err    error',
-        '    hash   string',
-        '}',
-        '',
-        'ch := make(chan result, len(activePeers))',
-        '',
-        'for _, p := range activePeers {',
-        '    go func(addr string) {',
-        '        res, err := s.client.Fetch([]string{addr}, cacheKey)',
-        '        if err != nil {',
-        '            ch <- result{addr: addr, err: err}',
-        '            return',
-        '        }',
-        '        ch <- result{',
-        '            addr:   addr,',
-        '            reader: res.Body,',
-        '            ct:     res.ContentType,',
-        '            hash:   res.Hash,',
-        '        }',
-        '    }(p)',
-        '}',
-      ],
-    },
-  ],
+  ['decentralised-package-manager', { kind: 'swarm', basis: 'README — How it works' }],
   [
     'leetcode',
     {
@@ -149,6 +119,26 @@ const MEDIA = new Map<string, QuestMedia>([
   ],
 ]);
 
+/** Repositories kept out of the side quests. */
+const HIDDEN = new Set(['token-generator']);
+/** Side quests that lead, in this order; the rest keep the feed's order. */
+const LEAD = ['decentralised-package-manager'];
+
+const key = (name: string) => name.trim().toLowerCase();
+
+/** Drops hidden repositories and moves the lead ones to the front, without mutating the input. */
+export function arrangeQuests<T extends { title: string }>(quests: readonly T[]): T[] {
+  const visible = quests.filter(quest => !HIDDEN.has(key(quest.title)));
+  const rank = (quest: T) => {
+    const index = LEAD.indexOf(key(quest.title));
+    return index < 0 ? LEAD.length : index;
+  };
+  return visible
+    .map((quest, index) => ({ quest, index }))
+    .sort((a, b) => rank(a.quest) - rank(b.quest) || a.index - b.index)
+    .map(({ quest }) => quest);
+}
+
 function hostOf(url: string | undefined) {
   if (!url) return undefined;
   try {
@@ -163,7 +153,7 @@ function hostOf(url: string | undefined) {
  * while the repository still points to the site it was captured from.
  */
 export function questMedia(repository: string, homepage?: string): QuestMedia | undefined {
-  const media = MEDIA.get(repository.trim().toLowerCase());
+  const media = MEDIA.get(key(repository));
   if (media?.kind === 'site' && hostOf(homepage) !== media.host) return undefined;
   return media;
 }

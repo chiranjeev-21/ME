@@ -12,7 +12,7 @@ import type {
   QuestTreatment,
 } from '../../data/types.ts';
 import { ScrollTrigger, gsap } from '../../lib/gsap.ts';
-import { SitePlate, SourcePlate, TypePlate } from './QuestPlates';
+import { SitePlate, SourcePlate, SwarmPlate, TypePlate } from './QuestPlates';
 import styles from './ProjectFeature.module.css';
 
 type Treatment = ProjectTreatment | QuestTreatment;
@@ -65,6 +65,14 @@ const ACCENTS: Record<Treatment, (tl: gsap.core.Timeline, q: Select) => void> = 
   },
   type: (tl, q) =>
     tl.fromTo(q('[data-ghost]'), { xPercent: 7 }, { xPercent: -7, duration: 1.1 }, 0),
+  // A slow dolly into the fleet while the frame opens.
+  swarm: (tl, q) =>
+    tl.fromTo(
+      q('[data-swarm]'),
+      { scale: 1.08, yPercent: 3 },
+      { scale: 1, yPercent: 0, duration: 0.7, ease: 'cine' },
+      0.02
+    ),
 };
 
 interface SceneProps {
@@ -332,6 +340,8 @@ export function QuestFeature({
       <SitePlate capture={media} />
     ) : media?.kind === 'source' ? (
       <SourcePlate excerpt={media} language={language} repository={project.title} />
+    ) : media?.kind === 'swarm' ? (
+      <SwarmPlate illustration={media} language={language} repository={project.title} />
     ) : (
       <TypePlate name={project.title} language={language} topics={topics} url={project.sourceUrl} />
     );
@@ -366,7 +376,9 @@ export function QuestFeature({
           <p className={styles.visualNote}>
             {media.kind === 'site'
               ? `Image: the live site, captured ${media.captured}.`
-              : `Image: ${media.path}, lines ${media.startLine}–${media.startLine + media.lines.length - 1}.`}
+              : media.kind === 'swarm'
+                ? `Image: an illustration of the swarm in the ${media.basis}, rendered live — not a screenshot.`
+                : `Image: ${media.path}, lines ${media.startLine}–${media.startLine + media.lines.length - 1}.`}
           </p>
         )}
       </div>

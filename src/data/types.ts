@@ -65,7 +65,7 @@ export type ProjectCategory = 'AI/ML' | 'Web' | 'Systems' | 'Games' | 'Experimen
 export type ProjectTreatment = 'monitor' | 'surveillance';
 
 /** How a side quest is staged: its live site, a real source excerpt, or its name alone. */
-export type QuestTreatment = 'site' | 'source' | 'type';
+export type QuestTreatment = 'site' | 'source' | 'swarm' | 'type';
 
 export interface ProjectImage {
   /** Large source, used for full-bleed expansion. */

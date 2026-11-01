@@ -1,5 +1,7 @@
+import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
-import type { SiteCapture, SourceExcerpt } from '../../data/questMedia.ts';
+import type { SiteCapture, SourceExcerpt, SwarmIllustration } from '../../data/questMedia.ts';
+import { SWARM_STILL, createSwarmScene } from '../../scenes/swarm/swarm.ts';
 import feature from './ProjectFeature.module.css';
 import styles from './QuestPlates.module.css';
 
@@ -137,6 +139,89 @@ export function TypePlate({
       </p>
       {topics.length > 0 && <p className={hud('hudBl')}>{topics.slice(0, 4).join(' · ')}</p>}
       {path && <p className={hud('hudBr')}>{path}</p>}
+    </div>
+  );
+}
+
+/**
+ * The swarm from the repository's README, rendered live: peers stream a
+ * bundle's chunks in parallel and the build verifies its SHA-256 before use.
+ * It animates only while on screen; reduced motion gets one composed still.
+ */
+export function SwarmPlate({
+  illustration,
+  language,
+  repository,
+}: {
+  illustration: SwarmIllustration;
+  language?: string;
+  repository: string;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const scene = createSwarmScene(canvas);
+    if (!scene) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const start = performance.now();
+    const now = () => (reduced ? SWARM_STILL : (performance.now() - start) / 1000);
+    const covered = () => document.documentElement.dataset.overlay === 'open';
+    let frame = 0;
+    let visible = false;
+
+    const tick = () => {
+      frame = 0;
+      if (!visible || document.hidden || covered()) return;
+      scene.draw(now());
+      frame = requestAnimationFrame(tick);
+    };
+    const schedule = () => {
+      if (reduced || frame || !visible || document.hidden || covered()) return;
+      frame = requestAnimationFrame(tick);
+    };
+    // Layout size, not the transformed box: the plate is scaled while its frame opens.
+    const resize = () => {
+      scene.resize(
+        canvas.clientWidth,
+        canvas.clientHeight,
+        Math.min(window.devicePixelRatio || 1, 1.75)
+      );
+      scene.draw(now());
+    };
+
+    const sizeObserver = new ResizeObserver(resize);
+    sizeObserver.observe(canvas);
+    const viewObserver = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      schedule();
+    });
+    viewObserver.observe(canvas);
+    document.addEventListener('visibilitychange', schedule);
+    window.addEventListener('portfolio:overlay', schedule);
+    void document.fonts.ready.then(resize);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      sizeObserver.disconnect();
+      viewObserver.disconnect();
+      document.removeEventListener('visibilitychange', schedule);
+      window.removeEventListener('portfolio:overlay', schedule);
+    };
+  }, []);
+
+  return (
+    <div className={styles.swarm} aria-hidden="true">
+      <div className={styles.swarmStage} data-swarm>
+        <canvas ref={canvasRef} className={styles.swarmCanvas} />
+      </div>
+      <p className={hud('hudTl')}>
+        Illustration — peer swarm
+        <span className={styles.wideOnly}>, after the {illustration.basis}</span>
+      </p>
+      <p className={`${hud('hudTr')} ${styles.wideOnly}`}>Content-addressed · SHA-256 verified</p>
+      <p className={hud('hudBl')}>{repository}</p>
+      <p className={hud('hudBr')}>mDNS · Kademlia DHT{language ? ` · ${language}` : ''}</p>
     </div>
   );
 }

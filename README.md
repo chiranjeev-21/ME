@@ -71,8 +71,12 @@ development-only scene harness (used to render the posters).
 Side quests come live from GitHub, and each gets the same pinned scene as the case
 studies. The visual is always real: a screenshot of the repository's live site
 (`public/images/quests`, used only while the repo still links to that site), a
-verbatim source excerpt with its file and line range, or the repository name set
-as a type specimen. Details are public metadata only (`src/data/questMedia.ts`
+verbatim source excerpt with its file and line range, a live illustration of the
+architecture its README documents (the Decentralised Package Manager's
+peer-to-peer swarm: chunks streamed in parallel between CI machines, then
+SHA-256 verified — `src/scenes/swarm`), or the repository name set as a type
+specimen. The package manager leads; the server keeps it in the keyless feed
+(`GITHUB_FEATURED_REPOSITORIES` overrides the default). Details are public metadata only (`src/data/questMedia.ts`
 maps repositories to visuals). With no feed, the section says so instead.
 
 ## Playbox

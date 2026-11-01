@@ -1,5 +1,9 @@
 const GITHUB_GRAPHQL_ENDPOINT = 'https://api.github.com/graphql';
 const DEFAULT_LOGIN = 'chiranjeev-21';
+// Repositories that always lead the keyless feed for the default profile, however
+// recently others were updated. GITHUB_FEATURED_REPOSITORIES (comma-separated) overrides it.
+const DEFAULT_FEATURED = ['Decentralised-Package-manager'];
+const RECENT_LIMIT = 6;
 
 const FALLBACK_ARTIFACT = {
   id: 'fallback-face-mask-detection',
@@ -150,6 +154,23 @@ async function fetchPinnedRepositories(login, token) {
   };
 }
 
+function featuredRepositories(login, env) {
+  const configured = env.GITHUB_FEATURED_REPOSITORIES;
+  const names =
+    typeof configured === 'string'
+      ? configured.split(',')
+      : login.toLowerCase() === DEFAULT_LOGIN
+        ? DEFAULT_FEATURED
+        : [];
+  return [...new Set(names.map(name => name.trim()).filter(name => /^[\w.-]{1,100}$/.test(name)))];
+}
+
+const REST_HEADERS = {
+  Accept: 'application/vnd.github+json',
+  'User-Agent': 'chiranjeev-portfolio-hidden-vault',
+  'X-GitHub-Api-Version': '2022-11-28',
+};
+
 function isPublicUrl(value) {
   try {
     const url = new URL(value);
@@ -159,15 +180,23 @@ function isPublicUrl(value) {
   }
 }
 
-async function fetchRecentRepositories(login) {
+async function fetchFeaturedRepository(login, name) {
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${encodeURIComponent(login)}/${encodeURIComponent(name)}`,
+      { headers: REST_HEADERS, signal: AbortSignal.timeout(4000) }
+    );
+    return response.ok ? await response.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchRecentRepositories(login, featured = []) {
   const response = await fetch(
-    `https://api.github.com/users/${encodeURIComponent(login)}/repos?type=owner&sort=updated&per_page=18`,
+    `https://api.github.com/users/${encodeURIComponent(login)}/repos?type=owner&sort=updated&per_page=30`,
     {
-      headers: {
-        Accept: 'application/vnd.github+json',
-        'User-Agent': 'chiranjeev-portfolio-hidden-vault',
-        'X-GitHub-Api-Version': '2022-11-28',
-      },
+      headers: REST_HEADERS,
       signal: AbortSignal.timeout(6000),
     }
   );
@@ -182,12 +211,26 @@ async function fetchRecentRepositories(login) {
     throw new Error('Invalid public repository response.');
   }
 
-  const items = repositories
+  const usable = repository =>
+    repository &&
+    !repository.private &&
+    !repository.fork &&
+    isPublicUrl(repository.html_url) &&
+    // The profile README repository is account configuration, not a project.
+    String(repository.name).toLowerCase() !== login.toLowerCase();
+  const candidates = repositories.filter(usable);
+  const byName = new Map(candidates.map(repository => [repository.name.toLowerCase(), repository]));
+  const lead = [];
+  for (const name of featured) {
+    const repository =
+      byName.get(name.toLowerCase()) || (await fetchFeaturedRepository(login, name));
+    if (usable(repository) && !lead.includes(repository)) lead.push(repository);
+  }
+  const items = [...lead, ...candidates.filter(repository => !lead.includes(repository))]
     .filter(
-      repository =>
-        repository && !repository.private && !repository.fork && isPublicUrl(repository.html_url)
+      (repository, index, list) => list.findIndex(item => item.id === repository.id) === index
     )
-    .slice(0, 6)
+    .slice(0, RECENT_LIMIT)
     .map(repository => ({
       id: String(repository.id),
       name: repository.name,
@@ -246,7 +289,7 @@ async function handlePinnedQuestRequest(req, res, env = process.env) {
   }
 
   try {
-    const payload = await fetchRecentRepositories(login);
+    const payload = await fetchRecentRepositories(login, featuredRepositories(login, env));
     sendJson(
       res,
       200,

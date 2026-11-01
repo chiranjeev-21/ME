@@ -259,9 +259,10 @@ test('side-quest visuals match repositories by name and only show a site still l
   assert.equal(questMedia('WhoDis'), undefined);
   assert.equal(questMedia('WhoDis', 'https://example.com'), undefined);
   assert.equal(questMedia('WhoDis', 'not a url'), undefined);
-  // Source excerpts belong to the repository itself, whatever its homepage.
+  // Excerpts and illustrations belong to the repository itself, whatever its homepage.
   assert.equal(questMedia('LEETCODE').kind, 'source');
-  assert.equal(questMedia('Decentralised-Package-manager', 'https://example.com').kind, 'source');
+  assert.equal(questMedia('Decentralised-Package-manager', 'https://example.com').kind, 'swarm');
+  assert.equal(questMedia('Token-generator', 'https://token-generator-woad.vercel.app'), undefined);
   for (const name of ['Public Research', 'constructor', '__proto__', 'toString', ''])
     assert.equal(questMedia(name, 'https://example.com'), undefined, name);
 });
@@ -271,7 +272,6 @@ test('side-quest screenshots resolve to real assets and excerpts carry their rea
   for (const [name, homepage] of [
     ['WhoDis', 'https://whodis-fawn.vercel.app'],
     ['InterviewStack', 'https://interview-stack.vercel.app'],
-    ['Token-generator', 'https://token-generator-woad.vercel.app'],
   ]) {
     const { image } = questMedia(name, homepage);
     for (const asset of [image.src, image.srcSmall])
@@ -280,11 +280,33 @@ test('side-quest screenshots resolve to real assets and excerpts carry their rea
       );
     assert.match(image.alt, new RegExp(`${name}.*live site`));
   }
-  for (const name of ['Decentralised-Package-manager', 'Leetcode']) {
+  for (const name of ['Leetcode', 'Distributed-Task-Queue-and-Job-Processor']) {
     const excerpt = questMedia(name);
     assert.ok(excerpt.startLine > 0 && excerpt.lines.length >= 15 && excerpt.lines.length <= 30);
     assert.ok(excerpt.lines.every(line => !line.includes('\t') && line === line.trimEnd()));
   }
+});
+
+test('side quests hide Token-generator and lead with the package manager, keeping feed order', async () => {
+  const { arrangeQuests } = await loadQuests;
+  const input = [
+    { title: 'Leetcode' },
+    { title: 'Token-generator' },
+    { title: 'WhoDis' },
+    { title: ' decentralised-package-manager ' },
+    { title: 'InterviewStack' },
+  ];
+  const before = input.map(quest => quest.title);
+  assert.deepEqual(
+    arrangeQuests(input).map(quest => quest.title),
+    [' decentralised-package-manager ', 'Leetcode', 'WhoDis', 'InterviewStack']
+  );
+  assert.deepEqual(
+    input.map(quest => quest.title),
+    before,
+    'the feed order is not mutated'
+  );
+  assert.deepEqual(arrangeQuests([]), []);
 });
 
 test('language accents use a safe feed colour, else GitHub’s published colour, else none', async () => {

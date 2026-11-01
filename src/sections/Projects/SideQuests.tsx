@@ -1,6 +1,7 @@
 import { SplitReveal } from '../../components/motion/SplitReveal';
 import { ExternalLink } from '../../components/ui/ExternalLink';
 import { Icon } from '../../components/ui/Icon';
+import { arrangeQuests } from '../../data/questMedia.ts';
 import type { GitHubFeedState } from '../../hooks/useGitHubFeed.ts';
 import type { Project } from '../../data/types.ts';
 import { QuestFeature } from './ProjectFeature';
@@ -35,7 +36,9 @@ export function SideQuests({
   // GitHub's profile-README repository is account configuration, not a project.
   const quests = feed.isLoading
     ? []
-    : projects.filter(project => !project.treatment && project.title.toLowerCase() !== login);
+    : arrangeQuests(
+        projects.filter(project => !project.treatment && project.title.toLowerCase() !== login)
+      );
   const items = new Map(feed.data.items.map(item => [canonical(item.url), item]));
   const profile = feed.data.profile.url;
   const live = feed.data.source === 'github' && !feed.isLoading;
