@@ -3,6 +3,7 @@ import { SplitReveal } from '../../components/motion/SplitReveal';
 import { ChapterMark } from '../../components/ui/ChapterMark';
 import { themeAttributes } from '../../data/themes.ts';
 import type { PortfolioContent } from '../../data/types.ts';
+import { selectQuests } from '../../data/questMedia.ts';
 import type { GitHubFeedState } from '../../hooks/useGitHubFeed.ts';
 import { ProjectFeature } from './ProjectFeature';
 import { SideQuests } from './SideQuests';
@@ -11,8 +12,9 @@ import styles from './Work.module.css';
 
 export function Work({ content, feed }: { content: PortfolioContent; feed: GitHubFeedState }) {
   const featured = content.projects.filter(project => project.treatment);
-  // Sub-chapter codes continue after the featured scenes (04.1–04.2).
-  const code = (offset: number) => `04.${featured.length + offset}`;
+  const quests = feed.isLoading ? [] : selectQuests(content.projects, feed.data.profile.login);
+  // Featured work, then the GitHub projects, then the notes: one run of 04.n numbers.
+  const notesCode = `04.${featured.length + quests.length + 1}`;
   return (
     <section
       id="work"
@@ -26,7 +28,7 @@ export function Work({ content, feed }: { content: PortfolioContent; feed: GitHu
           Things I’ve <em>built.</em>
         </SplitReveal>
         <Reveal as="p" className={styles.lede} delay={0.15}>
-          One case study, a published research artifact, and the side quests on my GitHub.
+          A hackathon win, a published research artifact, and the projects on my GitHub.
         </Reveal>
       </header>
 
@@ -34,8 +36,8 @@ export function Work({ content, feed }: { content: PortfolioContent; feed: GitHu
         <ProjectFeature key={project.id} project={project} index={index} />
       ))}
 
-      <SideQuests projects={content.projects} feed={feed} code={code(1)} />
-      <StudioNotes notes={content.notes} code={code(2)} />
+      <SideQuests quests={quests} feed={feed} start={featured.length + 1} />
+      <StudioNotes notes={content.notes} code={notesCode} />
     </section>
   );
 }

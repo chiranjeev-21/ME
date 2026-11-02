@@ -102,18 +102,22 @@ test('case studies are addressable overlays and closing returns to the page', as
     .getByRole('link', { name: /Read the case study/ })
     .first()
     .click();
-  await expect(page).toHaveURL(/\/projects\/cj-os-desktop$/);
-  const overlay = page.getByRole('dialog', { name: 'CJ OS' });
-  await expect(overlay.getByRole('heading', { level: 1, name: 'CJ OS' })).toBeFocused();
+  await expect(page).toHaveURL(/\/projects\/crimeclix$/);
+  const overlay = page.getByRole('dialog', { name: 'CrimeClix' });
+  await expect(overlay.getByRole('heading', { level: 1, name: 'CrimeClix' })).toBeFocused();
   await expect(overlay.getByRole('link', { name: /View source/ })).toHaveAttribute(
     'href',
-    'https://github.com/chiranjeev-21/ME/tree/feature/cj-os-desktop'
+    'https://github.com/Pixils/CrimeClix'
+  );
+  await expect(overlay.getByRole('link', { name: /Open live preview/ })).toHaveAttribute(
+    'href',
+    'https://crime-clix.vercel.app/'
   );
   await expect(page.locator('#main')).toHaveAttribute('inert', '');
   await overlay.getByRole('link', { name: /Next project/ }).click();
   await expect(page).toHaveURL(/\/projects\/face-mask-detection$/);
   await page.goBack();
-  await expect(page).toHaveURL(/\/projects\/cj-os-desktop$/);
+  await expect(page).toHaveURL(/\/projects\/crimeclix$/);
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.locator('#main')).not.toHaveAttribute('inert', '');
@@ -166,18 +170,20 @@ test('studio notes and unknown paths have real, recoverable pages', async ({ pag
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
-test('side quests sit in the work chapter as repository dossiers, not invented case studies', async ({
+test('GitHub projects continue the work chapter as repository dossiers, not invented case studies', async ({
   page,
 }) => {
   await page.goto('/#side-quests');
   const quests = page.locator('#work #side-quests');
+  // No separate "Side quests" heading: these are more things built, numbered on from the featured work.
+  await expect(page.locator('#work').getByRole('heading', { name: /Side quests/ })).toHaveCount(0);
   await expect(quests.getByText('Recently updated on GitHub')).toBeVisible();
   // Each repository is its own scene; with no screenshot or excerpt on record, its name is the plate.
   const scene = quests.locator('section[data-quest]');
   await expect(scene).toHaveCount(1);
   await expect(scene).toHaveAttribute('data-treatment', 'type');
   await expect(scene.getByRole('heading', { level: 4, name: 'Public Research' })).toBeVisible();
-  await expect(scene.getByText('Side quest 01 / 01 — TypeScript').first()).toBeVisible();
+  await expect(scene.getByText('04.3 — GitHub · TypeScript').first()).toBeVisible();
   await expect(scene.getByText('Updated Oct 2026 · 7 stars')).toBeVisible();
   await expect(scene.getByRole('link', { name: /Live site/ })).toHaveAttribute(
     'href',
@@ -193,9 +199,7 @@ test('side quests sit in the work chapter as repository dossiers, not invented c
   await expect(page.getByRole('heading', { name: 'Architecture' })).toHaveCount(0);
 });
 
-test('without the live feed the work chapter stays whole and side quests say so', async ({
-  page,
-}) => {
+test('without the live feed the work chapter stays whole and says so', async ({ page }) => {
   await page.route('**/api/github-pinned', route =>
     route.fulfill({ status: 503, json: { error: 'unavailable' } })
   );

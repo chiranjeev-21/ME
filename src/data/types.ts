@@ -81,6 +81,8 @@ export interface Project {
   id: string;
   slug: string;
   title: string;
+  /** Short label for the featured scene, in place of the categories. */
+  kicker?: string;
   summary: string;
   categories: ProjectCategory[];
   problem: string;

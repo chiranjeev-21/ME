@@ -40,8 +40,8 @@ test('repository entries have safe, unique slugs and deduplicate curated work an
     repository({ id: 'unicode-2', name: '画', url: 'https://github.com/chiranjeev-21/art-2' }),
     repository({
       id: 'curated-name',
-      name: 'CJ OS',
-      url: 'https://github.com/chiranjeev-21/cj-os',
+      name: 'CrimeClix',
+      url: 'https://github.com/chiranjeev-21/crimeclix-copy',
     }),
     repository({ id: 'portfolio', name: 'ME', url: 'https://github.com/chiranjeev-21/ME' }),
     repository({
@@ -60,7 +60,7 @@ test('repository entries have safe, unique slugs and deduplicate curated work an
   assert.equal(new Set(projects.map(project => project.id)).size, projects.length);
   assert.ok(projects.every(project => /^[a-z0-9][a-z0-9-]{0,100}$/.test(project.slug)));
   assert.equal(projects.filter(project => project.title === 'Search Garden').length, 1);
-  assert.equal(projects.filter(project => project.title === 'CJ OS').length, 1);
+  assert.equal(projects.filter(project => project.title === 'CrimeClix').length, 1);
   assert.equal(
     projects.filter(project => project.title === 'Real-Time Face-Mask Detection').length,
     1
@@ -164,19 +164,15 @@ test('verified profile, career qualifications, and original source destinations 
   assert.ok(SKILLS.some(skill => skill.label === 'Agentic AI'));
   assert.ok(SKILLS.some(skill => skill.label === 'Distributed Computing'));
   const projects = buildContent(emptyFeed).projects;
-  assert.equal(
-    projects.find(project => project.slug === 'cj-os-desktop').sourceUrl,
-    'https://github.com/chiranjeev-21/ME/tree/feature/cj-os-desktop'
-  );
-  assert.equal(
-    projects.find(project => project.slug === 'cj-os-desktop').demoUrl,
-    'https://portfolio-klmg84qar-capstonelader-9077s-projects.vercel.app'
-  );
-  assert.equal(
-    projects.find(project => project.slug === 'cj-universe'),
-    undefined,
-    'the previous portfolio build is no longer presented as a project'
-  );
+  const crimeclix = projects.find(project => project.slug === 'crimeclix');
+  assert.equal(crimeclix.sourceUrl, 'https://github.com/Pixils/CrimeClix');
+  assert.equal(crimeclix.demoUrl, 'https://crime-clix.vercel.app');
+  for (const slug of ['cj-os-desktop', 'cj-universe'])
+    assert.equal(
+      projects.find(project => project.slug === slug),
+      undefined,
+      `${slug}: earlier portfolio builds are not presented as projects`
+    );
   assert.equal(
     projects.find(project => project.slug === 'face-mask-detection').sourceUrl,
     'https://drive.google.com/drive/u/1/folders/1Kzb7cPkzDbj38a8uRQgOvbUnCQTpJK8Z'
@@ -210,14 +206,14 @@ test('three substantive, typed studio notes contain safe text sections, not fabr
 test('portrait, original résumé, project screenshots and orbital textures resolve to real assets', async () => {
   const { PROFILE, buildContent } = await load;
   const projects = buildContent(emptyFeed).projects;
-  const os = projects.find(project => project.slug === 'cj-os-desktop');
+  const crimeclix = projects.find(project => project.slug === 'crimeclix');
   assert.equal(PROFILE.resume, '/resume/Chiranjeev-Singh-Resume.pdf');
   const assets = [
     PROFILE.portrait.src,
     PROFILE.portrait.srcSmall,
     PROFILE.resume,
-    os.image.src,
-    os.image.srcSmall,
+    crimeclix.image.src,
+    crimeclix.image.srcSmall,
     '/assets/orbit/earth-day-3k.webp',
     '/assets/orbit/earth-data-2k.webp',
     '/assets/orbit/lights-southasia-2k.webp',
@@ -229,7 +225,7 @@ test('portrait, original résumé, project screenshots and orbital textures reso
       fs.statSync(path.join(root, 'public', ...asset.split('/').filter(Boolean))).size > 0,
       asset
     );
-  assert.match(os.image.alt, /Actual CJ OS desktop runtime/);
+  assert.match(crimeclix.image.alt, /Screenshot from the project’s repository/);
 });
 
 test('every featured project has a distinct staging treatment and the artifact has no image', async () => {
@@ -238,12 +234,12 @@ test('every featured project has a distinct staging treatment and the artifact h
   assert.deepEqual(
     featured.map(project => [project.slug, project.treatment]),
     [
-      ['cj-os-desktop', 'monitor'],
+      ['crimeclix', 'monitor'],
       ['face-mask-detection', 'surveillance'],
     ]
   );
   assert.equal(featured[1].image, undefined);
-  // Repositories are side quests, never featured scenes.
+  // GitHub repositories follow the featured work; they are never featured scenes.
   const withRepo = buildContent({ ...emptyFeed, items: [repository()] }).projects;
   assert.ok(withRepo.filter(project => project.source === 'github').every(p => !p.treatment));
 });
@@ -260,7 +256,7 @@ test('side-quest visuals match repositories by name and only show a site still l
   assert.equal(questMedia('WhoDis', 'https://example.com'), undefined);
   assert.equal(questMedia('WhoDis', 'not a url'), undefined);
   // Excerpts and illustrations belong to the repository itself, whatever its homepage.
-  assert.equal(questMedia('LEETCODE').kind, 'source');
+  assert.equal(questMedia('Distributed-Task-Queue-and-Job-Processor').kind, 'source');
   assert.equal(questMedia('Decentralised-Package-manager', 'https://example.com').kind, 'swarm');
   assert.equal(questMedia('Token-generator', 'https://token-generator-woad.vercel.app'), undefined);
   for (const name of ['Public Research', 'constructor', '__proto__', 'toString', ''])
@@ -280,15 +276,15 @@ test('side-quest screenshots resolve to real assets and excerpts carry their rea
       );
     assert.match(image.alt, new RegExp(`${name}.*live site`));
   }
-  for (const name of ['Leetcode', 'Distributed-Task-Queue-and-Job-Processor']) {
+  for (const name of ['Distributed-Task-Queue-and-Job-Processor']) {
     const excerpt = questMedia(name);
     assert.ok(excerpt.startLine > 0 && excerpt.lines.length >= 15 && excerpt.lines.length <= 30);
     assert.ok(excerpt.lines.every(line => !line.includes('\t') && line === line.trimEnd()));
   }
 });
 
-test('side quests hide Token-generator and lead with the package manager, keeping feed order', async () => {
-  const { arrangeQuests } = await loadQuests;
+test('GitHub projects hide Leetcode and Token-generator and lead with the package manager', async () => {
+  const { arrangeQuests, selectQuests } = await loadQuests;
   const input = [
     { title: 'Leetcode' },
     { title: 'Token-generator' },
@@ -299,7 +295,7 @@ test('side quests hide Token-generator and lead with the package manager, keepin
   const before = input.map(quest => quest.title);
   assert.deepEqual(
     arrangeQuests(input).map(quest => quest.title),
-    [' decentralised-package-manager ', 'Leetcode', 'WhoDis', 'InterviewStack']
+    [' decentralised-package-manager ', 'WhoDis', 'InterviewStack']
   );
   assert.deepEqual(
     input.map(quest => quest.title),
@@ -307,6 +303,19 @@ test('side quests hide Token-generator and lead with the package manager, keepin
     'the feed order is not mutated'
   );
   assert.deepEqual(arrangeQuests([]), []);
+  // Featured work and the profile README repository are never repeated as GitHub projects.
+  assert.deepEqual(
+    selectQuests(
+      [
+        { title: 'CrimeClix', treatment: 'monitor' },
+        { title: 'Chiranjeev-21' },
+        { title: 'LEETCODE' },
+        { title: 'WhoDis' },
+      ],
+      'chiranjeev-21'
+    ).map(quest => quest.title),
+    ['WhoDis']
+  );
 });
 
 test('language accents use a safe feed colour, else GitHub’s published colour, else none', async () => {

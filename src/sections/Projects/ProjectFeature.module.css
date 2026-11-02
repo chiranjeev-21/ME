@@ -232,7 +232,7 @@
   right: var(--gutter);
 }
 
-/* ─── Side quests: public metadata only ──────────────────────────────────── */
+/* ─── GitHub projects: public metadata only ───────────────────────────────── */
 
 /* The repository's language colour, as one restrained accent. */
 [data-quest] .kicker {

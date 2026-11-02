@@ -247,7 +247,9 @@ function Surveillance({ title }: { title: string }) {
 export function ProjectFeature({ project, index }: { project: Project; index: number }) {
   const treatment = project.treatment ?? 'monitor';
   const artifact = treatment === 'surveillance';
-  const label = `04.${index + 1} — ${artifact ? 'Research artifact' : project.categories.join(' · ')}`;
+  const label = `04.${index + 1} — ${
+    artifact ? 'Research artifact' : (project.kicker ?? project.categories.join(' · '))
+  }`;
   const visual = project.image ? (
     <img
       src={project.image.src}
@@ -308,8 +310,6 @@ export function ProjectFeature({ project, index }: { project: Project; index: nu
   );
 }
 
-const pad = (value: number) => String(value).padStart(2, '0');
-
 /**
  * A public repository staged like the featured work, using only its public
  * metadata. The frame holds its live site, a real source excerpt, or — with
@@ -318,13 +318,15 @@ const pad = (value: number) => String(value).padStart(2, '0');
 export function QuestFeature({
   project,
   meta,
+  number,
   index,
-  total,
 }: {
   project: Project;
   meta?: GitHubRepository;
+  /** Position within the chapter (04.n). */
+  number: number;
+  /** Position among the GitHub projects, for alternating sides. */
   index: number;
-  total: number;
 }) {
   const language = meta?.primaryLanguage?.name || undefined;
   const colour = languageColour(language, meta?.primaryLanguage?.color);
@@ -334,7 +336,7 @@ export function QuestFeature({
   const updated = meta
     ? new Date(meta.updatedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
     : undefined;
-  const label = `Side quest ${pad(index + 1)} / ${pad(total)}${language ? ` — ${language}` : ''}`;
+  const label = `04.${number} — GitHub${language ? ` · ${language}` : ''}`;
   const visual =
     media?.kind === 'site' ? (
       <SitePlate capture={media} />

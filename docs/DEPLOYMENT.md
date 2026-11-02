@@ -31,7 +31,7 @@ Vercel sign-in. A sign-in page does not mean the build failed.
 ## Direct routes must survive refresh
 
 ```text
-/projects/cj-os-desktop
+/projects/crimeclix
 /writing/retrieval-is-not-evidence
 /playbox
 /world/hush?mode=explore        (previous CJ Universe link → /#hush)

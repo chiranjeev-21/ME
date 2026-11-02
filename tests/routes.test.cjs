@@ -16,9 +16,9 @@ test('home, chapter anchors, case studies and notes have direct addresses', () =
     chapter: null,
     anchor: 'side-quests',
   });
-  assert.deepEqual(parseRoute('/projects/cj-os-desktop'), {
+  assert.deepEqual(parseRoute('/projects/crimeclix'), {
     name: 'project',
-    slug: 'cj-os-desktop',
+    slug: 'crimeclix',
   });
   assert.deepEqual(parseRoute('/writing/retrieval-is-not-evidence?mode=browse'), {
     name: 'note',

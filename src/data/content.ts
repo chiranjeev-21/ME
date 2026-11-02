@@ -168,51 +168,60 @@ function curatedProjects(fallback: boolean): Project[] {
   const research = RESEARCH_ARTIFACT;
   return [
     {
-      id: 'curated-cj-os',
-      slug: 'cj-os-desktop',
-      title: 'CJ OS',
+      id: 'curated-crimeclix',
+      slug: 'crimeclix',
+      title: 'CrimeClix',
+      kicker: 'Hackathon win · Team Pixils',
       summary:
-        'A personal portfolio as a working desktop: shared apps, managed windows, a read-only terminal, and inspectable local retrieval.',
-      categories: ['Web', 'Systems'],
+        'Realistic portraits of suspects generated from a text description or a sketch, stored on IPFS, and identified from live CCTV feeds in real time to raise alerts.',
+      categories: ['AI/ML', 'Web'],
       problem:
-        'Give a desktop-inspired portfolio useful behavior without making basic information depend on discovering a simulated operating system.',
+        'Turn a witness’s description of a suspect into a realistic portrait, keep that record permanently on decentralised storage, and recognise the person when they appear on a live CCTV feed.',
       constraints: [
-        'Browser-based React/TypeScript application; not a real operating system.',
-        'Keep résumé and source links accessible on desktop and mobile.',
-        'The virtual filesystem is read-only; the retrieval lab is local and lexical, not a remote LLM.',
+        'Built at a hackathon by a team of four, Team Pixils.',
+        'Portrait generation relies on the Stable Diffusion API and storage on web3.storage; both need API keys.',
+        'Public IPFS gateway URLs can be blocked by institutional networks; the README notes a VPN is needed on Thapar’s network.',
       ],
       architecture: [
-        'A shared app registry connects desktop entry points to the same applications.',
-        'A window manager coordinates open applications and desktop interaction.',
-        'A read-only virtual parser and filesystem expose portfolio material through terminal commands.',
-        'A real GitHub feed supplements curated work; the original PDF remains a direct document.',
+        'A Next.js frontend where a suspect is described and the generated portrait reviewed.',
+        'Text-to-portrait generation through the Stable Diffusion API.',
+        'A Flask backend that stores portraits permanently on IPFS through web3.storage.',
+        'YOLOv4 and Single Shot Detection models for identification in live CCTV feeds, raising alerts.',
       ],
       decisions: [
-        'Use familiar desktop affordances while preserving direct access to conventional portfolio material.',
-        'Make retrieval evidence inspectable instead of presenting local search as generated intelligence.',
-        'Use a real runtime screenshot to document the implemented desktop.',
+        'Keep criminal portraits on IPFS, so each record is content-addressed and permanent.',
+        'Call a hosted Stable Diffusion API for portraits instead of running the model inside the app.',
       ],
       tradeoffs: [
-        'A desktop metaphor adds interaction complexity and requires a considered mobile layout.',
-        'Lexical retrieval is bounded by the local corpus and can miss relevant material with different wording.',
-        'The preview may require sign-in because of deployment protection.',
+        'Depends on third-party APIs (Stable Diffusion, web3.storage) and their availability.',
+        'IPFS gateways can be blocked by network policy, which affects where the app can be used.',
+        'The repository documents no accuracy or latency figures, so none are claimed here.',
       ],
-      technologies: ['React', 'TypeScript', 'Vite', 'Local lexical retrieval', 'GitHub feed'],
+      technologies: [
+        'Next.js',
+        'TypeScript',
+        'Flask',
+        'Python',
+        'Stable Diffusion',
+        'IPFS · web3.storage',
+        'YOLOv4',
+        'SSD',
+      ],
       outcomes: [
-        'Implemented desktop and mobile portfolio interactions with shared applications.',
-        'Desktop and mobile flows were tested; no performance benchmark is claimed here.',
+        'Won the hackathon it was built for (HackOWASP), as Team Pixils.',
+        'Deployed at crime-clix.vercel.app.',
       ],
-      sourceUrl: 'https://github.com/chiranjeev-21/ME/tree/feature/cj-os-desktop',
-      demoUrl: 'https://portfolio-klmg84qar-capstonelader-9077s-projects.vercel.app',
+      sourceUrl: 'https://github.com/Pixils/CrimeClix',
+      demoUrl: 'https://crime-clix.vercel.app',
       image: {
-        src: '/images/projects/cj-os-2400.webp',
-        srcSmall: '/images/projects/cj-os-1200.webp',
+        src: '/images/projects/crimeclix-2400.webp',
+        srcSmall: '/images/projects/crimeclix-1200.webp',
         width: 2400,
         height: 1500,
-        alt: 'Actual CJ OS desktop runtime with the Terminal and AI Lab retrieval windows open.',
+        alt: 'CrimeClix turning a written description of a suspect into a generated portrait, then uploading it to IPFS. Screenshot from the project’s repository.',
       },
       treatment: 'monitor',
-      provenance: 'Authored implementation case study.',
+      provenance: 'Team project by Team Pixils · details from the repository and its README.',
       source: 'curated',
     },
     {
@@ -299,7 +308,7 @@ export function buildContent(feed: GitHubFeed): PortfolioContent {
       names.has(displayName)
     )
       continue;
-    // This site's own repository: the CJ OS case study already documents it.
+    // This site's own repository is the portfolio itself, not one of the projects in it.
     if (/^https?:\/\/github\.com\/chiranjeev-21\/me(?:\/|$)/i.test(sourceUrl)) continue;
     ids.add(item.id);
     urls.add(canonical);

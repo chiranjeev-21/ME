@@ -36,3 +36,8 @@ FONTS
 Instrument Serif (Instrument) and Geist / Geist Mono (Vercel), SIL Open Font
 License 1.1. Latin subsets are self-hosted in /fonts; licences:
 /fonts/OFL-instrument-serif.txt and /fonts/OFL-geist.txt.
+
+PROJECT IMAGERY
+CrimeClix: the project's own screenshot (screenshots/text2image.png in
+https://github.com/Pixils/CrimeClix, a Team Pixils project), cropped to the app
+window. WhoDis and InterviewStack: screenshots of their live sites, October 2026.

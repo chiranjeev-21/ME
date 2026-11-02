@@ -50,39 +50,6 @@ const MEDIA = new Map<string, QuestMedia>([
   ['interviewstack', site('interviewstack', 'interview-stack.vercel.app', 'InterviewStack')],
   ['decentralised-package-manager', { kind: 'swarm', basis: 'README — How it works' }],
   [
-    'leetcode',
-    {
-      kind: 'source',
-      path: 'binary-tree-cameras/1886915646.cpp',
-      startLine: 53,
-      comment: '//',
-      lines: [
-        'int cameras=0;',
-        'int f(TreeNode* root){',
-        '    if(!root){',
-        '        return 2; // Null nodes are covered',
-        '    }',
-        '    int left = f(root->left);',
-        '    int right = f(root->right);',
-        '',
-        '    //One Node is not covered',
-        '    if(left==0 || right==0){',
-        '        cameras++;',
-        '        return 1;',
-        '    }',
-        '',
-        "    //This node can be covered by the camera placed on it's children",
-        '    if(left==1 || right==1){',
-        '        return 2;',
-        '    }',
-        '',
-        '    //Both children covered',
-        '    return 0;',
-        '}',
-      ],
-    },
-  ],
-  [
     'distributed-task-queue-and-job-processor',
     {
       kind: 'source',
@@ -119,9 +86,9 @@ const MEDIA = new Map<string, QuestMedia>([
   ],
 ]);
 
-/** Repositories kept out of the side quests. */
-const HIDDEN = new Set(['token-generator']);
-/** Side quests that lead, in this order; the rest keep the feed's order. */
+/** Repositories kept off the site; they stay on GitHub. */
+const HIDDEN = new Set(['token-generator', 'leetcode']);
+/** Repositories that lead, in this order; the rest keep the feed's order. */
 const LEAD = ['decentralised-package-manager'];
 
 const key = (name: string) => name.trim().toLowerCase();
@@ -137,6 +104,20 @@ export function arrangeQuests<T extends { title: string }>(quests: readonly T[])
     .map((quest, index) => ({ quest, index }))
     .sort((a, b) => rank(a.quest) - rank(b.quest) || a.index - b.index)
     .map(({ quest }) => quest);
+}
+
+/**
+ * The GitHub projects shown after the featured work: feed entries without a
+ * featured treatment, minus the profile README repository and hidden ones.
+ */
+export function selectQuests<T extends { title: string; treatment?: unknown }>(
+  projects: readonly T[],
+  login: string
+): T[] {
+  const profile = key(login);
+  return arrangeQuests(
+    projects.filter(project => !project.treatment && key(project.title) !== profile)
+  );
 }
 
 function hostOf(url: string | undefined) {
