@@ -80,7 +80,7 @@ export function HushReveal() {
           <span className={styles.whisper}>something is still watching</span>
         </div>
         <div className={styles.copy}>
-          <p className="u-label">05.2 — Games</p>
+          <p className="u-label">05.4 — Making one</p>
           <h3 className={styles.heading}>
             A little curiosity.
             <br />
@@ -88,7 +88,7 @@ export function HushReveal() {
           </h3>
           <p>
             Hush is my horror-game project — something between the trees, and one light you control.
-            I play games too; building one is a different kind of puzzle.
+            Building a game is a different kind of puzzle from playing one.
           </p>
           <div className={styles.controls}>
             <button

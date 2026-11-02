@@ -1,0 +1,187 @@
+.sport,
+.games {
+  position: relative;
+  margin-top: clamp(7rem, 18vh, 12rem);
+  padding-inline: var(--gutter);
+}
+
+.head {
+  display: grid;
+  gap: 1.1rem;
+  max-width: 40rem;
+}
+
+.head :global(.u-label) {
+  color: var(--accent);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-heading);
+  line-height: 1.04;
+}
+
+.title em {
+  font-style: italic;
+}
+
+.lede {
+  color: var(--fg-muted);
+}
+
+.note {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  color: var(--fg-muted);
+}
+
+/* ─── Sport: a scoreboard set as type ──────────────────────────────────────── */
+
+.board {
+  margin-top: clamp(3rem, 8vh, 5rem);
+  border-top: 1px solid var(--line);
+}
+
+.board li {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr) minmax(0, 18rem);
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: clamp(0.6rem, 1.6vh, 1.1rem) 0;
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.index {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.sportName {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8.4vw, 9rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  transition: color var(--dur-mid) var(--ease-settle);
+}
+
+.sportName em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.board li:hover .sportName {
+  color: var(--accent);
+}
+
+.board .note {
+  justify-self: end;
+  text-align: right;
+}
+
+.open .sportName {
+  font-size: clamp(2.4rem, 6vw, 6.4rem);
+}
+
+/* ─── Games: three slots on a shelf ────────────────────────────────────────── */
+
+.shelf {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(3rem, 8vh, 5rem);
+  border-top: 1px solid var(--line-strong);
+}
+
+.shelf li {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1.25rem;
+  min-height: clamp(14rem, 34vh, 20rem);
+  padding: 1.5rem clamp(1rem, 2vw, 2rem) 1.5rem 0;
+}
+
+.shelf li + li {
+  padding-left: clamp(1rem, 2vw, 2rem);
+  border-left: 1px solid var(--line);
+}
+
+.shelf :global(.u-label) {
+  color: var(--fg-faint);
+}
+
+.gameNames {
+  align-self: end;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.6vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+}
+
+.gameNames > span {
+  display: block;
+}
+
+.amp {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.continue {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem 1.5rem;
+  margin-top: clamp(2.5rem, 6vh, 4rem);
+}
+
+.continue :global(.u-label) {
+  color: var(--accent);
+}
+
+.continue > span:last-child {
+  color: var(--fg-muted);
+}
+
+.continue svg {
+  display: inline-block;
+  color: var(--accent);
+  vertical-align: -0.12em;
+}
+
+@media (max-width: 720px) {
+  .board li {
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: 0.25rem 1rem;
+  }
+
+  .board .note {
+    grid-column: 2;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .sportName {
+    font-size: clamp(2.6rem, 13vw, 4rem);
+  }
+
+  .open .sportName {
+    font-size: clamp(2.2rem, 10vw, 3.2rem);
+  }
+
+  .shelf {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .shelf li,
+  .shelf li + li {
+    min-height: 0;
+    padding: 1.5rem 0;
+    border-left: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}

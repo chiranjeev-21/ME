@@ -241,6 +241,18 @@ test('creative instruments work with keyboard and touch, with sound off by defau
   );
 });
 
+test('after hours lists the sports and games as readable, labelled regions', async ({ page }) => {
+  await page.goto('/#beyond');
+  const sport = page.getByRole('region', { name: 'Game for anything.' });
+  for (const name of ['Cricket', 'Badminton', 'Swimming', 'Anything else']) {
+    await expect(sport.getByRole('listitem').filter({ hasText: name })).toBeVisible();
+  }
+  const games = page.getByRole('region', { name: 'One more run.' });
+  for (const name of ['Elden Ring', 'Counter-Strike', 'Valorant', 'Campaigns']) {
+    await expect(games.getByText(name)).toBeVisible();
+  }
+});
+
 test('copying the email address reports what actually happened', async ({
   page,
   context,

@@ -8,6 +8,7 @@ import { themeAttributes } from '../../data/themes.ts';
 import { loadPlaybox } from '../../pages/Playbox/load.ts';
 import { GuitarStrings } from '../../scenes/strings/GuitarStrings';
 import { HushReveal } from './HushReveal';
+import { Games, Sport } from './Pastimes';
 import styles from './BeyondCode.module.css';
 
 const prefetchPlaybox = () => void loadPlaybox().catch(() => undefined);
@@ -29,7 +30,7 @@ export function BeyondCode() {
           After <em>hours.</em>
         </SplitReveal>
         <Reveal as="p" className={styles.lede} delay={0.15}>
-          Music, games, and the slower kind of making.
+          Music, sport, games, and the slower kind of making.
         </Reveal>
       </header>
 
@@ -74,6 +75,8 @@ export function BeyondCode() {
         <GuitarStrings sound={sound} onFirstPluck={() => setTouched(true)} />
       </div>
 
+      <Sport />
+      <Games />
       <HushReveal />
     </section>
   );

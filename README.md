@@ -11,14 +11,14 @@ live GitHub feed.
 
 ## The six chapters
 
-| #   | Chapter            | Experience                                                                                                                                                       |
-| --- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 01  | Opening            | Pinned orbital dawn rendered in WebGL; the name surfaces letter by letter, disperses on scroll, and sunrise floods into the next chapter                         |
-| 02  | Identity           | Paper-toned editorial chapter: masked line reveals, a portrait opened by a moving mask, reading-pace text, counter-drifting facet lines                          |
-| 03  | Journey            | Pinned horizontal timeline driven by vertical scroll; each role has its own light, parallax year numerals and a progress rail                                    |
-| 04  | Engineering & Work | “Things I’ve built.” Pinned scenes (frame → full-bleed hold → slate and details) for CrimeClix, the research artifact and each live GitHub project; studio notes |
-| 05  | Beyond Code        | A physically modelled guitar neck (sound off by default), the Playbox for building and recording strums, and a torch-lit Hush wordmark                           |
-| 06  | Contact            | Eclipse over India; magnetic email action with copy feedback, GitHub, LinkedIn and the résumé                                                                    |
+| #   | Chapter            | Experience                                                                                                                                                                   |
+| --- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 01  | Opening            | Pinned orbital dawn rendered in WebGL; the name surfaces letter by letter, disperses on scroll, and sunrise floods into the next chapter                                     |
+| 02  | Identity           | Paper-toned editorial chapter: masked line reveals, a portrait opened by a moving mask, reading-pace text, counter-drifting facet lines                                      |
+| 03  | Journey            | Pinned horizontal timeline driven by vertical scroll; each role has its own light, parallax year numerals and a progress rail                                                |
+| 04  | Engineering & Work | “Things I’ve built.” Pinned scenes (frame → full-bleed hold → slate and details) for CrimeClix, the research artifact and each live GitHub project; studio notes             |
+| 05  | Beyond Code        | A physically modelled guitar neck (sound off by default), the Playbox for building and recording strums, a sport scoreboard, the games I play, and a torch-lit Hush wordmark |
+| 06  | Contact            | Eclipse over India; magnetic email action with copy feedback, GitHub, LinkedIn and the résumé                                                                                |
 
 All career facts come from `src/data/facts.ts`, which mirrors the résumé PDF in
 `public/resume`. Project case studies, the research artifact and notes are
