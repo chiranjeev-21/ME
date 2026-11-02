@@ -41,3 +41,18 @@ PROJECT IMAGERY
 CrimeClix: the project's own screenshot (screenshots/text2image.png in
 https://github.com/Pixils/CrimeClix, a Team Pixils project), cropped to the app
 window. WhoDis and InterviewStack: screenshots of their live sites, October 2026.
+
+GAME IMAGERY (After hours · 05.3)
+Shown non-commercially, credited on the page, under each publisher's fan-content
+terms. This site is not affiliated with or endorsed by any of them. Resized to
+1920 and 1200 px WebP in public/images/games.
+- elden-ring-*: official screenshot from the Steam store page
+  (https://store.steampowered.com/app/1245620/). © Bandai Namco Entertainment
+  Inc. / © FromSoftware, Inc.
+- counter-strike-*: official Counter-Strike 2 screenshot from the Steam store
+  page (https://store.steampowered.com/app/730/). © Valve Corporation.
+- valorant-ascent-*: the Ascent wallpaper from https://playvalorant.com/en-us/media/,
+  cropped to remove the wordmark and frame marks. © Riot Games, Inc.
+  Chiranjeev Singh's portfolio was created under Riot Games' "Legal Jibber
+  Jabber" policy using assets owned by Riot Games. Riot Games does not endorse
+  or sponsor this project.

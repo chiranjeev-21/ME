@@ -15,7 +15,8 @@ import { ScrollTrigger, gsap } from '../../lib/gsap.ts';
 import { SitePlate, SourcePlate, SwarmPlate, TypePlate } from './QuestPlates';
 import styles from './ProjectFeature.module.css';
 
-type Treatment = ProjectTreatment | QuestTreatment;
+/** `still` drifts a single photograph; `versus` wipes a second one across the first. */
+type Treatment = ProjectTreatment | QuestTreatment | 'still' | 'versus';
 type Side = 'left' | 'right';
 type Select = (selector: string) => Element[];
 
@@ -73,10 +74,35 @@ const ACCENTS: Record<Treatment, (tl: gsap.core.Timeline, q: Select) => void> = 
       { scale: 1, yPercent: 0, duration: 0.7, ease: 'cine' },
       0.02
     ),
+  // A slow lateral camera drift across the whole scene, as in a held establishing shot.
+  still: (tl, q) =>
+    tl.fromTo(
+      q('[data-pan]'),
+      { xPercent: -2.5, scale: 1.06 },
+      { xPercent: 2.5, scale: 1.06, duration: 1.1 },
+      0
+    ),
+  // Next round: a hard wipe carries the second image across the first, its edge lit.
+  versus: (tl, q) => {
+    const edge = q('[data-edge]');
+    gsap.set(edge, { xPercent: 0, autoAlpha: 0 });
+    tl.fromTo(
+      q('[data-wipe]'),
+      { clipPath: 'inset(0% 100% 0% 0%)' },
+      { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.22, ease: 'power2.inOut' },
+      0.38
+    )
+      .to(edge, { autoAlpha: 1, duration: 0.01 }, 0.38)
+      .to(edge, { xPercent: 100, duration: 0.22, ease: 'power2.inOut' }, 0.38)
+      .to(edge, { autoAlpha: 0, duration: 0.03 }, 0.6);
+  },
 };
 
 interface SceneProps {
-  project: Project;
+  /** Heading id; also names the section for assistive tech. */
+  headingId: string;
+  title: string;
+  summary: string;
   label: string;
   treatment: Treatment;
   side?: Side;
@@ -84,7 +110,9 @@ interface SceneProps {
   length?: number;
   heading?: 'h3' | 'h4';
   tint?: string;
-  quest?: boolean;
+  /** Extra hold on the image before the details arrive, as timeline time. */
+  hold?: number;
+  dataAttributes?: Record<string, string>;
   /** What fills the frame: a screenshot or a typeset plate. */
   visual: ReactNode;
   /** Detail columns; each carries `data-detail`. */
@@ -96,15 +124,18 @@ interface SceneProps {
  * full bleed and the image settles; a clean hold; then the light drops and the
  * slate and details rise. Narrow screens and reduced motion get a static layout.
  */
-function Scene({
-  project,
+export function Scene({
+  headingId,
+  title,
+  summary,
   label,
   treatment,
   side = 'right',
   length = 2.2,
   heading: Heading = 'h3',
   tint,
-  quest = false,
+  hold = 0,
+  dataAttributes,
   visual,
   children,
 }: SceneProps) {
@@ -113,8 +144,6 @@ function Scene({
   const choreograph = (tl: gsap.core.Timeline, stage: HTMLElement) => {
     const q = gsap.utils.selector(stage);
     const details = q('[data-detail]');
-    // Quests hold a little longer on the work itself before the details arrive.
-    const hold = quest ? 0.1 : 0;
     // Staggered targets need explicit start states. Opacity, not visibility, keeps the
     // links reachable by keyboard and assistive tech before they rise.
     gsap.set(details, { y: 70, opacity: 0, pointerEvents: 'none' });
@@ -156,7 +185,7 @@ function Scene({
         },
         0.55 + hold
       )
-      .to({}, { duration: quest ? 0.3 : 0.28 });
+      .to({}, { duration: hold ? 0.3 : 0.28 });
     ACCENTS[treatment](tl, q);
   };
 
@@ -172,9 +201,7 @@ function Scene({
       });
   };
 
-  const titleId = `${quest ? 'quest' : 'project'}-${project.slug}`;
-  const attributes: Record<string, string> = { 'data-treatment': treatment, 'data-side': side };
-  if (quest) attributes['data-quest'] = '';
+  const attributes = { ...dataAttributes, 'data-treatment': treatment, 'data-side': side };
   return (
     <div
       ref={sectionRef}
@@ -187,7 +214,7 @@ function Scene({
         length={length}
         choreograph={choreograph}
         media="(min-width: 900px) and (min-height: 640px)"
-        labelledBy={titleId}
+        labelledBy={headingId}
         dataAttributes={attributes}
       >
         <div className={styles.media} data-media>
@@ -203,16 +230,16 @@ function Scene({
 
         <div className={styles.titleBlock} data-title>
           <p className={`u-label ${styles.kicker}`}>{label}</p>
-          <Heading id={titleId} className={styles.title}>
-            {project.title}
+          <Heading id={headingId} className={styles.title}>
+            {title}
           </Heading>
-          <p className={styles.summary}>{project.summary}</p>
+          <p className={styles.summary}>{summary}</p>
         </div>
 
         <div className={styles.details}>
           <div className={styles.slate} data-detail aria-hidden="true">
             <span className={`u-label ${styles.kicker}`}>{label}</span>
-            <span className={styles.slateTitle}>{project.title}</span>
+            <span className={styles.slateTitle}>{title}</span>
           </div>
           {children}
         </div>
@@ -266,7 +293,9 @@ export function ProjectFeature({ project, index }: { project: Project; index: nu
   );
   return (
     <Scene
-      project={project}
+      headingId={`project-${project.slug}`}
+      title={project.title}
+      summary={project.summary}
       label={label}
       treatment={treatment}
       tint={TINT[treatment]}
@@ -349,14 +378,17 @@ export function QuestFeature({
     );
   return (
     <Scene
-      project={project}
+      headingId={`quest-${project.slug}`}
+      title={project.title}
+      summary={project.summary}
       label={label}
       treatment={media?.kind ?? 'type'}
       side={index % 2 === 0 ? 'left' : 'right'}
       length={1.6}
       heading="h4"
       tint={colour ? `color-mix(in oklab, ${colour} 70%, #ece6db)` : undefined}
-      quest
+      hold={0.1}
+      dataAttributes={{ 'data-quest': '' }}
       visual={visual}
     >
       <div className={styles.detailCol} data-detail>

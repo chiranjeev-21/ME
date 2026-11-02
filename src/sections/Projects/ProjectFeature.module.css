@@ -265,6 +265,17 @@
   overflow-wrap: anywhere;
 }
 
+/* ─── After-hours games: official imagery, a compact title ────────────────── */
+
+[data-game] .title {
+  max-width: 12ch;
+  font-size: clamp(2.6rem, 5vw, 5.8rem);
+}
+
+[data-game] .details {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
 .questLead {
   max-width: 46ch;
   font-family: var(--font-display);
@@ -431,7 +442,8 @@
 
 @media (max-width: 899px) {
   .details,
-  [data-quest] .details {
+  [data-quest] .details,
+  [data-game] .details {
     grid-template-columns: minmax(0, 1fr);
   }
 

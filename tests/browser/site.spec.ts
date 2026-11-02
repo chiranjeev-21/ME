@@ -248,9 +248,18 @@ test('after hours lists the sports and games as readable, labelled regions', asy
     await expect(sport.getByRole('listitem').filter({ hasText: name })).toBeVisible();
   }
   const games = page.getByRole('region', { name: 'One more run.' });
-  for (const name of ['Elden Ring', 'Counter-Strike', 'Valorant', 'Campaigns']) {
-    await expect(games.getByText(name)).toBeVisible();
+  for (const name of ['Elden Ring', 'Counter-Strike & Valorant']) {
+    await expect(games.getByRole('heading', { name, exact: true })).toBeVisible();
   }
+  for (const name of [/^Elden Ring:/, /^Counter-Strike 2:/, /^Valorant:/]) {
+    const image = games.getByRole('img', { name });
+    await image.scrollIntoViewIfNeeded();
+    await expect
+      .poll(() => image.evaluate(element => (element as HTMLImageElement).naturalWidth))
+      .toBeGreaterThan(0);
+  }
+  await expect(games.getByText(/Story mode/)).toBeVisible();
+  await expect(games.getByText(/“Legal Jibber Jabber” policy/)).toBeVisible();
 });
 
 test('copying the email address reports what actually happened', async ({
